@@ -1,0 +1,26 @@
+{
+  "name": "fuzionkit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@lab.braindead.io:fuzionkit/fuzionkit.git"
+  },
+  "author": "enzi (enzi@braindead.io)",
+  "license": "ISC",
+  "devDependencies": {
+    "@lit-labs/context": "^0.3.1",
+    "@typescript-eslint/eslint-plugin": "5.37.0",
+    "@typescript-eslint/parser": "5.37.0",
+    "eslint": "^8.41.0",
+    "history": "^5.3.0",
+    "lit": "^2.7.4",
+    "typescript": "^5.0.4",
+    "webpack": "^5.84.1",
+    "webpack-cli": "^5.1.1"
+  }
+}

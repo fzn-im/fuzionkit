@@ -1,9 +1,7 @@
 import { createContext } from '@lit-labs/context';
 import { History, Listener } from 'history';
 
-import { EnhancedEventTarget } from 'utils/events';
-
-import 'js/components/nav-link';
+import { EnhancedEventTarget } from '../utils/events.js';
 
 export type RouterExecutionDetails = {
   props: any[];

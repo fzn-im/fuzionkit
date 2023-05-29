@@ -1,0 +1,101 @@
+@import '~css/mixins/scrollbars.scss';
+
+@include scrollbars;
+
+:host
+{
+  display: block;
+
+  *
+  {
+    box-sizing: border-box;
+  }
+
+  > div
+  {
+    z-index: 1001;
+    height: 100%;
+
+    .blackout
+    {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 1;
+      background: rgba(0, 0, 0, .4);
+    }
+
+    & > .slide-outer
+    {
+      float: left;
+      position: relative;
+      width: 0px;
+      height: 100%;
+      z-index: 2;
+
+      & > .slide
+      {
+        float: left;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        width: 100%;
+        background: #262a37;
+
+        & > .inner
+        {
+          width: 100%;
+          height: 100%;
+
+          & > .content
+          {
+            position: relative;
+            height: 100%;
+            overflow: auto;
+          }
+        }
+
+        & > .drag
+        {
+          display: none;
+          position: absolute;
+          left: 100%;
+          top: 10%;
+          height: 80%;
+          padding: 54px 3px 6px 3px;
+
+          &, * { cursor: e-resize; }
+
+          & > div
+          {
+            width: 2px;
+            height: 100%;
+            border: 1px dotted rgba(255, 255, 255, .3);
+          }
+
+          &:hover > div
+          {
+            border: 1px dotted #CEE61B;
+          }
+        }
+      }
+    }
+
+    & > .slide-outer
+    {
+      &.open
+      {
+        border-right: 1px solid rgba(0, 0, 0, .4);
+        right: 0;
+
+        & > .slide > .drag
+        {
+          display: block;
+        }
+      }
+    }
+  }
+}

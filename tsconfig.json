@@ -8,30 +8,32 @@
     ],
     "target": "esnext",
     "module": "esnext",
-    "rootDir": "./",
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "allowJs": false,
     "strict": false,
     "isolatedModules": false,
     "esModuleInterop": true,
-    "jsx": "preserve",
+    "declaration": true,
     "sourceMap": true,
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
     "skipLibCheck": true,
-    "baseUrl": "./",
-    "paths": {
-      "*": [
-        "./*"
-      ]
-    },
+    "declarationDir": ".",
+    "outDir": ".",
     "typeRoots": [
       "node_modules/@types"
+    ],
+    "plugins": [
+      {
+        "name": "typescript-plugin-css-modules"
+      }
     ]
   },
   "include": [
-    "**/*.ts"
+    "."
   ],
-  "exclude": []
+  "exclude": [
+    "rollup.config.ts"
+  ]
 }

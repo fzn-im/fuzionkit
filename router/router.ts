@@ -2,8 +2,8 @@ import { css, html, LitElement, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { ContextConsumer, createContext } from '@lit-labs/context';
 
-import { RouterContext, routerContext, RouteState } from './context';
-import { groupBy } from 'utils/arrays';
+import { RouterContext, routerContext, RouteState } from './context.js';
+import { groupBy } from '../utils/arrays.js';
 
 declare type Constructor<T> = new (...args: any[]) => T;
 
@@ -228,7 +228,7 @@ export class Router extends LitElement {
 
     this.dispatchEvent(new CustomEvent(
       'route',
-      { detail: route }
+      { detail: route },
     ));
 
     this.currentRoute = routeName;

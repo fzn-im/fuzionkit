@@ -38,7 +38,7 @@ export class EnhancedEventTarget<S = any> extends EventTarget {
     for (const type of typesArr) {
       super.addEventListener(type, listener, options);
     }
-  }
+  };
 
   removeEventListener: typeof EventTarget.prototype.removeEventListener = (
     types,
@@ -50,7 +50,7 @@ export class EnhancedEventTarget<S = any> extends EventTarget {
     for (const type of typesArr) {
       super.removeEventListener(type, listener, options);
     }
-  }
+  };
 
   addCountedEventListener: typeof EventTarget.prototype.addEventListener = (
     types,
@@ -204,7 +204,7 @@ export function EnhancedEventTargetMixin<T extends Constructor<Omit<LitElement, 
       for (const type of typesArr) {
         super.addEventListener(type, listener, options);
       }
-    }
+    };
 
     removeEventListener: typeof EventTarget.prototype.removeEventListener = (
       types,
@@ -216,7 +216,7 @@ export function EnhancedEventTargetMixin<T extends Constructor<Omit<LitElement, 
       for (const type of typesArr) {
         super.removeEventListener(type, listener, options);
       }
-    }
+    };
 
     addCountedEventListener: typeof EventTarget.prototype.addEventListener = (
       types,

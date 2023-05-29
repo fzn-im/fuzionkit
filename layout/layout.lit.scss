@@ -1,0 +1,431 @@
+@keyframes bars-pulse
+{
+  0% {
+    background: #788091;
+  }
+  50% {
+    background: #CEE61B;
+  }
+  100% {
+    background: #788091;
+  }
+}
+
+:host(fzn-new-layout)
+{
+  display: block;
+  height: 100%;
+
+  *
+  {
+    box-sizing: border-box;
+  }
+
+  > div
+  {
+    background: #1b1d28;
+    height: 100%;
+
+    > .app-badge, > .action-bar
+    {
+      > .content-title
+      {
+        > .item
+        {
+          display: block;
+          border-right: 1px solid rgba(0,0,0,0.4);
+          padding: 0 .6rem;
+          color: #FFFFFF;
+          text-decoration: none;
+
+          &.clickable
+          {
+            cursor: pointer;
+          }
+        }
+      }
+    }
+    
+    & > .app-badge
+    {
+      float: left;
+      position: absolute;
+      height: 3rem;
+      overflow: hidden;
+      z-index: 1002;
+
+      &.has-back
+      {
+        position: fixed;
+        top: 0;
+        left: 0;
+
+        & > div.branding > a.up-action
+        {
+          & > .back-icon
+          {
+            width: .9375rem;
+          }
+
+          & > .menu-icon  > .bars
+          {
+            left: .625rem;
+          }
+        }
+      }
+
+      &:not(.has-back)
+      {
+        & > div.branding
+        {
+          width: auto !important;
+        }
+        & > .content-title
+        {
+          border-left: 1px solid rgba(0, 0, 0, .3);
+        }
+      }
+
+      & > div.branding
+      {
+        display: inline-block;
+        height: 100%;
+
+        & > a.up-action
+        {
+          float: left;
+          display: block;
+          height: 100%;
+          position: relative;
+          z-index: 3;
+          cursor: pointer;
+
+          &:hover
+          {
+            & > .menu-icon > .bars .bar
+            {
+              animation: none;
+              background: #CEE61B;
+            }
+
+            & > .back-icon i
+            {
+              color: #CEE61B;
+            }
+          }
+
+          & > .back-icon
+          {
+            display: block;
+            float: left;
+            height: 100%;
+            width: 0;
+            position: relative;
+            z-index: 3;
+            transition: width 0.15s ease 0s;
+
+            & > fa-icon
+            {
+              position: absolute;
+              right: 2px;;
+              display: block;
+              line-height: 3rem;
+              font-size: 1.5rem;
+              color: #FFFFFF;
+              padding-left: .375rem;
+              width: .9375rem;
+            }
+          }
+
+          & > .menu-icon
+          {
+            display: block;
+            float: left;
+            position: relative;
+            height: 100%;
+            padding-left: .5rem;
+
+            & > .bars
+            {
+              display: block;
+              position: absolute;
+              width: 1.25rem;
+              top: 1.0625rem;
+              left: 0;
+              transition: left 0.2s ease 0s;
+
+              .bar
+              {
+                animation: bars-pulse 1.5s infinite;
+                display: block;
+                width: 100%;
+                height: .1875rem;
+                background: #788091;
+                margin-bottom: .1875rem;
+              }
+            }
+
+            & > .icon
+            {
+              position: relative;
+              z-index: 3;
+              margin-top: .5rem;
+              margin-right: .5rem;
+              width: 2rem;
+              height: 2rem;
+              background: transparent;
+
+              & > img
+              {
+                border: 0;
+                width: 100%;
+                height: 100%;
+              }
+            }
+          }
+        }
+
+        & > .title
+        {
+          background-repeat: no-repeat;
+          background-position: center center;
+          background-size: 100%;
+          position: relative;
+          z-index: 3;
+          float: left;
+          font-family: "Montserrat";
+          line-height: 3rem;
+          font-size: 1rem;
+          font-weight: 600;
+          color: #FFFFFF;
+          height: 100%;
+          margin-right: .5rem;
+          text-shadow: -1px -1px 0 rgba(0, 0, 0, .3), 1px 1px 0 rgba(0, 0, 0, .3);
+          text-decoration: none;
+        }
+      }
+
+      & > .content-title
+      {
+        vertical-align: top;
+        display: inline-block;
+        height: 100%;
+        line-height: 3rem;
+        font-size: .8725rem;
+        font-weight: normal;
+        color: #FFFFFF;
+        height: 100%;
+        text-shadow: -1px -1px 0 rgba(0, 0, 0, .3), 1px 1px 0 rgba(0, 0, 0, .3);
+        text-decoration: none;
+
+        > span
+        {
+          padding-left: .5rem;
+        }
+      }
+    }
+
+    &.drawer-open
+    {
+      > .app-badge > .branding > .title
+      {
+        display: block;
+      }
+    }
+
+    & > .action-bar
+    {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 3rem;
+      background: #262a37;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, .08);
+      z-index: 1000;
+
+      & > .content-title
+      {
+        position: absolute;
+        vertical-align: top;
+        display: inline-block;
+        height: 100%;
+        line-height: 3rem;
+        font-size: .8725rem;
+        font-weight: normal;
+        color: #FFFFFF;
+        height: 100%;
+        text-shadow: -1px -1px 0 rgba(0, 0, 0, .3), 1px 1px 0 rgba(0, 0, 0, .3);
+        text-decoration: none;
+
+        > span
+        {
+          padding-left: .5rem;
+        }
+      }
+
+      & > .right
+      {
+        float: right;
+        height: 100%;
+        display: flex;
+
+        & > .voice-widget
+        {
+          cursor: pointer;
+          display: flex;
+          height: 100%;
+          border-left: 1px solid rgba(0, 0, 0, .4);
+          align-items: center;
+
+          &, *
+          {
+            cursor: pointer;
+          }
+
+          .text
+          {
+            margin: 0 .5rem;
+          }
+        }
+
+        & > div.login,
+        & > div.user
+        {
+          display: inline-block;
+          position: relative;
+          height: 100%;
+          border-left: 1px solid rgba(0, 0, 0, .4);
+          cursor: pointer;
+          user-select: none;
+
+          & > div
+          {
+            .avatar
+            {
+              & *
+              {
+                cursor: pointer;
+              }
+
+              float: left;
+              display: flex;
+              width: 2rem;
+              height: 2rem;
+              margin: .5rem;
+              background: rgba(0, 0, 0, .2);
+              border-radius: .1875rem;
+              align-items: center;
+              justify-content: center;
+
+              img
+              {
+                max-width: 100%;
+                max-height: 100%;
+                border-radius: .1875rem;
+              }
+            }
+
+            & > .username
+            {
+              & *
+              {
+                cursor: pointer;
+              }
+
+              float: left;
+              line-height: 3rem;
+              font-size: .875rem;
+              color: #FFFFFF;
+              font-weight: bold;
+              padding-left: .75rem;
+            }
+          }
+        }
+      }
+    }
+
+    & > .content-frame
+    {
+      position: relative;
+      top: 0;
+      right: 0;
+      bottom: auto;
+      left: 0;
+      padding-top: 3rem;
+      min-height: 100%;
+
+      & > div
+      {
+        position: relative;
+        width: 100%;
+      }
+    }
+
+    & > fzn-drawer
+    {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1001;
+      height: 100%;
+
+      &::part(slide)
+      {
+        padding-top: 3rem;
+      }
+
+      &::part(inner)
+      {
+        border-top: 2px solid rgba(0, 0, 0, .2);
+      }
+    }
+  }
+
+  fzn-notices
+  {
+    position: fixed;
+    left: 50%;
+    bottom: 0;
+    z-index: 300000;
+    transform: translate(-50%, 0);
+    max-width: 100%;
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    padding: .4125rem;
+  }
+}
+
+:host(fzn-default-layout[collapsed])
+{
+  > div
+  {
+    & > .app-badge > .branding > .title
+    {
+      display: none;
+    }
+
+    &.drawer-open
+    {
+      overflow: hidden;
+
+      & > .app-badge > .branding > .title
+      {
+        display: block;
+      }
+    }
+
+    & > .app-badge
+    {
+      & > .branding
+      {
+        width: 100% !important;
+      }
+    }
+
+    fzn-drawer
+    {
+      box-shadow: 0 0 40px black;
+    }
+  }
+}

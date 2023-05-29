@@ -1,4 +1,8 @@
 node_modules
 **/*.js
 **/*.js.map
+**/*.d.ts
 !.eslintrc.js
+!global.d.ts
+**/*.css
+**/*.css.map

@@ -1,0 +1,50 @@
+@import './mixins/scrollbars.scss';
+
+@include scrollbars;
+
+@import '@fortawesome/fontawesome-free/scss/regular.scss';
+@import '@fortawesome/fontawesome-free/scss/brands.scss';
+@import '@fortawesome/fontawesome-free/scss/solid.scss';
+@import 'material-icons/iconfont/material-icons.css';
+
+@font-face
+{
+  font-family: Montserrat;
+  src: url('~fonts/Montserrat-Regular.otf');
+}
+
+@font-face
+{
+  font-family: vcr_osd;
+  src: url('~fonts/vcr_osd.ttf');
+}
+
+html
+{
+  height: 100%;
+}
+
+body
+{
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #36393F;
+  color: #DEDEDE;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+*,
+*:before,
+*:after
+{
+  box-sizing: border-box;
+}
+
+*
+{
+  -webkit-tap-highlight-color: transparent;
+}

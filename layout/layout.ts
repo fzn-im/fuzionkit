@@ -17,7 +17,7 @@ import { EnhancedEventTargetMixin } from '../utils/events.js';
 import { contextConnect } from '../utils/redux.js';
 import { handleRouteClick } from '../utils/router.js';
 
-import fuzionLogo from '../resources/fuzion.png';
+import fuzionLogo from '../resources/img/fuzion.png';
 
 import styles from './new-layout.lit.css';
 

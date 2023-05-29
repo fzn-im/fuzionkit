@@ -1,0 +1,26 @@
+@mixin scrollbars
+{
+  ::-webkit-scrollbar
+  {
+    width: 14px;
+    border-radius: 20px;
+  }
+
+  ::-webkit-scrollbar-thumb
+  {
+    background: #666;
+    border-radius: 20px;
+    border: 2px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+  }
+
+  ::-webkit-scrollbar-track
+  {
+    background: #0F1016;
+  }
+
+  *
+  {
+    scrollbar-color: #666 #0F1016;
+  }
+}

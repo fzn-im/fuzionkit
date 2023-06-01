@@ -1,0 +1,141 @@
+@import '../../resources/css/mixins/button.scss';
+
+* { box-sizing: border-box; }
+
+:host
+{
+  display: inline-flex;
+  flex-direction: row;
+
+  > button,
+  > a
+  {
+    flex-grow: 1;
+    @include fzn-button;
+
+    &:hover
+    {
+      @include fzn-button--hover;
+    }
+
+    &:active
+    {
+      @include fzn-button--active;
+    }
+  }
+}
+
+:host([variant='solid'])
+{
+  > button,
+  > a
+  {
+    @include fzn-button--solid;
+
+    &:hover
+    {
+      @include fzn-button--solid--hover;
+    }
+
+    &:active
+    {
+      @include fzn-button--solid--active;
+    }
+  }
+}
+
+:host([variant='solid-success'])
+{
+  > button,
+  > a
+  {
+    @include fzn-button--solid-success;
+
+    &:hover
+    {
+      @include fzn-button--solid-success--hover;
+    }
+
+    &:active
+    {
+      @include fzn-button--solid-success--active;
+    }
+  }
+}
+
+:host([variant='success'])
+{
+  > button,
+  > a
+  {
+    @include fzn-button--success;
+
+    &:hover
+    {
+      @include fzn-button--success--hover;
+    }
+
+    &:active
+    {
+      @include fzn-button--success--active;
+    }
+  }
+}
+
+:host([variant='danger'])
+{
+  > button,
+  > a
+  {
+    @include fzn-button--danger;
+
+    &:hover
+    {
+      @include fzn-button--danger--hover;
+    }
+
+    &:active
+    {
+      @include fzn-button--danger--active;
+    }
+  }
+}
+
+:host([disabled])
+{
+  > button,
+  > a
+  {
+    &, &:hover
+    {
+      @include fzn-button--disabled;
+    }
+  }
+}
+
+:host([size='xs'])
+{
+  > button,
+  > a
+  {
+    @include fzn-button--xs;
+  }
+}
+
+:host([size='s'])
+{
+  > button,
+  > a
+  {
+    @include fzn-button--s;
+  }
+}
+
+:host([size='l'])
+{
+  > button,
+  > a
+  {
+    @include fzn-button--l;
+  }
+}

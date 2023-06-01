@@ -8,7 +8,7 @@ import { EnhancedEventTargetMixin } from '../utils/events.js';
 // import { defaultLayoutContext } from 'js/components/layouts/default/context';
 // import DefaultLayout from 'js/components/layouts/default/default-layout';
 
-import styles from './drawer.lit.css';
+import styles from './drawer.lit.css.js';
 
 export type DrawerResizeEvent = {
   width: number;

@@ -1,7 +1,10 @@
 node_modules
 **/*.js
+!babel/**/*.js
+!scripts/**/*.js
 **/*.js.map
 **/*.d.ts
+**/*.css.ts
 !.eslintrc.js
 !global.d.ts
 **/*.css

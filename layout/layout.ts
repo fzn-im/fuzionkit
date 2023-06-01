@@ -19,7 +19,7 @@ import { handleRouteClick } from '../utils/router.js';
 
 import fuzionLogo from '../resources/img/fuzion.png';
 
-import styles from './new-layout.lit.css';
+import styles from './layout.lit.css.js';
 
 export type DrawerResizeEvent = {
   width: number;

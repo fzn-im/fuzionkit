@@ -5,7 +5,7 @@ import { customElement, property, queryAssignedNodes, state } from 'lit/decorato
 import { repeat } from 'lit/directives/repeat.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
-import styles from './tree.lit.css';
+import styles from './tree.lit.css.js';
 
 export type TreeNode<T> = {
   children?: TreeNode<T>[];

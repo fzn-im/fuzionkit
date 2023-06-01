@@ -1,0 +1,20 @@
+:host
+{
+  display: flex;
+
+  ::slotted(*)
+  {
+    flex-grow: 1;
+    margin-right: 2px;
+  }
+
+  ::slotted(:last-child)
+  {
+    margin-right: 0;
+  }
+}
+
+:host([inline])
+{
+  display: inline-flex;
+}

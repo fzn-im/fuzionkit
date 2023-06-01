@@ -2,21 +2,21 @@
 
 @include scrollbars;
 
-@import '@fortawesome/fontawesome-free/scss/regular.scss';
-@import '@fortawesome/fontawesome-free/scss/brands.scss';
-@import '@fortawesome/fontawesome-free/scss/solid.scss';
-@import 'material-icons/iconfont/material-icons.css';
+// @import '@fortawesome/fontawesome-free/scss/regular.scss';
+// @import '@fortawesome/fontawesome-free/scss/brands.scss';
+// @import '@fortawesome/fontawesome-free/scss/solid.scss';
+// @import 'material-icons/iconfont/material-icons.scss';
 
 @font-face
 {
   font-family: Montserrat;
-  src: url('~fonts/Montserrat-Regular.otf');
+  src: url('../fonts/Montserrat-Regular.otf');
 }
 
 @font-face
 {
   font-family: vcr_osd;
-  src: url('~fonts/vcr_osd.ttf');
+  src: url('../fonts/vcr_osd.ttf');
 }
 
 html

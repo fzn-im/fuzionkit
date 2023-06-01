@@ -9,7 +9,7 @@ import { ControllableMixin } from '../base/controllable-mixin.js';
 import { handleHrefClick } from '../utils/router.js';
 import { RouterContext, routerContext } from '../router/context.js';
 
-import styles from './tabs.lit.css';
+import styles from './tabs.lit.css.js';
 
 @customElement('fzn-tabs')
 export class Tabs extends ControllableMixin<string, typeof LitElement>(LitElement) {

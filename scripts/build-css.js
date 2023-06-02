@@ -4,6 +4,8 @@ const fs = require('fs');
 const path = require('path');
 
 const build = async () => {
+  const { default: stringToTemplateLiteral } = await import('string-to-template-literal');
+
   const files = (
     await glob('**/*.scss', {
       ignore: 'node_modules/**',
@@ -32,7 +34,7 @@ const build = async () => {
     const jsFilename = file.replace(/\.scss$/, '.css.ts');
 
     const fileContents = `import { css } from 'lit';
-export default css\`${css.replace(/(`|\$)/, '\\$1')}\`;
+export default css${stringToTemplateLiteral(css)};
 `;
 
     fs.writeFileSync(jsFilename, fileContents);

@@ -8,7 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "run-p build:css build:js",
+    "build": "run-s build:css build:js",
     "build:js": "tsc",
     "build:css": "node scripts/build-css.js",
     "lint": "eslint **/*.ts"
@@ -36,12 +36,22 @@
     "rollup": "^3.23.0",
     "sass": "^1.62.1",
     "sass-embedded": "^1.62.0",
+    "string-to-template-literal": "^2.0.0",
     "typescript": "^5.0.4"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^5.15.2",
     "@lit-labs/context": "^0.3.1",
+    "@milkdown/core": "^6.4.1",
+    "@milkdown/design-system": "^6.4.1",
+    "@milkdown/plugin-history": "^6.5.0",
+    "@milkdown/plugin-indent": "^6.4.1",
+    "@milkdown/plugin-menu": "^6.4.1",
+    "@milkdown/plugin-prism": "^6.5.0",
+    "@milkdown/preset-commonmark": "^6.4.2",
+    "@milkdown/prose": "^6.4.1",
+    "@milkdown/theme-nord": "^6.4.1",
     "@reduxjs/toolkit": "^1.9.5",
     "@types/hammerjs": "^2.0.41",
     "@types/uuid": "^9.0.1",
@@ -49,6 +59,7 @@
     "history": "^5.3.0",
     "lit": "^2.7.4",
     "material-icons": "^1.12.0",
+    "prism-themes": "^1.9.0",
     "resize-observer-polyfill": "^1.5.1",
     "uuid": "^9.0.0"
   }

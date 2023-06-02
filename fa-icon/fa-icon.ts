@@ -17,6 +17,6 @@ export class FaIcon extends LitElement {
 
   render (): TemplateResult {
     const { type } = this;
-    return html`<i class=${type} part='icon'><slot>hi</slot></i>`;
+    return html`<i class=${type} part='icon'><slot></slot></i>`;
   }
 }

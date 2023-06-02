@@ -2,6 +2,7 @@ node_modules
 **/*.js
 !babel/**/*.js
 !scripts/**/*.js
+!resources/html/**/*.js
 **/*.js.map
 **/*.d.ts
 **/*.css.ts

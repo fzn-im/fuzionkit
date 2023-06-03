@@ -11,7 +11,7 @@
   }
 }
 
-:host(fzn-new-layout)
+:host(fzn-layout)
 {
   display: block;
   height: 100%;
@@ -396,7 +396,7 @@
   }
 }
 
-:host(fzn-default-layout[collapsed])
+:host(fzn-layout[collapsed])
 {
   > div
   {

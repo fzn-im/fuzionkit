@@ -29,7 +29,7 @@ export const layoutContext = createContext<Layout>('layout');
 
 const storeContext = null as any;
 
-// @customElement('fzn-layout')
+@customElement('fzn-layout')
 class Layout extends contextConnect(storeContext)(EnhancedEventTargetMixin<
   typeof LitElement,
   Layout

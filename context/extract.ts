@@ -77,8 +77,13 @@ export function extract<ValueType>({
         new ContextExtractor(element, {
           context,
           callback: (value: ValueType): void => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- have to force the property on the type
-            (element as any)[name] = value;
+            if (!element.isUpdatePending) {
+              // hacccccky
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any -- have to force the property on the type
+              (element as any)[`__${name.toString()}`] = value;
+            } else {
+              (element as any)[name] = value;
+            }
           },
         });
       });

@@ -1,4 +1,4 @@
-import { html, LitElement } from 'lit';
+import { html, LitElement, TemplateResult } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
@@ -261,7 +261,7 @@ export class Shell extends EnhancedEventTargetMixin<
     this.drawerWidth = Math.min(Math.max(width, drawerMinWidth), this.drawerMaxWidth);
   };
 
-  render (): unknown {
+  render (): TemplateResult {
     const {
       contentFramePadding,
       collapsed,
@@ -368,6 +368,17 @@ export class Shell extends EnhancedEventTargetMixin<
           <slot name="drawer"></slot>
         </fzn-drawer>
       </div>
+    `;
+  }
+}
+
+@customElement('fzn-action-bar-button')
+export class FuzionActionBarButton extends LitElement {
+  static styles = [ styles ];
+
+  render (): TemplateResult {
+    return html`
+      <a><slot></slot></a>
     `;
   }
 }

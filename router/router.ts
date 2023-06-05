@@ -68,9 +68,11 @@ export class Router extends LitElement {
 
   __router = new ContextConsumer(
     this,
-    routerContext,
-    (router) => {
-      this.routerContext = router;
+    {
+      context: routerContext,
+      callback: (router): void => {
+        this.routerContext = router;
+      },
     },
   );
 

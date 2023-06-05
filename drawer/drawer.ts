@@ -2,11 +2,10 @@ import { html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
-// import { contextProvided } from '@lit-labs/context';
+import { consume } from '@lit-labs/context';
 
 import { EnhancedEventTargetMixin } from '../utils/events.js';
-// import { defaultLayoutContext } from 'js/components/layouts/default/context';
-// import DefaultLayout from 'js/components/layouts/default/default-layout';
+import { Shell, shellContext } from '../shell/shell.js';
 
 import styles from './drawer.lit.css.js';
 
@@ -18,8 +17,8 @@ export type DrawerResizeEvent = {
 export default class Drawer extends EnhancedEventTargetMixin<typeof LitElement, Drawer>(LitElement) {
   static styles = [ styles ];
 
-  // @contextProvided({ context: defaultLayoutContext })
-  // layout: DefaultLayout | null;
+  @consume({ context: shellContext })
+  shell: Shell | null;
 
   @query('.content')
   content: HTMLElement;
@@ -40,17 +39,17 @@ export default class Drawer extends EnhancedEventTargetMixin<typeof LitElement, 
   handleDragStart = (evt: MouseEvent): void => {
     evt.preventDefault();
     evt.stopPropagation();
-    const { handleDragMove } = this;
+    const { handleDragMove, shell } = this;
 
     this.dispatchEvent(new CustomEvent<boolean>('drag-change', { detail: true }));
-    // layout?.lockMouseGuard();
+    shell?.lockMouseGuard();
 
     window.addEventListener('mousemove', handleDragMove);
     window.addEventListener('mouseup', () => {
       window.removeEventListener('mousemove', handleDragMove);
 
       this.dispatchEvent(new CustomEvent<boolean>('drag-change', { detail: false }));
-      // layout?.unlockMouseGuard();
+      shell?.unlockMouseGuard();
     }, { once: true });
   };
 

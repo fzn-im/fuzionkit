@@ -5,7 +5,7 @@ import { styleMap } from 'lit/directives/style-map.js';
 import Hammer from 'hammerjs';
 import { v4 as uuid } from 'uuid';
 import ResizeObserver from 'resize-observer-polyfill';
-import { contextProvided, contextProvider, createContext } from '@lit-labs/context';
+import { consume, createContext, provide } from '@lit-labs/context';
 
 import Drawer from '../drawer/drawer.js';
 
@@ -14,36 +14,33 @@ import '../fa-icon/fa-icon.js';
 
 import { RouterContext, routerContext } from '../router/context.js';
 import { EnhancedEventTargetMixin } from '../utils/events.js';
-import { contextConnect } from '../utils/redux.js';
 import { handleRouteClick } from '../utils/router.js';
 
 import fuzionLogo from '../resources/img/fuzion.png';
 
-import styles from './layout.lit.css.js';
+import styles from './shell.lit.css.js';
 
 export type DrawerResizeEvent = {
   width: number;
 }
 
-export const layoutContext = createContext<Layout>('layout');
+export const shellContext = createContext<Shell>('shell');
 
-const storeContext = null as any;
-
-@customElement('fzn-layout')
-class Layout extends contextConnect(storeContext)(EnhancedEventTargetMixin<
+@customElement('fzn-shell')
+export class Shell extends EnhancedEventTargetMixin<
   typeof LitElement,
-  Layout
->(LitElement)) {
+  Shell
+>(LitElement) {
   _uuid = uuid();
 
   static styles = [ styles ];
 
-  @contextProvided({ context: routerContext })
-  routerContext: RouterContext;
-
-  @contextProvider({ context: layoutContext })
+  @provide({ context: shellContext })
   @property({ attribute: false })
-  layout = this;
+  shell: Shell;
+
+  @consume({ context: routerContext })
+  routerContext: RouterContext;
 
   _contentTitle: HTMLElement | null = null;
 
@@ -99,8 +96,14 @@ class Layout extends contextConnect(storeContext)(EnhancedEventTargetMixin<
 
   resizeObserver: ResizeObserver;
 
+  constructor () {
+    super();
+  }
+
   async connectedCallback (): Promise<void> {
     super.connectedCallback();
+
+    this.shell = this;
 
     this.initMobileScreen();
 
@@ -123,10 +126,13 @@ class Layout extends contextConnect(storeContext)(EnhancedEventTargetMixin<
 
     hammerTime.on('swiperight swipeleft', (evt) => {
       evt.preventDefault();
+
       if (!(evt.pointers && evt.pointers.length)) {
         return;
       }
+
       const x = evt.pointers[0].pageX - evt.deltaX;
+
       if (evt.type === 'swiperight' && x >= 0 && x <= 20) {
         this.drawerOpen = true;
       } else if (evt.type === 'swipeleft') {
@@ -140,8 +146,13 @@ class Layout extends contextConnect(storeContext)(EnhancedEventTargetMixin<
 
   firstUpdated (): void {
     this.dispatchEvent(new CustomEvent('first-updated'));
-    this.handleResize();
-    this.drawerOpen = !this.collapsed;
+
+    setTimeout(() => {
+      this.handleResize();
+      this.drawerOpen = !this.collapsed;
+
+      this.shell = this;
+    }, 0);
   }
 
   handleResize = (): void => {
@@ -246,6 +257,7 @@ class Layout extends contextConnect(storeContext)(EnhancedEventTargetMixin<
 
   handleDrawerResize = ({ detail: { width } }: CustomEvent<DrawerResizeEvent>): void => {
     const { drawerMinWidth } = this;
+
     this.drawerWidth = Math.min(Math.max(width, drawerMinWidth), this.drawerMaxWidth);
   };
 

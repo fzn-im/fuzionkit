@@ -1,6 +1,6 @@
 import { html, LitElement, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { contextProvided } from '@lit-labs/context';
+import { consume } from '@lit-labs/context';
 
 import { SizedMixin } from '../../base/sized-mixin.js';
 import { VariantMixin } from '../../base/variant-mixin.js';
@@ -19,7 +19,7 @@ const ButtonBase = VariantMixin<
 export default class Button extends ButtonBase {
   static styles = [ normalizeStyles, styles ];
 
-  @contextProvided({ context: routerContext })
+  @consume({ context: routerContext })
   routerContext: RouterContext;
 
   @property({ attribute: true, type: Boolean, reflect: true })

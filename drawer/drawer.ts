@@ -5,7 +5,8 @@ import { styleMap } from 'lit/directives/style-map.js';
 import { consume } from '@lit-labs/context';
 
 import { EnhancedEventTargetMixin } from '../utils/events.js';
-import { Shell, shellContext } from '../shell/shell.js';
+import { Shell } from '../shell/shell.js';
+import { shellContext } from '../shell/context.js';
 
 import styles from './drawer.lit.css.js';
 

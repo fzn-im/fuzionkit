@@ -11,15 +11,15 @@ import { styleMap } from 'lit/directives/style-map.js';
 import Hammer from 'hammerjs';
 import { v4 as uuid } from 'uuid';
 import ResizeObserver from 'resize-observer-polyfill';
-import { consume, createContext, provide } from '@lit-labs/context';
+import { consume, provide } from '@lit-labs/context';
 import '../drawer/drawer.js';
 import '../fa-icon/fa-icon.js';
 import { routerContext } from '../router/context.js';
 import { EnhancedEventTargetMixin } from '../utils/events.js';
 import { handleRouteClick } from '../utils/router.js';
+import { shellContext } from './context.js';
 import fuzionLogo from '../resources/img/fuzion.png';
 import styles from './shell.lit.css.js';
-export const shellContext = createContext('shell');
 export let Shell = class Shell extends EnhancedEventTargetMixin(LitElement) {
     static { this.styles = [styles]; }
     get contentTitle() {

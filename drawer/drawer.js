@@ -10,7 +10,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { consume } from '@lit-labs/context';
 import { EnhancedEventTargetMixin } from '../utils/events.js';
-import { shellContext } from '../shell/shell.js';
+import { shellContext } from '../shell/context.js';
 import styles from './drawer.lit.css.js';
 let Drawer = class Drawer extends EnhancedEventTargetMixin(LitElement) {
     constructor() {

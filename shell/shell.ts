@@ -5,7 +5,7 @@ import { styleMap } from 'lit/directives/style-map.js';
 import Hammer from 'hammerjs';
 import { v4 as uuid } from 'uuid';
 import ResizeObserver from 'resize-observer-polyfill';
-import { consume, createContext, provide } from '@lit-labs/context';
+import { consume, provide } from '@lit-labs/context';
 
 import Drawer from '../drawer/drawer.js';
 
@@ -16,6 +16,8 @@ import { RouterContext, routerContext } from '../router/context.js';
 import { EnhancedEventTargetMixin } from '../utils/events.js';
 import { handleRouteClick } from '../utils/router.js';
 
+import { shellContext } from './context.js';
+
 import fuzionLogo from '../resources/img/fuzion.png';
 
 import styles from './shell.lit.css.js';
@@ -23,8 +25,6 @@ import styles from './shell.lit.css.js';
 export type DrawerResizeEvent = {
   width: number;
 }
-
-export const shellContext = createContext<Shell>('shell');
 
 @customElement('fzn-shell')
 export class Shell extends EnhancedEventTargetMixin<

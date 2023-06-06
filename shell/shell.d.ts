@@ -7,9 +7,6 @@ import { RouterContext } from '../router/context.js';
 export type DrawerResizeEvent = {
     width: number;
 };
-export declare const shellContext: {
-    __context__: Shell;
-};
 declare const Shell_base: typeof LitElement & {
     new (...args: any[]): import("../utils/events.js").IEnhancedEventTarget<Shell>;
     prototype: import("../utils/events.js").IEnhancedEventTarget<Shell>;

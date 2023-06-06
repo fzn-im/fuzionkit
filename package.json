@@ -11,7 +11,8 @@
     "build": "run-s build:css build:js",
     "build:js": "tsc",
     "build:css": "node scripts/build-css.js",
-    "lint": "eslint **/*.ts"
+    "lint": "eslint **/*.ts",
+    "postinstall": "build"
   },
   "repository": {
     "type": "git",

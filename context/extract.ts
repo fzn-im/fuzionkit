@@ -60,7 +60,7 @@ export class ContextExtractor<
       const element = evt.composedPath()[0] as HTMLElement;
 
       ((element as any)?.__controllers as Array<ContextProvider<C>>)
-        .find((controller) => (controller as any).context = this.context)
+        .find((controller) => (controller as any).context === this.context)
         ?.addCallback(this.callback, true);
     });
   }
@@ -78,9 +78,21 @@ export function extract<ValueType>({
           context,
           callback: (value: ValueType): void => {
             if (!element.isUpdatePending) {
-              // hacccccky
+              // hacccccky - have to prevent the update during update error
+
               // eslint-disable-next-line @typescript-eslint/no-explicit-any -- have to force the property on the type
               (element as any)[`__${name.toString()}`] = value;
+
+              const controller = ((element as any)
+                ?.__controllers as Array<ContextProvider<Context<unknown, ValueType>>>)
+                .find((controller) => (
+                  (controller as any).context === context &&
+                  Object.prototype.hasOwnProperty.call(controller, 'onContextRequest')
+                ));
+
+              if (controller) {
+                controller.value = value;
+              }
             } else {
               (element as any)[name] = value;
             }

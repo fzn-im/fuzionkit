@@ -40,6 +40,7 @@ export let Shell = class Shell extends EnhancedEventTargetMixin(LitElement) {
     constructor() {
         super();
         this._uuid = uuid();
+        this.shell = this;
         this._contentTitle = null;
         this.collapsed = false;
         this.userAvatarUrl = null;
@@ -78,7 +79,6 @@ export let Shell = class Shell extends EnhancedEventTargetMixin(LitElement) {
     }
     async connectedCallback() {
         super.connectedCallback();
-        this.shell = this;
         this.initMobileScreen();
         const hammerTime = new Hammer.Manager(document, {
             touchAction: 'auto',

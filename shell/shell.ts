@@ -37,7 +37,7 @@ export class Shell extends EnhancedEventTargetMixin<
 
   @provide({ context: shellContext })
   @property({ attribute: false })
-  shell: Shell;
+  shell: Shell = this;
 
   @consume({ context: routerContext })
   routerContext: RouterContext;
@@ -102,8 +102,6 @@ export class Shell extends EnhancedEventTargetMixin<
 
   async connectedCallback (): Promise<void> {
     super.connectedCallback();
-
-    this.shell = this;
 
     this.initMobileScreen();
 

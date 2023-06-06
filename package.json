@@ -12,7 +12,7 @@
     "build:js": "tsc",
     "build:css": "node scripts/build-css.js",
     "lint": "eslint **/*.ts",
-    "postinstall": "build"
+    "postinstall": "npm run build"
   },
   "repository": {
     "type": "git",

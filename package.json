@@ -5,7 +5,10 @@
   "module": "dist/fuzionkit.es5.js",
   "typings": "dist/types/fuzionkit.d.ts",
   "files": [
-    "dist"
+    "*",
+    "!scripts",
+    "!tsconfig.json",
+    "!.eslintrc.js"
   ],
   "scripts": {
     "build": "run-s build:css build:js",

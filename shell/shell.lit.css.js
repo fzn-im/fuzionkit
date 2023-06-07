@@ -89,7 +89,7 @@ export default css `@keyframes bars-pulse {
   top: 0;
 }
 :host(fzn-shell) > div > .app-badge > div.branding > a.up-action > .back-icon > fa-icon {
-  display: block;
+  display: flex;
   align-items: center;
   position: absolute;
   right: 5px;

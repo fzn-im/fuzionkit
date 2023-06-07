@@ -93,7 +93,6 @@ export default css `@keyframes bars-pulse {
   align-items: center;
   position: absolute;
   right: 5px;
-  display: block;
   font-size: 1.5rem;
   color: #FFFFFF;
   padding-left: 0.375rem;

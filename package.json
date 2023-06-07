@@ -45,7 +45,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^5.15.2",
-    "@lit-labs/context": "^0.3.1",
+    "@lit-labs/context": "0.3.1",
     "@milkdown/core": "^6.4.1",
     "@milkdown/design-system": "^6.4.1",
     "@milkdown/plugin-history": "^6.5.0",

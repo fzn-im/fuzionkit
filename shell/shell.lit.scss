@@ -65,6 +65,11 @@
           & > .back-icon
           {
             width: .9375rem;
+
+            fa-icon
+            {
+              right: 0;
+            }
           }
 
           & > .menu-icon  > .bars
@@ -116,20 +121,21 @@
 
           & > .back-icon
           {
-            display: block;
+            display: flex;
             float: left;
             height: 100%;
             width: 0;
             position: relative;
             z-index: 3;
             transition: width 0.15s ease 0s;
+            align-items: center;
+            top: 0;
 
             & > fa-icon
             {
               position: absolute;
-              right: 2px;;
+              right: 5px;
               display: block;
-              line-height: 3rem;
               font-size: 1.5rem;
               color: #FFFFFF;
               padding-left: .375rem;

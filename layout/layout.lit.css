@@ -9,59 +9,56 @@
     background: #788091;
   }
 }
-:host(fzn-shell) {
+:host(fzn-new-layout) {
   display: block;
   height: 100%;
 }
-:host(fzn-shell) * {
+:host(fzn-new-layout) * {
   box-sizing: border-box;
 }
-:host(fzn-shell) > div {
+:host(fzn-new-layout) > div {
   background: #1b1d28;
   height: 100%;
 }
-:host(fzn-shell) > div > .app-badge > .content-title > .item, :host(fzn-shell) > div > .action-bar > .content-title > .item {
+:host(fzn-new-layout) > div > .app-badge > .content-title > .item, :host(fzn-new-layout) > div > .action-bar > .content-title > .item {
   display: block;
   border-right: 1px solid rgba(0, 0, 0, 0.4);
   padding: 0 0.6rem;
   color: #FFFFFF;
   text-decoration: none;
 }
-:host(fzn-shell) > div > .app-badge > .content-title > .item.clickable, :host(fzn-shell) > div > .action-bar > .content-title > .item.clickable {
+:host(fzn-new-layout) > div > .app-badge > .content-title > .item.clickable, :host(fzn-new-layout) > div > .action-bar > .content-title > .item.clickable {
   cursor: pointer;
 }
-:host(fzn-shell) > div > .app-badge {
+:host(fzn-new-layout) > div > .app-badge {
   float: left;
   position: absolute;
   height: 3rem;
   overflow: hidden;
   z-index: 1002;
 }
-:host(fzn-shell) > div > .app-badge.has-back {
+:host(fzn-new-layout) > div > .app-badge.has-back {
   position: fixed;
   top: 0;
   left: 0;
 }
-:host(fzn-shell) > div > .app-badge.has-back > div.branding > a.up-action > .back-icon {
+:host(fzn-new-layout) > div > .app-badge.has-back > div.branding > a.up-action > .back-icon {
   width: 0.9375rem;
 }
-:host(fzn-shell) > div > .app-badge.has-back > div.branding > a.up-action > .back-icon fa-icon {
-  right: 0;
-}
-:host(fzn-shell) > div > .app-badge.has-back > div.branding > a.up-action > .menu-icon > .bars {
+:host(fzn-new-layout) > div > .app-badge.has-back > div.branding > a.up-action > .menu-icon > .bars {
   left: 0.625rem;
 }
-:host(fzn-shell) > div > .app-badge:not(.has-back) > div.branding {
+:host(fzn-new-layout) > div > .app-badge:not(.has-back) > div.branding {
   width: auto !important;
 }
-:host(fzn-shell) > div > .app-badge:not(.has-back) > .content-title {
+:host(fzn-new-layout) > div > .app-badge:not(.has-back) > .content-title {
   border-left: 1px solid rgba(0, 0, 0, 0.3);
 }
-:host(fzn-shell) > div > .app-badge > div.branding {
+:host(fzn-new-layout) > div > .app-badge > div.branding {
   display: inline-block;
   height: 100%;
 }
-:host(fzn-shell) > div > .app-badge > div.branding > a.up-action {
+:host(fzn-new-layout) > div > .app-badge > div.branding > a.up-action {
   float: left;
   display: block;
   height: 100%;
@@ -69,41 +66,40 @@
   z-index: 3;
   cursor: pointer;
 }
-:host(fzn-shell) > div > .app-badge > div.branding > a.up-action:hover > .menu-icon > .bars .bar {
+:host(fzn-new-layout) > div > .app-badge > div.branding > a.up-action:hover > .menu-icon > .bars .bar {
   animation: none;
   background: #CEE61B;
 }
-:host(fzn-shell) > div > .app-badge > div.branding > a.up-action:hover > .back-icon i {
+:host(fzn-new-layout) > div > .app-badge > div.branding > a.up-action:hover > .back-icon i {
   color: #CEE61B;
 }
-:host(fzn-shell) > div > .app-badge > div.branding > a.up-action > .back-icon {
-  display: flex;
+:host(fzn-new-layout) > div > .app-badge > div.branding > a.up-action > .back-icon {
+  display: block;
   float: left;
   height: 100%;
   width: 0;
   position: relative;
   z-index: 3;
   transition: width 0.15s ease 0s;
-  align-items: center;
-  top: 0;
 }
-:host(fzn-shell) > div > .app-badge > div.branding > a.up-action > .back-icon > fa-icon {
+:host(fzn-new-layout) > div > .app-badge > div.branding > a.up-action > .back-icon > fa-icon {
   position: absolute;
-  right: 5px;
+  right: 2px;
   display: block;
+  line-height: 3rem;
   font-size: 1.5rem;
   color: #FFFFFF;
   padding-left: 0.375rem;
   width: 0.9375rem;
 }
-:host(fzn-shell) > div > .app-badge > div.branding > a.up-action > .menu-icon {
+:host(fzn-new-layout) > div > .app-badge > div.branding > a.up-action > .menu-icon {
   display: block;
   float: left;
   position: relative;
   height: 100%;
   padding-left: 0.5rem;
 }
-:host(fzn-shell) > div > .app-badge > div.branding > a.up-action > .menu-icon > .bars {
+:host(fzn-new-layout) > div > .app-badge > div.branding > a.up-action > .menu-icon > .bars {
   display: block;
   position: absolute;
   width: 1.25rem;
@@ -111,7 +107,7 @@
   left: 0;
   transition: left 0.2s ease 0s;
 }
-:host(fzn-shell) > div > .app-badge > div.branding > a.up-action > .menu-icon > .bars .bar {
+:host(fzn-new-layout) > div > .app-badge > div.branding > a.up-action > .menu-icon > .bars .bar {
   animation: bars-pulse 1.5s infinite;
   display: block;
   width: 100%;
@@ -119,7 +115,7 @@
   background: #788091;
   margin-bottom: 0.1875rem;
 }
-:host(fzn-shell) > div > .app-badge > div.branding > a.up-action > .menu-icon > .icon {
+:host(fzn-new-layout) > div > .app-badge > div.branding > a.up-action > .menu-icon > .icon {
   position: relative;
   z-index: 3;
   margin-top: 0.5rem;
@@ -128,12 +124,12 @@
   height: 2rem;
   background: transparent;
 }
-:host(fzn-shell) > div > .app-badge > div.branding > a.up-action > .menu-icon > .icon > img {
+:host(fzn-new-layout) > div > .app-badge > div.branding > a.up-action > .menu-icon > .icon > img {
   border: 0;
   width: 100%;
   height: 100%;
 }
-:host(fzn-shell) > div > .app-badge > div.branding > .title {
+:host(fzn-new-layout) > div > .app-badge > div.branding > .title {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 100%;
@@ -150,7 +146,7 @@
   text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3), 1px 1px 0 rgba(0, 0, 0, 0.3);
   text-decoration: none;
 }
-:host(fzn-shell) > div > .app-badge > .content-title {
+:host(fzn-new-layout) > div > .app-badge > .content-title {
   vertical-align: top;
   display: inline-block;
   height: 100%;
@@ -162,13 +158,13 @@
   text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3), 1px 1px 0 rgba(0, 0, 0, 0.3);
   text-decoration: none;
 }
-:host(fzn-shell) > div > .app-badge > .content-title > span {
+:host(fzn-new-layout) > div > .app-badge > .content-title > span {
   padding-left: 0.5rem;
 }
-:host(fzn-shell) > div.drawer-open > .app-badge > .branding > .title {
+:host(fzn-new-layout) > div.drawer-open > .app-badge > .branding > .title {
   display: block;
 }
-:host(fzn-shell) > div > .action-bar {
+:host(fzn-new-layout) > div > .action-bar {
   position: absolute;
   top: 0;
   width: 100%;
@@ -177,7 +173,7 @@
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
   z-index: 1000;
 }
-:host(fzn-shell) > div > .action-bar > .content-title {
+:host(fzn-new-layout) > div > .action-bar > .content-title {
   position: absolute;
   vertical-align: top;
   display: inline-block;
@@ -190,28 +186,28 @@
   text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3), 1px 1px 0 rgba(0, 0, 0, 0.3);
   text-decoration: none;
 }
-:host(fzn-shell) > div > .action-bar > .content-title > span {
+:host(fzn-new-layout) > div > .action-bar > .content-title > span {
   padding-left: 0.5rem;
 }
-:host(fzn-shell) > div > .action-bar > .right {
+:host(fzn-new-layout) > div > .action-bar > .right {
   float: right;
   height: 100%;
   display: flex;
 }
-:host(fzn-shell) > div > .action-bar > .right > .voice-widget {
+:host(fzn-new-layout) > div > .action-bar > .right > .voice-widget {
   cursor: pointer;
   display: flex;
   height: 100%;
   border-left: 1px solid rgba(0, 0, 0, 0.4);
   align-items: center;
 }
-:host(fzn-shell) > div > .action-bar > .right > .voice-widget, :host(fzn-shell) > div > .action-bar > .right > .voice-widget * {
+:host(fzn-new-layout) > div > .action-bar > .right > .voice-widget, :host(fzn-new-layout) > div > .action-bar > .right > .voice-widget * {
   cursor: pointer;
 }
-:host(fzn-shell) > div > .action-bar > .right > .voice-widget .text {
+:host(fzn-new-layout) > div > .action-bar > .right > .voice-widget .text {
   margin: 0 0.5rem;
 }
-:host(fzn-shell) > div > .action-bar > .right > div.login, :host(fzn-shell) > div > .action-bar > .right > div.user {
+:host(fzn-new-layout) > div > .action-bar > .right > div.login, :host(fzn-new-layout) > div > .action-bar > .right > div.user {
   display: inline-block;
   position: relative;
   height: 100%;
@@ -219,7 +215,7 @@
   cursor: pointer;
   user-select: none;
 }
-:host(fzn-shell) > div > .action-bar > .right > div.login > div .avatar, :host(fzn-shell) > div > .action-bar > .right > div.user > div .avatar {
+:host(fzn-new-layout) > div > .action-bar > .right > div.login > div .avatar, :host(fzn-new-layout) > div > .action-bar > .right > div.user > div .avatar {
   float: left;
   display: flex;
   width: 2rem;
@@ -230,15 +226,15 @@
   align-items: center;
   justify-content: center;
 }
-:host(fzn-shell) > div > .action-bar > .right > div.login > div .avatar *, :host(fzn-shell) > div > .action-bar > .right > div.user > div .avatar * {
+:host(fzn-new-layout) > div > .action-bar > .right > div.login > div .avatar *, :host(fzn-new-layout) > div > .action-bar > .right > div.user > div .avatar * {
   cursor: pointer;
 }
-:host(fzn-shell) > div > .action-bar > .right > div.login > div .avatar img, :host(fzn-shell) > div > .action-bar > .right > div.user > div .avatar img {
+:host(fzn-new-layout) > div > .action-bar > .right > div.login > div .avatar img, :host(fzn-new-layout) > div > .action-bar > .right > div.user > div .avatar img {
   max-width: 100%;
   max-height: 100%;
   border-radius: 0.1875rem;
 }
-:host(fzn-shell) > div > .action-bar > .right > div.login > div > .username, :host(fzn-shell) > div > .action-bar > .right > div.user > div > .username {
+:host(fzn-new-layout) > div > .action-bar > .right > div.login > div > .username, :host(fzn-new-layout) > div > .action-bar > .right > div.user > div > .username {
   float: left;
   line-height: 3rem;
   font-size: 0.875rem;
@@ -246,10 +242,10 @@
   font-weight: bold;
   padding-left: 0.75rem;
 }
-:host(fzn-shell) > div > .action-bar > .right > div.login > div > .username *, :host(fzn-shell) > div > .action-bar > .right > div.user > div > .username * {
+:host(fzn-new-layout) > div > .action-bar > .right > div.login > div > .username *, :host(fzn-new-layout) > div > .action-bar > .right > div.user > div > .username * {
   cursor: pointer;
 }
-:host(fzn-shell) > div > .content-frame {
+:host(fzn-new-layout) > div > .content-frame {
   position: relative;
   top: 0;
   right: 0;
@@ -258,24 +254,24 @@
   padding-top: 3rem;
   min-height: 100%;
 }
-:host(fzn-shell) > div > .content-frame > div {
+:host(fzn-new-layout) > div > .content-frame > div {
   position: relative;
   width: 100%;
 }
-:host(fzn-shell) > div > fzn-drawer {
+:host(fzn-new-layout) > div > fzn-drawer {
   position: fixed;
   top: 0;
   left: 0;
   z-index: 1001;
   height: 100%;
 }
-:host(fzn-shell) > div > fzn-drawer::part(slide) {
+:host(fzn-new-layout) > div > fzn-drawer::part(slide) {
   padding-top: 3rem;
 }
-:host(fzn-shell) > div > fzn-drawer::part(inner) {
+:host(fzn-new-layout) > div > fzn-drawer::part(inner) {
   border-top: 2px solid rgba(0, 0, 0, 0.2);
 }
-:host(fzn-shell) fzn-notices {
+:host(fzn-new-layout) fzn-notices {
   position: fixed;
   left: 50%;
   bottom: 0;
@@ -288,27 +284,18 @@
   padding: 0.4125rem;
 }
 
-:host(fzn-shell[collapsed]) > div > .app-badge > .branding > .title {
+:host(fzn-default-layout[collapsed]) > div > .app-badge > .branding > .title {
   display: none;
 }
-:host(fzn-shell[collapsed]) > div.drawer-open {
+:host(fzn-default-layout[collapsed]) > div.drawer-open {
   overflow: hidden;
 }
-:host(fzn-shell[collapsed]) > div.drawer-open > .app-badge > .branding > .title {
+:host(fzn-default-layout[collapsed]) > div.drawer-open > .app-badge > .branding > .title {
   display: block;
 }
-:host(fzn-shell[collapsed]) > div > .app-badge > .branding {
+:host(fzn-default-layout[collapsed]) > div > .app-badge > .branding {
   width: 100% !important;
 }
-:host(fzn-shell[collapsed]) > div fzn-drawer {
+:host(fzn-default-layout[collapsed]) > div fzn-drawer {
   box-shadow: 0 0 40px black;
-}
-
-:host(fzn-action-bar-button) {
-  display: inline-flex;
-  height: 100%;
-  border-right: 1px solid rgba(0, 0, 0, 0.4);
-  align-items: center;
-  padding: 0 0.5rem;
-  cursor: pointer;
 }

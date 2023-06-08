@@ -31,9 +31,8 @@ export class ContextExtractor {
                 return;
             }
             const element = evt.composedPath()[0];
-            (element?.__controllers)
-                .find((controller) => controller.context === this.context)
-                ?.addCallback(this.callback, true);
+            const value = element?.instilled[this.context.toString()];
+            this.callback(value);
         });
     }
 }
@@ -43,22 +42,11 @@ export function extract({ context, }) {
             ctor.addInitializer((element) => {
                 new ContextExtractor(element, {
                     context,
-                    callback: (value) => {
-                        if (!element.isUpdatePending) {
-                            // hacccccky - have to prevent the update during update error
-                            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- have to force the property on the type
-                            element[`__${name.toString()}`] = value;
-                            const controller = (element
-                                ?.__controllers)
-                                .find((controller) => (controller.context === context &&
-                                Object.prototype.hasOwnProperty.call(controller, 'onContextRequest')));
-                            if (controller) {
-                                controller.value = value;
-                            }
-                        }
-                        else {
-                            element[name] = value;
-                        }
+                    callback: async (value) => {
+                        // hacky af - have to prevent the update during update error
+                        element[`__${name.toString()}`] = value;
+                        await element.updateComplete;
+                        element[name] = value;
                     },
                 });
             });

@@ -15,6 +15,7 @@ import '../fa-icon/fa-icon.js';
 import { RouterContext, routerContext } from '../router/context.js';
 import { EnhancedEventTargetMixin } from '../utils/events.js';
 import { handleRouteClick } from '../utils/router.js';
+import { instill } from '../context/instill.js';
 
 import { shellContext } from './context.js';
 
@@ -35,6 +36,7 @@ export class Shell extends EnhancedEventTargetMixin<
 
   static styles = [ styles ];
 
+  @instill({ context: shellContext })
   @provide({ context: shellContext })
   @property({ attribute: false })
   shell: Shell = this;

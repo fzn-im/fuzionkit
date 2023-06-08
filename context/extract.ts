@@ -57,11 +57,10 @@ export class ContextExtractor<
         return;
       }
 
-      const element = evt.composedPath()[0] as HTMLElement;
+      const element = evt.composedPath()[0] as any;
+      const value = element?.instilled[this.context.toString()];
 
-      ((element as any)?.__controllers as Array<ContextProvider<C>>)
-        .find((controller) => (controller as any).context === this.context)
-        ?.addCallback(this.callback, true);
+      this.callback(value);
     });
   }
 }
@@ -76,26 +75,12 @@ export function extract<ValueType>({
       ctor.addInitializer((element: ReactiveElement): void => {
         new ContextExtractor(element, {
           context,
-          callback: (value: ValueType): void => {
-            if (!element.isUpdatePending) {
-              // hacccccky - have to prevent the update during update error
+          callback: async (value: ValueType): Promise<void> => {
+            // hacky af - have to prevent the update during update error
+            (element as any)[`__${name.toString()}`] = value;
 
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any -- have to force the property on the type
-              (element as any)[`__${name.toString()}`] = value;
-
-              const controller = ((element as any)
-                ?.__controllers as Array<ContextProvider<Context<unknown, ValueType>>>)
-                .find((controller) => (
-                  (controller as any).context === context &&
-                  Object.prototype.hasOwnProperty.call(controller, 'onContextRequest')
-                ));
-
-              if (controller) {
-                controller.value = value;
-              }
-            } else {
-              (element as any)[name] = value;
-            }
+            await element.updateComplete;
+            (element as any)[name] = value;
           },
         });
       });

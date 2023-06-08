@@ -17,6 +17,7 @@ import '../fa-icon/fa-icon.js';
 import { routerContext } from '../router/context.js';
 import { EnhancedEventTargetMixin } from '../utils/events.js';
 import { handleRouteClick } from '../utils/router.js';
+import { instill } from '../context/instill.js';
 import { shellContext } from './context.js';
 import fuzionLogo from '../resources/img/fuzion.png';
 import styles from './shell.lit.css.js';
@@ -274,6 +275,7 @@ export let Shell = class Shell extends EnhancedEventTargetMixin(LitElement) {
     }
 };
 __decorate([
+    instill({ context: shellContext }),
     provide({ context: shellContext }),
     property({ attribute: false })
 ], Shell.prototype, "shell", void 0);

@@ -1,7 +1,9 @@
 import { createContext } from '@lit-labs/context';
 import { History, Listener } from 'history';
+import { Store } from '@reduxjs/toolkit';
 
 import { EnhancedEventTarget } from '../utils/events.js';
+import { handleRouterNavigation } from '../redux/actions/router.js';
 
 export type RouterExecutionDetails = {
   props: any[];
@@ -33,6 +35,12 @@ export type NavigateOptions = {
 export type RouterWaitType = 'router' | 'browser' | 'all';
 
 export const routerContext = createContext<RouterContext>('router');
+
+export const connectRouterToStore = (routerContext: RouterContext, store: Store): void => {
+  routerContext.addEventListener('navigate', ({ detail: path }: CustomEvent<string>) => {
+    store.dispatch(handleRouterNavigation(path));
+  });
+};
 
 export class RouterContext extends EnhancedEventTarget {
   browserWaits = 0;

@@ -1,7 +1,6 @@
 const { glob } = require('glob');
 const sass = require('sass');
 const fs = require('fs');
-const path = require('path');
 
 const build = async () => {
   const { default: stringToTemplateLiteral } = await import('string-to-template-literal');

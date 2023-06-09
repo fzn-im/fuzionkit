@@ -2,19 +2,16 @@
   "name": "fuzionkit",
   "version": "1.0.0",
   "description": "",
-  "module": "dist/fuzionkit.es5.js",
-  "typings": "dist/types/fuzionkit.d.ts",
   "files": [
-    "*",
-    "!scripts",
-    "!tsconfig.json",
-    "!.eslintrc.js"
+    "*"
   ],
   "scripts": {
-    "build": "run-s build:css build:js",
+    "build": "run-s clean:dist build:css build:js",
+    "clean:dist": "node scripts/clean-dist.js",
     "build:js": "tsc",
     "build:css": "node scripts/build-css.js",
-    "lint": "eslint **/*.ts"
+    "lint": "eslint **/*.ts",
+    "postinstall": "run-s build"
   },
   "repository": {
     "type": "git",

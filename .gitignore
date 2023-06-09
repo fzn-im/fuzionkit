@@ -1,12 +1,12 @@
 node_modules
-# **/*.js
-# !babel/**/*.js
-# !scripts/**/*.js
-# !resources/html/**/*.js
-# **/*.js.map
-# **/*.d.ts
-# **/*.css.ts
-# !.eslintrc.js
-# !global.d.ts
-# **/*.css
-# **/*.css.map
+**/*.js
+!babel/**/*.js
+!scripts/**/*.js
+!resources/html/**/*.js
+**/*.js.map
+**/*.d.ts
+**/*.css.ts
+!.eslintrc.js
+!global.d.ts
+**/*.css
+**/*.css.map

@@ -1,6 +1,7 @@
 const { glob } = require('glob');
 const sass = require('sass');
 const fs = require('fs');
+const path = require('path');
 
 const build = async () => {
   const { default: stringToTemplateLiteral } = await import('string-to-template-literal');
@@ -13,17 +14,17 @@ const build = async () => {
   )
     .map((file) => file.fullpath());
 
-  // console.log('/* files */', files);
+  const parentNodeModules = path.resolve(__dirname, '../../');
 
   for (const file of files) {
     const result = await sass.compileAsync(file, {
-      loadPaths: [ 'node_modules' ],
+      loadPaths: [
+        'node_modules',
+        ...(path.basename(parentNodeModules) === 'node_modules' ? [ parentNodeModules ] : []),
+      ],
       sourceMap: true,
       verbose: true,
     });
-
-    // console.log('cwd', process.cwd());
-    // console.log('result', result);
 
     const { css } = result;
 

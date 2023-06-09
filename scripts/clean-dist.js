@@ -5,7 +5,7 @@ const build = async () => {
   const { default: stringToTemplateLiteral } = await import('string-to-template-literal');
 
   const files = (
-    await glob('*/**/*.{d.ts,js,js.map,lit.css,lit.css.d.ts,lit.css.js,lit.css.js.map,lit.css.map,lit.css.ts}', {
+    await glob('*/**/*.{d.ts,js,js.map,css,css.d.ts,css.js,css.js.map,css.map,css.ts}', {
       ignore: [
         'node_modules/**',
         'resources/**',

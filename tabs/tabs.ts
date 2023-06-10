@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { styleMap } from 'lit/directives/style-map.js';
-import { contextProvided } from '@lit-labs/context';
+import { provide } from '@lit-labs/context';
 
 import { ControllableMixin } from '../base/controllable-mixin.js';
 import { handleHrefClick } from '../utils/router.js';
@@ -78,7 +78,7 @@ export class Tabs extends ControllableMixin<string, typeof LitElement>(LitElemen
 export class Tab extends LitElement {
   static styles = [ styles ];
 
-  @contextProvided({ context: routerContext })
+  @provide({ context: routerContext })
   routerContext: RouterContext;
 
   @property({ attribute: true, type: Boolean, reflect: true })

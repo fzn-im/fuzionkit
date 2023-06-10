@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-import { Context, ContextProvider, ContextType } from '@lit-labs/context';
+import { Context, ContextType } from '@lit-labs/context';
 import { ReactiveController, ReactiveElement } from 'lit';
 import { decorateProperty } from '@lit/reactive-element/decorators/base.js';
 

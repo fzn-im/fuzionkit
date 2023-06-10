@@ -1,11 +1,11 @@
 import { ReactiveElement } from 'lit';
-import { ContextKey, contextProvided } from '@lit-labs/context';
+import { Context, provide } from '@lit-labs/context';
 import { Store, Unsubscribe } from '@reduxjs/toolkit';
 
 declare type Constructor<T> = new (...args: any[]) => T;
 
 export const contextConnect = <S>(
-  context: ContextKey<unknown, Store>,
+  context: Context<unknown, Store>,
 ) =>
   <T extends Constructor<ReactiveElement>>(constructor: T): {
     new (...args: any[]): {
@@ -18,7 +18,7 @@ export const contextConnect = <S>(
   } & T => {
     class ConnectedElement extends constructor {
 
-      @contextProvided({ context })
+      @provide({ context })
       store: Store;
 
       _storeUnsubscribe?: Unsubscribe;

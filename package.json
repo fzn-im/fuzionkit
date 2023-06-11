@@ -58,6 +58,8 @@
     "sass": "^1.62.1",
     "sass-embedded": "^1.62.0",
     "string-to-template-literal": "^2.0.0",
+    "style-to-object": "^0.4.1",
+    "ts-debounce": "^4.0.0",
     "typescript": "^5.0.4",
     "uuid": "^9.0.0"
   }

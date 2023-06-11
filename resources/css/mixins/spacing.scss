@@ -1,0 +1,22 @@
+$spacingprops: ('m': 'margin', 'p': 'padding');
+$directions: ('t': 'top', 'r': 'right', 'b': 'bottom', 'l': 'left');
+$spacings: (-1: -8px,-0.5: -4px, 0: 0, 0.25: 2px, 0.5: 4px, 1: 8px, 2: 16px, 3: 24px, 4: 32px);
+
+@mixin fzn-spacing($shortprop, $dir, $size)
+{
+  @if ($dir == 'x')
+  {
+    #{map-get($spacingprops, $shortprop)}-left: map-get($spacings, $size);
+    #{map-get($spacingprops, $shortprop)}-right: map-get($spacings, $size);
+  } @else if ($dir == 'y')
+  {
+    #{map-get($spacingprops, $shortprop)}-top: map-get($spacings, $size);
+    #{map-get($spacingprops, $shortprop)}-bottom: map-get($spacings, $size);
+  } @else if ($dir == 'xy')
+  {
+    #{map-get($spacingprops, $shortprop)}: map-get($spacings, $size);
+  } @else
+  {
+    #{map-get($spacingprops, $shortprop)}-#{map-get($directions, $dir)}: map-get($spacings, $size);
+  }
+}

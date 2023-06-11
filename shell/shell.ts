@@ -16,6 +16,8 @@ import { RouterContext, routerContext } from '../router/context.js';
 import { EnhancedEventTargetMixin } from '../utils/events.js';
 import { handleRouteClick } from '../utils/router.js';
 import { instill } from '../context/instill.js';
+import { contextMenuFactoryContext } from '../context-menu/context.js';
+import { ContextMenuFactory } from '../context-menu/context-menu.js';
 
 import { shellContext } from './context.js';
 
@@ -40,6 +42,14 @@ export class Shell extends EnhancedEventTargetMixin<
   @provide({ context: shellContext })
   @property({ attribute: false })
   shell: Shell = this;
+
+  @instill({ context: contextMenuFactoryContext })
+  @provide({ context: contextMenuFactoryContext })
+  @property({ attribute: false })
+  contextMenuFactory = new ContextMenuFactory({
+    container: this,
+    slot: 'children',
+  });
 
   @consume({ context: routerContext })
   routerContext: RouterContext;
@@ -367,6 +377,8 @@ export class Shell extends EnhancedEventTargetMixin<
         >
           <slot name="drawer"></slot>
         </fzn-drawer>
+
+        <slot name="children"></slot>
       </div>
     `;
   }

@@ -7,3 +7,9 @@ export function groupBy<T> (source: T[], transform: (source: T) => string): { [k
     {} as { [key: string]: T },
   );
 }
+
+export function chunkArray<T> (input: T[], size: number): T[][] {
+  return Array.from({ length: Math.ceil(input.length / size) }, (_, i) =>
+    input.slice(i * size, i * size + size),
+  );
+}

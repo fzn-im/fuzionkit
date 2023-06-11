@@ -10,12 +10,15 @@ export function instill<ValueType>({
   return decorateProperty({
     finisher: (ctor: typeof ReactiveElement, name: PropertyKey) => {
       ctor.addInitializer((element: ReactiveElement): void => {
-        (element as any).instilled = {
-          ...((element as any)?.instilled ?? {}),
-          get [context.toString()](): any {
+        (element as any).instilled = (element as any).instilled ?? {};
+
+        Object.defineProperty((element as any).instilled, context.toString(), {
+          get: () => {
             return element[name];
           },
-        };
+        });
+
+        console.log('instilled', (element as any).instilled);
       });
     },
   });
@@ -37,7 +40,7 @@ type FieldMustMatchProvidedType<Obj, Key extends PropertyKey, ProvidedType> =
       : {
           message: 'provided type not assignable to consuming field';
           provided: ProvidedType;
-          consuming: ExtractingType;
+          instilling: ExtractingType;
         }
     :
     Obj extends Partial<Record<Key, infer ExtractingType>>
@@ -46,6 +49,6 @@ type FieldMustMatchProvidedType<Obj, Key extends PropertyKey, ProvidedType> =
       : {
           message: 'provided type not assignable to consuming field';
           provided: ProvidedType;
-          consuming: ExtractingType | undefined;
+          instilling: ExtractingType | undefined;
         }
     : DecoratorReturn;

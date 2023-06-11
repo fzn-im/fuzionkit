@@ -1,0 +1,129 @@
+:host(fzn-context-menu-item-element)
+{
+  display: block;
+}
+
+:host(fzn-context-menu-item-button),
+:host(fzn-context-menu-item-toggle)
+{
+  display: block;
+  user-select: none;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+
+  > div,
+  > a
+  {
+    padding: .25rem .5rem;
+    display: flex;
+    text-decoration: none;
+    color: white;
+
+    > .left
+    {
+      display: flex;
+      flex-grow: 1;
+      align-items: center;
+
+      .icon-holder
+      {
+        width: 20px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+
+    > .right
+    {
+      display: flex;
+      justify-content: flex-end;
+      flex-shrink: 1;
+      align-items: center;
+    }
+  }
+}
+
+:host(fzn-context-menu-item-toggle)
+{
+  > div > .right > fa-icon[type='fas fa-toggle-on']
+  {
+    color: #62C492;
+  }
+}
+
+:host(fzn-context-menu-item-button:hover),
+:host(fzn-context-menu-item-toggle:hover)
+{
+  background: #406DCE;
+}
+
+:host(fzn-context-menu-item-button:active),
+:host(fzn-context-menu-item-toggle:active)
+{
+  background: linear-gradient(#020202, #101112 40%, #191B1D);
+}
+
+:host(fzn-context-menu-item-button[selected]),
+:host(fzn-context-menu-item-button.child-expand)
+{
+  background: linear-gradient(#020202, #0a0a0b 40%, #0e0f11);
+  cursor: default;
+}
+
+:host(fzn-context-menu-item-loading)
+{
+  user-select: none;
+  display: block;
+  padding: .125rem .25rem;
+  cursor: default;
+  text-decoration: none;
+  color: inherit;
+  text-align: center;
+  opacity: .4;
+}
+
+:host(fzn-context-menu-item-placeholder)
+{
+  user-select: none;
+  display: block;
+  padding: .125rem .25rem;
+  cursor: default;
+  text-decoration: none;
+  color: inherit;
+  text-align: center;
+  opacity: .4;
+}
+
+:host(fzn-context-menu-item-header)
+{
+  display: block;
+  padding: .1rem .5rem;
+  font-size: .625rem;
+  color: rgba(255, 255, 255, .6);
+}
+
+:host(fzn-context-menu-item-separator)
+{
+  display: block;
+  border: 1px solid rgba(0, 0, 0, .3);
+  border-width: 1px 0 0 0;
+  margin: 3px 4px;
+}
+
+:host(fzn-context-menu-item-slider)
+{
+  user-select: none;
+  display: flex;
+  padding: .25rem .5rem;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+// .empty
+// {
+//   @include fzn-spacing('p', 'xy', 1);
+//   text-align: center;
+// }

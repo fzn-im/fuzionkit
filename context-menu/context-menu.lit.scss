@@ -1,0 +1,33 @@
+@import "../resources/css/mixins/spacing.scss";
+
+* { box-sizing: border-box; }
+
+:host(fzn-context-menu)
+{
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 999999;
+
+  > fzn-panel
+  {
+    overflow: auto;
+    max-height: 100%;
+    min-width: 160px;
+    font-size: .825rem;
+    min-height: 12px;
+    color: #DDD;
+    border-radius: 3px;
+    padding: 3px 0;
+
+    &.collapse
+    {
+      padding: 0;
+    }
+  }
+
+  fzn-context-menu-item-slider fzn-slider {
+    width: 100%;
+  }
+}

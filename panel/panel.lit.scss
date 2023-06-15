@@ -1,0 +1,71 @@
+@import '../resources/css/mixins/spacing.scss';
+
+:host(fzn-panel)
+{
+  display: block;
+  background: #282A37;
+  border-radius: 5px;
+}
+
+:host(fzn-panel[variant='outlined'])
+{
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+:host(fzn-panel[foggedGlass])
+{
+  @supports (backdrop-filter: blur(32px)) {
+    box-shadow: 0 0 20px rgb(0 0 0 / 40%), 0 0 1px rgba(0, 0, 0, 1);
+    border: 1px solid rgba(255, 255, 255, 0.15); 
+    background: rgba(40, 42, 55, 0.45);
+    backdrop-filter: blur(32px);
+  }
+}
+
+:host(fzn-panel-header)
+{
+  display: flex;
+  padding: .75rem .75rem calc(.75rem - #{map-get($spacings, 1)}) .75rem;
+
+  ::slotted(*)
+  {
+    flex-grow: 1;
+    line-height: 2rem;
+    font-size: 1.25rem;
+    margin-bottom: 0;
+  }
+
+  ::slotted([slot='right'])
+  {
+    flex-grow: 0;
+  }
+}
+
+:host(fzn-panel-body)
+{
+  display: block;
+  @include fzn-spacing('p', 'xy', 1);
+}
+
+:host(fzn-panel-footer)
+{
+  display: flex;
+  padding: .25rem;
+  background: rgba(20, 17, 38, 0.17);
+  overflow: hidden;
+  box-sizing: border-box;
+
+  div.left
+  {
+    display: inline-flex;
+    flex-wrap: wrap;
+    flex-grow: 1;
+  }
+
+  div.right
+  {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+}

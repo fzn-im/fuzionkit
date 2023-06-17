@@ -1,0 +1,20 @@
+@mixin fzn-panel
+{
+  fzn-panel-footer
+  {
+    display: flex;
+
+    > [slot='left'] {
+      display: inline-flex;
+      > *
+      {
+        margin: .125rem;
+      }
+    }
+
+    > :not([slot])
+    {
+      margin: .125rem;
+    }
+  }
+}

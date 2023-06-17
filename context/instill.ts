@@ -17,8 +17,6 @@ export function instill<ValueType>({
             return element[name];
           },
         });
-
-        console.log('instilled', (element as any).instilled);
       });
     },
   });

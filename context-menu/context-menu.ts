@@ -10,6 +10,8 @@ import { getElementOffsetPosition, getElementOuterSize, getViewportSize } from '
 import { contextMenuFactoryContext } from './context.js';
 import { ContextMenuItemOptions, renderContextMenuItems } from './context-menu-item.js';
 
+import '../panel';
+
 import styles from './context-menu.lit.css.js';
 
 type AnchorDirection = 'up' | 'right' | 'down' | 'left';
@@ -118,7 +120,7 @@ export class ContextMenu extends LitElement {
   uuid: string;
 
   @property({ attribute: true, type: String, reflect: true })
-  slot = 'context-menu';
+  slot: string | undefined;
 
   @state()
   loading = true;

@@ -1,0 +1,22 @@
+:host
+{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  color: #FFFFFF;
+
+  :first-child,
+  :last-child
+  {
+    flex-grow: 1;
+    border-top: 1px solid #CEE61B;
+  }
+
+  .content
+  {
+    flex-grow: 0;
+    padding: 0 .5rem;
+    font-size: 1rem;
+    opacity: .9;
+  }
+}

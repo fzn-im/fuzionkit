@@ -135,15 +135,15 @@ export class Router extends LitElement {
 
       const route = this.getRoute(path);
 
-      const redirectRoute = !!this.getRoute(route.routeName, { followDefault: false });
-
-      if (redirectRoute) {
-        routerContext.navigate(route.routeName, { replace: true });
-
-        return;
-      }
-
       if (route) {
+        const redirectRoute = !!this.getRoute(route.routeName, { followDefault: false });
+
+        if (redirectRoute) {
+          routerContext.navigate(route.routeName, { replace: true });
+
+          return;
+        }
+
         this.loadRoute(route);
       }
     }

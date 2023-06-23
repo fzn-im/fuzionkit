@@ -12,7 +12,7 @@ import Drawer from '../drawer/drawer.js';
 import '../drawer/drawer.js';
 import '../fa-icon/fa-icon.js';
 
-import { RouterContext, routerContext } from '../router/context.js';
+import { Router, routerContext } from '../router/context.js';
 import { EnhancedEventTargetMixin } from '../utils/events.js';
 import { handleRouteClick } from '../utils/router.js';
 import { instill } from '../context/instill.js';
@@ -42,7 +42,7 @@ export class Shell extends EnhancedEventTargetMixin<
   shell: Shell = this;
 
   @consume({ context: routerContext })
-  routerContext: RouterContext;
+  router: Router;
 
   _contentTitle: HTMLElement | null = null;
 
@@ -271,7 +271,7 @@ export class Shell extends EnhancedEventTargetMixin<
       handleDrawerResize,
       handleUpActionClick,
       pageHandlesPadding,
-      routerContext,
+      router,
     } = this;
 
     const adjustedDrawerWidth = Math.min(Math.max(drawerWidth, drawerMinWidth), this.drawerMaxWidth);
@@ -315,7 +315,7 @@ export class Shell extends EnhancedEventTargetMixin<
             <a
               class="title select pointer"
               href="/"
-              @click=${handleRouteClick(routerContext)}
+              @click=${handleRouteClick(router)}
             >
               Fuzion
             </a>

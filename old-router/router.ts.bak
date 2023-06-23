@@ -1,24 +1,37 @@
 import { css, html, LitElement, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { consume, ContextConsumer, provide } from '@lit-labs/context';
-import { History, Listener } from 'history';
+import { ContextConsumer, createContext } from '@lit-labs/context';
 
+import { RouterContext, routerContext, RouteState } from './context.js';
 import { groupBy } from '../utils/arrays.js';
-import { historyContext } from '../utils/history.js';
 
-import {
-  NavigateOptions,
-  routerContext,
-  RouterPage,
-  RouterPath,
-  RouterRoute,
-  RouterWait,
-  RouterWaitType,
-  RouteState,
-} from './context.js';
-import { compilePath } from './utils.js';
+declare type Constructor<T> = new (...args: any[]) => T;
 
-@customElement('fzn-router')
+export type RouterPage<T extends LitElement> = {
+  name: string;
+  page: Constructor<T>;
+  instance?: T;
+  onCreate?: (instance: T) => void;
+  props?: any;
+  lastProps?: any;
+}
+
+export type RouterRoute<T extends LitElement> = {
+  [0]: string, // name
+  [1]: Constructor<T>; // constructor
+  [2]?: Partial<T>; // props
+  [3]?: (instance: T) => void; // onCreate
+};
+
+export type RouterPath = {
+  [0]: string | RegExp,
+  [1]: string,
+  [2]?: any,
+};
+
+export const pageLoaderContext = createContext<Router>('pageLoader');
+
+@customElement('fzn-old-router')
 export class Router extends LitElement {
   static styles = [
     css`
@@ -31,53 +44,46 @@ export class Router extends LitElement {
     `,
   ];
 
-  // === start context ===
+  _routerContext: RouterContext;
 
-  browserWaits = 0;
-  routerWaits = 0;
-  waits: RouterWait[] = [];
-  triggerNext = true;
+  get routerContext (): RouterContext {
+    return this._routerContext;
+  }
 
-  // currentPath: string | null = null;
+  set routerContext (routerContext: RouterContext) {
+    if (this._routerContext !== routerContext) {
+      this._routerContext = routerContext;
 
-  _history: ContextConsumer<typeof historyContext, Router> = new ContextConsumer(
+      routerContext.addEventListener('navigate', (evt: CustomEvent<string>) => {
+        const { detail } = evt;
+
+        this.currentPath = detail;
+      });
+
+      if (this.hasUpdated) {
+        this.currentPath = routerContext.path;
+      }
+    }
+  }
+
+  __router = new ContextConsumer(
     this,
     {
-      context: historyContext,
-      callback: (value): void => {
-        const { handleHistoryChange } = this;
-
-        this.unlistenHistory?.();
-
-        this.unlistenHistory = value.listen(handleHistoryChange);
+      context: routerContext,
+      callback: (router): void => {
+        this.routerContext = router;
       },
     },
   );
 
-  get history (): History {
-    return this._history.value;
-  }
-
-  unlistenHistory: ReturnType<History['listen']>;
-
-  // === end context ===
-
-  @consume({ context: routerContext })
-  @property()
-  parentRouter: Router;
-
-  @provide({ context: routerContext })
-  @property()
-  router: Router = this;
-
   _routes: RouterRoute<any>[];
 
   @property({ attribute: false })
-  get routes (): RouterRoute<any>[] {
+  get routes(): RouterRoute<any>[] {
     return this._routes;
   }
 
-  set routes (routes: RouterRoute<any>[]) {
+  set routes(routes: RouterRoute<any>[]) {
     if (this._routes !== routes) {
       const oldValue = this.routes;
 
@@ -101,20 +107,14 @@ export class Router extends LitElement {
     }
   }
 
-  get path (): string {
-    const { pathname } = this.history.location;
-
-    return pathname;
-  }
-
   _paths: RouterPath[];
 
   @property({ attribute: false })
-  get paths (): RouterPath[] {
+  get paths(): RouterPath[] {
     return this._paths;
   }
 
-  set paths (paths: RouterPath[]) {
+  set paths(paths: RouterPath[]) {
     if (this._paths !== paths) {
       this._paths= paths;
       this.pathsMap = groupBy(paths, ({ [0]: path }) => path.toString());
@@ -128,6 +128,8 @@ export class Router extends LitElement {
   }
 
   set currentPath (path: string | null) {
+    const { routerContext } = this;
+
     if (this._currentPath !== path) {
       this._currentPath = path;
 
@@ -137,7 +139,7 @@ export class Router extends LitElement {
         const redirectRoute = !!this.getRoute(route.routeName, { followDefault: false });
 
         if (redirectRoute) {
-          this.navigate(route.routeName, { replace: true });
+          routerContext.navigate(route.routeName, { replace: true });
 
           return;
         }
@@ -152,72 +154,10 @@ export class Router extends LitElement {
 
   currentRoute: string | null = null;
 
-  async firstUpdated(): Promise<void> {
-    await this.updateComplete;
+  firstUpdated (): void {
+    const { routerContext } = this;
 
-    this.navigateFromPath();
-  }
-
-  handleHistoryChange: Listener = () => {
-    this.navigateFromPath();
-  };
-
-  navigateFromPath (): void {
-    if (!this.triggerNext) {
-      return;
-    }
-
-    const path = this.path;
-
-    // Handle navigation locking.
-    if (this.routerWaits && this.currentPath !== null) {
-      // Go back if path doesn't match.
-      if (path !== this.currentPath) {
-        history.back();
-      }
-
-      this.dispatchEvent(new CustomEvent('failed-navigation-attempt'));
-
-      return;
-    }
-
-    this.currentPath = path;
-
-    this.dispatchEvent(new CustomEvent<string>(
-      'navigate',
-      { detail: path },
-    ));
-  }
-
-  handleBeforeUnload = (evt: BeforeUnloadEvent): string | void => {
-    const msg = 'Are you sure you want to leave? There may be unsaved work.';
-
-    if (this.browserWaits) {
-      evt.returnValue = msg;
-      return msg;
-    }
-  };
-
-  navigate (path: string, options: NavigateOptions = {}): void {
-    const { replace = false, trigger = true } = options;
-
-    this.triggerNext = trigger;
-    if (replace) {
-      this.history.replace(path);
-    } else {
-      this.history.push(path);
-    }
-  }
-
-  renavigate (): void {
-    const { currentPath } = this;
-
-    if (this.currentPath) {
-      this.dispatchEvent(new CustomEvent<string>(
-        'navigation',
-        { detail: currentPath },
-      ));
-    }
+    this.currentPath = routerContext.path;
   }
 
   getRoute (
@@ -232,23 +172,6 @@ export class Router extends LitElement {
         return { routeName, props: routeParams };
       } else if (path === parsedPath || (followDefault && path === '/*')) {
         return { routeName, props: {} };
-      } else if (typeof path === 'string') {
-        const [ regex, params ] = compilePath(path);
-
-        const matches = parsedPath.match(regex);
-
-        if (!matches) {
-          continue;
-        }
-
-        matches.shift();
-
-        const props = Object.fromEntries(
-          params
-            .map((key, idx) => [ key, matches[idx] ]),
-        );
-
-        return { routeName, props };
       }
     }
 
@@ -352,63 +275,7 @@ export class Router extends LitElement {
     this.currentRoute = null;
   }
 
-  createWait (waitType: RouterWaitType): RouterWait {
-    switch (waitType) {
-    case 'router':
-      return this.createRouterWait();
-
-    case 'browser':
-      return this.createBrowserWait();
-
-    default:
-      return this.createWaitAll();
-    }
-  }
-
-  createRouterWait (): RouterWait {
-    const wait = new RouterWait(this);
-
-    wait.addRouterWait();
-
-    return wait;
-  }
-
-  createBrowserWait (): RouterWait {
-    const wait = new RouterWait(this);
-
-    wait.addBrowserWait();
-
-    return wait;
-  }
-
-  createWaitAll (): RouterWait {
-    const wait = new RouterWait(this);
-
-    wait.addWaitAll();
-
-    return wait;
-  }
-
-  removeAllWaits (): void {
-    [ ...this.waits ].forEach((wait) => {
-      wait.remove();
-    });
-  }
-
-  _addWait (wait: RouterWait): void {
-    this.waits.push(wait);
-  }
-
-  _removeWait (wait: RouterWait): void {
-    const index = this.waits.indexOf(wait);
-
-    if (index > -1) {
-      this.waits.splice(index, 1);
-    }
-  }
-
   render (): TemplateResult {
     return html`<slot></slot>`;
   }
 }
-

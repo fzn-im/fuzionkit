@@ -5,7 +5,7 @@ import { consume } from '@lit-labs/context';
 import { v4 as uuid } from 'uuid';
 
 import { handleHrefClick } from '../utils/router.js';
-import { RouterContext, routerContext } from '../router/context.js';
+import { Router, routerContext } from '../router/context.js';
 import { ChangeEvent } from '../utils/events.js';
 import { takeOrEvaluate, TakeOrEvaluate } from '../utils/take-or-evaluate.js';
 import { ControllableMixin } from '../base/controllable-mixin.js';
@@ -289,7 +289,7 @@ export class ContextMenuItemButton extends LitElement {
   static styles = [ styles ];
 
   @consume({ context: routerContext })
-  routerContext: RouterContext;
+  router: Router;
 
   @property({ attribute: true, type: Boolean, reflect: true })
   hasMore: boolean;
@@ -328,7 +328,7 @@ export class ContextMenuItemButton extends LitElement {
   }
 
   handleClick (evt: MouseEvent): void {
-    const { contextMenu, items, routerContext, routeTo } = this;
+    const { contextMenu, items, router, routeTo } = this;
 
     if (items) {
       if (!this.contextMenuUuid) {
@@ -343,7 +343,7 @@ export class ContextMenuItemButton extends LitElement {
         uuid: this.contextMenuUuid,
       });
     } else if (routeTo) {
-      handleHrefClick(routerContext)(evt);
+      handleHrefClick(router)(evt);
       contextMenu.close();
     }
   }

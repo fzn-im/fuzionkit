@@ -5,13 +5,27 @@
   "files": [
     "*"
   ],
+  "watch": {
+    "build:js": {
+      "patterns": ".",
+      "extensions": "ts",
+      "ignore": [
+        "*.d.ts"
+      ]
+    },
+    "build:css": {
+      "patterns": ".",
+      "extensions": "scss"
+    }
+  },
   "scripts": {
     "build": "run-s clean:dist build:css build:js",
     "clean:dist": "node scripts/clean-dist.js",
-    "build:js": "tsc",
-    "build:css": "node scripts/build-css.js",
+    "build:js": "tsc || exit 1",
+    "build:css": "node scripts/build-css.js || exit 1",
     "lint": "eslint **/*.ts",
-    "postinstall": "run-s build"
+    "postinstall": "run-s build",
+    "watch": "npm-watch"
   },
   "repository": {
     "type": "git",
@@ -62,5 +76,8 @@
     "ts-debounce": "^4.0.0",
     "typescript": "^5.0.4",
     "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "npm-watch": "^0.11.0"
   }
 }

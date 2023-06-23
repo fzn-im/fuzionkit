@@ -3,11 +3,11 @@ import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { styleMap } from 'lit/directives/style-map.js';
-import { provide } from '@lit-labs/context';
+import { consume } from '@lit-labs/context';
 
 import { ControllableMixin } from '../base/controllable-mixin.js';
 import { handleHrefClick } from '../utils/router.js';
-import { RouterContext, routerContext } from '../router/context.js';
+import { Router, routerContext } from '../router/context.js';
 
 import styles from './tabs.lit.css.js';
 
@@ -78,8 +78,8 @@ export class Tabs extends ControllableMixin<string, typeof LitElement>(LitElemen
 export class Tab extends LitElement {
   static styles = [ styles ];
 
-  @provide({ context: routerContext })
-  routerContext: RouterContext;
+  @consume({ context: routerContext })
+  router: Router;
 
   @property({ attribute: true, type: Boolean, reflect: true })
   active: boolean;
@@ -104,10 +104,11 @@ export class Tab extends LitElement {
       return;
     }
 
-    const { routerContext } = this;
+    const { router } = this;
 
     if (this.routerHref) {
-      handleHrefClick(routerContext)(evt, this.routerHref);
+      console.log('router', router, this.routerHref);
+      handleHrefClick(router)(evt, this.routerHref);
     }
   };
 

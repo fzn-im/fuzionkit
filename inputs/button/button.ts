@@ -5,7 +5,7 @@ import { consume } from '@lit-labs/context';
 import { SizedMixin } from '../../base/sized-mixin.js';
 import { VariantMixin } from '../../base/variant-mixin.js';
 import { handleHrefClick } from '../../utils/router.js';
-import { RouterContext, routerContext } from '../../router/context.js';
+import { Router, routerContext } from '../../router/context.js';
 
 import normalizeStyles from '../../resources/css/normalize.css.js';
 
@@ -20,7 +20,7 @@ export default class Button extends ButtonBase {
   static styles = [ normalizeStyles, styles ];
 
   @consume({ context: routerContext })
-  routerContext: RouterContext;
+  router: Router;
 
   @property({ attribute: true, type: Boolean, reflect: true })
   disabled?: boolean;
@@ -42,10 +42,10 @@ export default class Button extends ButtonBase {
       return;
     }
 
-    const { routerContext } = this;
+    const { router } = this;
 
     if (this.routerHref) {
-      handleHrefClick(routerContext)(evt);
+      handleHrefClick(router)(evt);
     }
   };
 

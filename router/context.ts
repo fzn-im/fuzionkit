@@ -5,21 +5,21 @@ import { Store } from '@reduxjs/toolkit';
 import { handleRouterNavigation } from '../redux/actions/router.js';
 
 import { type Router } from './router.js';
+import { type Route } from './route.js';
+import { type RouteMatch } from './match.js';
+import { type Switch } from './switch.js';
 
 export { Router };
+export { Route };
+export { RouteMatch };
+export { Switch };
+
+export const routerContext = createContext<Router>('router');
+export const routeContext = createContext<Route>('route');
+export const routeMatchContext = createContext<RouteMatch>('routeMatch');
+export const switchContext = createContext<Switch>('switch');
 
 declare type Constructor<T> = new (...args: any[]) => T;
-
-export type RouterExecutionDetails = {
-  props: any[];
-  routeName: string;
-}
-
-export type Route = {
-  path: string | RegExp;
-  routeName: string;
-  props: any;
-}
 
 export type RouteState = {
   routeName: string;
@@ -61,15 +61,24 @@ export type RouterPath = {
 
 export type RouterWaitType = 'router' | 'browser' | 'all';
 
-export const routerContext = createContext<Router>('router');
+export const connectRouterToStore = (
+  router: Router,
+  store: Store,
+): (evt: CustomEvent<string>) => void => {
+  const handler = ({ detail: path }: CustomEvent<string>): void => {
+    store.dispatch(handleRouterNavigation(path));
+  };
 
-export const connectRouterToStore = (router: Router, store: Store): void => {
-  router.addEventListener(
-    'navigate',
-    ({ detail: path }: CustomEvent<string>) => {
-      store.dispatch(handleRouterNavigation(path));
-    },
-  );
+  router.addEventListener('navigate', handler);
+
+  return handler;
+};
+
+export const disconnectRouterFromStore = (
+  router: Router,
+  handler: (evt: CustomEvent<string>) => void,
+): void => {
+  router.removeEventListener('navigate', handler);
 };
 
 export class RouterWait {

@@ -14,7 +14,7 @@ import '../fa-icon/fa-icon.js';
 
 import { Router, routerContext } from '../router/context.js';
 import { EnhancedEventTargetMixin } from '../utils/events.js';
-import { handleRouteClick } from '../utils/router.js';
+import { handleRouteClick } from '../router/utils.js';
 import { instill } from '../context/instill.js';
 
 import { shellContext } from './context.js';
@@ -41,7 +41,7 @@ export class Shell extends EnhancedEventTargetMixin<
   @property({ attribute: false })
   shell: Shell = this;
 
-  @consume({ context: routerContext })
+  @consume({ context: routerContext, subscribe: true })
   router: Router;
 
   _contentTitle: HTMLElement | null = null;

@@ -12,11 +12,15 @@ export function instill<ValueType>({
       ctor.addInitializer((element: ReactiveElement): void => {
         (element as any).instilled = (element as any).instilled ?? {};
 
-        Object.defineProperty((element as any).instilled, context.toString(), {
-          get: () => {
-            return element[name];
+        Object.defineProperty(
+          (element as any).instilled,
+          context.toString(),
+          {
+            get: () => {
+              return element[name];
+            },
           },
-        });
+        );
       });
     },
   });

@@ -6,7 +6,7 @@ import { styleMap } from 'lit/directives/style-map.js';
 import { consume } from '@lit-labs/context';
 
 import { ControllableMixin } from '../base/controllable-mixin.js';
-import { handleHrefClick } from '../utils/router.js';
+import { handleHrefClick } from '../router/utils.js';
 import { Router, routerContext } from '../router/context.js';
 
 import styles from './tabs.lit.css.js';

@@ -3,6 +3,8 @@ import { Router } from './router.js';
 export const handleRouteClick = (router?: Router) => (evt: MouseEvent): void => {
   evt.preventDefault();
 
+  console.log('router', router);
+
   router?.navigate(
     (evt.composedPath().find(el => el instanceof HTMLAnchorElement) as HTMLAnchorElement).getAttribute('href'),
     {

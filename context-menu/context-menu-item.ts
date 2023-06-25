@@ -4,7 +4,7 @@ import { ifDefined } from 'lit-html/directives/if-defined.js';
 import { consume } from '@lit-labs/context';
 import { v4 as uuid } from 'uuid';
 
-import { handleHrefClick } from '../utils/router.js';
+import { handleHrefClick } from '../router/utils.js';
 import { Router, routerContext } from '../router/context.js';
 import { ChangeEvent } from '../utils/events.js';
 import { takeOrEvaluate, TakeOrEvaluate } from '../utils/take-or-evaluate.js';

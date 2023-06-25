@@ -11,6 +11,12 @@ import { decorateProperty } from '@lit/reactive-element/decorators/base.js';
 export interface Options<C extends Context<unknown, unknown>> {
   context: C;
   callback?: (value: ContextType<C>, dispose?: () => void) => void;
+  qualifier?: string;
+}
+
+export interface InstilledContext {
+  value: any;
+  qualifier?: string;
 }
 
 export class ContextExtractor<
@@ -20,6 +26,7 @@ export class ContextExtractor<
 {
   protected host: HostElement;
   private context: C;
+  private qualifier?: string;
   private callback?: (value: ContextType<C>, dispose?: () => void) => void;
 
   public value?: ContextType<C> = undefined;
@@ -35,7 +42,9 @@ export class ContextExtractor<
     // have a property name context and be used in positional argument form.
     if ((contextOrOptions as Options<C>).context !== undefined) {
       const options = contextOrOptions as Options<C>;
+
       this.context = options.context;
+      this.qualifier = options.qualifier;
       this.callback = options.callback;
     } else {
       this.context = contextOrOptions as C;
@@ -53,12 +62,25 @@ export class ContextExtractor<
 
   private dispatchRequest (): void {
     this.host.addEventListener('context-provider', (evt: any) => {
-      if (evt.context !== this.context) {
+      const { context, qualifier } = this;
+
+      if (evt.context !== context) {
         return;
       }
 
       const element = evt.composedPath()[0] as any;
-      const value = element?.instilled[this.context.toString()];
+
+      if (qualifier) {
+        const qualifiers = element.getAttribute('qualifiers')
+          ?.split(',')
+          .map((qualifier: string) => qualifier.trim());
+
+        if (!qualifiers?.includes(qualifier)) {
+          return;
+        }
+      }
+
+      const value = element?.instilled[context.toString()];
 
       this.callback(value);
     });
@@ -67,8 +89,10 @@ export class ContextExtractor<
 
 export function extract<ValueType>({
   context,
+  qualifier,
 }: {
   context: Context<unknown, ValueType>;
+  qualifier?: string;
 }): ExtractorDecorator<ValueType> {
   return decorateProperty({
     finisher: (ctor: typeof ReactiveElement, name: PropertyKey) => {
@@ -82,6 +106,7 @@ export function extract<ValueType>({
             await element.updateComplete;
             (element as any)[name] = value;
           },
+          qualifier,
         });
       });
     },

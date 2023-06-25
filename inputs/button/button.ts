@@ -4,7 +4,7 @@ import { consume } from '@lit-labs/context';
 
 import { SizedMixin } from '../../base/sized-mixin.js';
 import { VariantMixin } from '../../base/variant-mixin.js';
-import { handleHrefClick } from '../../utils/router.js';
+import { handleHrefClick } from '../../router/utils.js';
 import { Router, routerContext } from '../../router/context.js';
 
 import normalizeStyles from '../../resources/css/normalize.css.js';

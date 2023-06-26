@@ -5,7 +5,13 @@ import { keyed } from 'lit/directives/keyed.js';
 import { consume, provide } from '@lit-labs/context';
 import { pathToRegexp } from 'path-to-regexp';
 
-import { RouteMatch, Router, routeContext, routerContext, switchContext } from './context.js';
+import {
+  RouteMatch,
+  Router,
+  routeContext,
+  routerContext,
+  switchContext,
+} from './context.js';
 import { Route } from './route.js';
 
 export type SwitchRoute =
@@ -42,6 +48,19 @@ export const buildSwitches = (routes: SwitchRoute[]): unknown => (
             ></fzn-route>
           `;
         } else if (typeof content === 'string') {
+          if (content.startsWith('redirect:')) {
+            return html`
+              <fzn-route
+                path=${path}
+                .component=${(): unknown => html`
+                  <fzn-redirect
+                    to=${content.substring(9)}
+                  ></fzn-redirect>
+                `}
+              ></fzn-route>
+            `;
+          }
+
           const htmlContent = staticHtml`
             <${unsafeStatic(content)} 
             ></${unsafeStatic(content)}>

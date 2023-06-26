@@ -71,6 +71,10 @@ export const connectRouterToStore = (
 
   router.addEventListener('navigate', handler);
 
+  if (router.currentPath) {
+    store.dispatch(handleRouterNavigation(router.currentPath));
+  }
+
   return handler;
 };
 

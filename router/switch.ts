@@ -136,7 +136,7 @@ export class Switch extends LitElement {
   }
 
   handleNavigate = ({ detail: path }: CustomEvent<string>): void => {
-    console.log('switch handling path', path);
+    // console.log('switch handling path', path);
 
     this.navigate(path);
   };
@@ -198,7 +198,7 @@ export class Switch extends LitElement {
           continue;
         }
 
-        console.log('matches', matches);
+        // console.log('matches', matches);
 
         return child;
       }

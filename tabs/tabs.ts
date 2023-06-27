@@ -1,5 +1,5 @@
 import { html, LitElement, TemplateResult } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { styleMap } from 'lit/directives/style-map.js';
@@ -15,8 +15,23 @@ import styles from './tabs.lit.css.js';
 export class Tabs extends ControllableMixin<string, typeof LitElement>(LitElement) {
   static styles = [ styles ];
 
+  @state()
+  leftMaxed = true;
+
+  @state()
+  rightMaxed = false;
+
+  @state()
+  hasScroll = false;
+
+  @property({ attribute: true, type: Boolean, reflect: true })
+  scrollButtons = false;
+
   @property({ attribute: true, type: String })
   maxWidth: string | undefined;
+
+  @query('.body')
+  body: HTMLElement;
 
   get activeTab (): Tab | null {
     const slot = this.shadowRoot.querySelector('slot');
@@ -24,11 +39,18 @@ export class Tabs extends ControllableMixin<string, typeof LitElement>(LitElemen
     return childNodes.find((node) => node instanceof Tab && node.active === true && node.key) as Tab | null;
   }
 
-  getTabByKey = (key: string): Tab | null => {
-    const slot = this.shadowRoot.querySelector('slot');
-    const childNodes = slot.assignedNodes({ flatten: true });
-    return childNodes.find((node) => node instanceof Tab && node.key === key) as Tab | null;
-  };
+  constructor () {
+    super();
+
+    this.resizeObserver.observe(this);
+  }
+
+  connectedCallback (): void {
+    super.connectedCallback();
+    const { handleTabClick } = this;
+
+    this.addEventListener('tab-click', handleTabClick);
+  }
 
   updated (changedProperties: any): void {
     changedProperties.forEach((_: any, propName: string) => {
@@ -37,6 +59,38 @@ export class Tabs extends ControllableMixin<string, typeof LitElement>(LitElemen
       }
     });
   }
+
+  handleResize = (): void => {
+    const { clientWidth: width, scrollLeft, scrollWidth } = this.body;
+
+    console.log('handleResize');
+
+    this.hasScroll = scrollWidth > width;
+    this.leftMaxed = scrollLeft === 0;
+    this.rightMaxed = scrollLeft >= (scrollWidth - width);
+
+    console.log('scrollWidth', scrollWidth, 'width', width);
+
+    // if (width < 560) {
+    //   this.size = 0;
+    // } else {
+    //   this.size = 1;
+    // }
+  };
+
+  resizeObserver = new ResizeObserver(this.handleResize);
+
+  handleTabClick = (evt: CustomEvent): void => {
+    evt.stopPropagation();
+
+    // console.log('tab-clickerino', evt.target);
+  };
+
+  getTabByKey = (key: string): Tab | null => {
+    const slot = this.shadowRoot.querySelector('slot');
+    const childNodes = slot.assignedNodes({ flatten: true });
+    return childNodes.find((node) => node instanceof Tab && node.key === key) as Tab | null;
+  };
 
   handleSlotChange = (): void => {
     const { activeTab, getTabByKey, value } = this;
@@ -51,16 +105,31 @@ export class Tabs extends ControllableMixin<string, typeof LitElement>(LitElemen
   };
 
   render (): TemplateResult {
-    const { handleSlotChange, maxWidth } = this;
+    const {
+      handleResize,
+      handleSlotChange,
+      hasScroll,
+      leftMaxed,
+      maxWidth,
+      rightMaxed,
+      scrollButtons,
+    } = this;
 
     return html`
-      <li class="start"></li>
+      <li class="start">
+        ${
+          (!leftMaxed && hasScroll && scrollButtons) ? html`
+            <fa-icon type="fa-solid fa-angle-left"></fa-icon>
+          ` : null
+        }
+      </li>
 
       <li
         class="body"
         style=${styleMap({
           maxWidth,
         })}
+        @scroll=${handleResize}
       >
         <slot
           @slotchange=${handleSlotChange}
@@ -69,7 +138,13 @@ export class Tabs extends ControllableMixin<string, typeof LitElement>(LitElemen
         <span class="rest"></span>
       </li>
 
-      <li class="end"></li>
+      <li class="end">
+        ${
+          (!rightMaxed && hasScroll && scrollButtons) ? html`
+            <fa-icon type="fa-solid fa-angle-right"></fa-icon>
+          ` : null
+        }
+      </li>
     `;
   }
 }
@@ -94,6 +169,9 @@ export class Tab extends LitElement {
   href?: string;
 
   @property()
+  icon?: unknown;
+
+  @property()
   routerHref?: string;
 
   handleClick = (evt: MouseEvent): void => {
@@ -106,14 +184,15 @@ export class Tab extends LitElement {
 
     const { router } = this;
 
+    this.dispatchEvent(new CustomEvent('tab-click', { bubbles: true }));
+
     if (this.routerHref) {
-      console.log('router', router, this.routerHref);
       handleHrefClick(router)(evt, this.routerHref);
     }
   };
 
   render (): TemplateResult {
-    const { active, disabled, handleClick, href, routerHref } = this;
+    const { active, disabled, handleClick, href, icon, routerHref } = this;
 
     return html`
       <a
@@ -125,6 +204,8 @@ export class Tab extends LitElement {
         ?disabled=${disabled}
         href=${ifDefined(routerHref || href)}
       >
+        ${icon}
+
         <slot></slot>
       </a>
     `;

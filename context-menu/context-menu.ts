@@ -79,7 +79,6 @@ export class ContextMenuFactory {
       window.CONTEXT_MENUS[uuid].close();
       return null;
     }
-    console.log('SLOT', defaultSlot);
 
     const contextMenu = Object.assign(
       new ContextMenu(),

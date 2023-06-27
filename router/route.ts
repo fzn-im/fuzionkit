@@ -109,15 +109,15 @@ export class Route extends LitElement {
 
     this.currentPath = this.switch.router.currentPath;
 
-    console.log(
-      'route handling path',
-      barePath,
-      'with',
-      (doBaseMatch || !this.parentRoute?.routeMatch.baseMatch)
-        ? this.switch.router.currentPath
-        : this.switch.router.currentPath
-          .substring(this.parentRoute.routeMatch.baseMatch.length),
-    );
+    // console.log(
+    //   'route handling path',
+    //   barePath,
+    //   'with',
+    //   (doBaseMatch || !this.parentRoute?.routeMatch.baseMatch)
+    //     ? this.switch.router.currentPath
+    //     : this.switch.router.currentPath
+    //       .substring(this.parentRoute.routeMatch.baseMatch.length),
+    // );
 
     const paramList = [];
     const regex = pathToRegexp(barePath, paramList, { end });
@@ -153,7 +153,7 @@ export class Route extends LitElement {
       },
     };
 
-    console.log(this, 'params', this.routeMatch.params, 'parentRoute', parentRoute);
+    // console.log(this, 'params', this.routeMatch.params, 'parentRoute', parentRoute);
   };
 
   updated (): void {
@@ -172,7 +172,7 @@ export class Route extends LitElement {
       return html`<slot></slot>`;
     }
 
-    console.log('route removed', path);
+    // console.log('route removed', path);
     return null;
   }
 }

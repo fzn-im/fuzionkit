@@ -133,7 +133,7 @@ export class Router extends LitElement {
 
     this.currentPath = path;
 
-    console.log('navigate', path);
+    // console.log('navigate', path);
 
     this.dispatchEvent(new CustomEvent<string>(
       'navigate',

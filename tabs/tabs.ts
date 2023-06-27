@@ -63,13 +63,9 @@ export class Tabs extends ControllableMixin<string, typeof LitElement>(LitElemen
   handleResize = (): void => {
     const { clientWidth: width, scrollLeft, scrollWidth } = this.body;
 
-    console.log('handleResize');
-
     this.hasScroll = scrollWidth > width;
     this.leftMaxed = scrollLeft === 0;
     this.rightMaxed = scrollLeft >= (scrollWidth - width);
-
-    console.log('scrollWidth', scrollWidth, 'width', width);
 
     // if (width < 560) {
     //   this.size = 0;

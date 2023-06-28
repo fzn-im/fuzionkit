@@ -2,6 +2,8 @@ import { ReactiveElement } from 'lit';
 import { Context } from '@lit-labs/context';
 import { decorateProperty } from '@lit/reactive-element/decorators/base.js';
 
+import { FieldMustMatchProvidedType } from './utils.js';
+
 export function instill<ValueType>({
   context,
 }: {
@@ -32,25 +34,3 @@ type InstillDecorator<ValueType> = {
     name?: K
   ): FieldMustMatchProvidedType<Proto, K, ValueType>;
 };
-
-type DecoratorReturn = void | any;
-
-type FieldMustMatchProvidedType<Obj, Key extends PropertyKey, ProvidedType> =
-  Obj extends Record<Key, infer ExtractingType>
-    ? [ProvidedType] extends [ExtractingType]
-      ? DecoratorReturn
-      : {
-          message: 'provided type not assignable to consuming field';
-          provided: ProvidedType;
-          instilling: ExtractingType;
-        }
-    :
-    Obj extends Partial<Record<Key, infer ExtractingType>>
-    ? [ProvidedType] extends [ExtractingType | undefined]
-      ? DecoratorReturn
-      : {
-          message: 'provided type not assignable to consuming field';
-          provided: ProvidedType;
-          instilling: ExtractingType | undefined;
-        }
-    : DecoratorReturn;

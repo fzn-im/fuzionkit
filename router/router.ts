@@ -9,6 +9,7 @@ import { instill } from '../context/instill.js';
 
 import {
   connectRouterToStore,
+  currentPathContext,
   disconnectRouterFromStore,
   NavigateOptions,
   routerContext,
@@ -100,6 +101,8 @@ export class Router extends LitElement {
     return pathname;
   }
 
+  @provide({ context: currentPathContext })
+  @property({ attribute: false })
   currentPath: string | null = null;
 
   async firstUpdated(): Promise<void> {

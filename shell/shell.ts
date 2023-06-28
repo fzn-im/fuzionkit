@@ -144,15 +144,20 @@ export class Shell extends EnhancedEventTargetMixin<
     this.resizeObserver.observe(this);
   }
 
-  firstUpdated (): void {
+  async firstUpdated (): Promise<void> {
     this.dispatchEvent(new CustomEvent('first-updated'));
 
-    setTimeout(() => {
-      this.handleResize();
-      this.drawerOpen = !this.collapsed;
+    await this.updateComplete;
 
-      this.shell = this;
-    }, 0);
+    this.handleResize();
+    this.drawerOpen = !this.collapsed;
+
+    this.dispatchEvent(
+      new CustomEvent(
+        'shell-first-updated',
+        { bubbles: true, composed: true },
+      ),
+    );
   }
 
   handleResize = (): void => {

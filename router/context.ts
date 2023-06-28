@@ -18,6 +18,8 @@ export const routerContext = createContext<Router>('router');
 export const routeContext = createContext<Route>('route');
 export const routeMatchContext = createContext<RouteMatch>('routeMatch');
 export const switchContext = createContext<Switch>('switch');
+export const currentPathContext = createContext<string | null>('currentPath');
+export const routeCurrentPathContext = createContext<string | null>('routeCurrentPath');
 
 declare type Constructor<T> = new (...args: any[]) => T;
 

@@ -1,5 +1,6 @@
 import { consume, provide } from '@lit-labs/context';
 import { LitElement, html } from 'lit';
+import { html as staticHtml, unsafeStatic } from 'lit-html/static.js';
 import { customElement, property } from 'lit/decorators.js';
 import { pathToRegexp } from 'path-to-regexp';
 
@@ -82,11 +83,11 @@ export class Route extends LitElement {
 
   currentPath: string;
 
-  @property({ attribute: false })
-  component: (routeMatch?: RouteMatch) => unknown;
+  @property({ attribute: true })
+  component: ((routeMatch?: RouteMatch) => unknown) | string;
 
   handleNavigate = (): void => {
-    const { parentRoute, path } = this;
+    const { path } = this;
 
     // prevent renavigating if path has not changed
     if (this.currentPath === this.switch.router.currentPath) {
@@ -166,6 +167,13 @@ export class Route extends LitElement {
 
     if (slot) {
       if (component) {
+        if (typeof component === 'string') {
+          return staticHtml`
+            <${unsafeStatic(component)}
+            ></${unsafeStatic(component)}>
+          `;
+        }
+
         return component(routeMatch);
       }
 

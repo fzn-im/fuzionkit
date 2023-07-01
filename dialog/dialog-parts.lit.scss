@@ -1,0 +1,20 @@
+* {
+  box-sizing: border-box;
+}
+
+:host(fzn-closable-panel-header) :first-child
+{
+  padding-right: .5rem;
+}
+
+:host(fzn-dialog-close-button)
+{
+  cursor: pointer;
+  display: block;
+  padding: 0 .3rem;
+}
+
+:host(fzn-dialog-close-button:hover)
+{
+  color: #E74C3C;
+}

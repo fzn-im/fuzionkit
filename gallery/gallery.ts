@@ -1,6 +1,9 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
+import { DialogFactory, dialogFactoryContext } from '../dialog/context';
+import { consume } from '@lit-labs/context';
+import { createGalleryDialog } from './gallery-dialog';
 
 @customElement('fzn-nubblet')
 export class Nubblet extends LitElement {
@@ -94,11 +97,25 @@ class GalleryItem extends LitElement {
   @property({ attribute: false })
   item: GalleryItem;
 
+  @consume({ context: dialogFactoryContext })
+  dialogFactory: DialogFactory;
+
+  handleGalleryClick = (): void => {
+    const { dialogFactory } = this;
+    const { url } = this.item;
+    
+    dialogFactory.show(createGalleryDialog({ url }));
+  };
+
   render (): unknown {
+    const { handleGalleryClick } = this;
     const { url } = this.item;
 
     return html`
-      <img src=${url} />
+      <img
+        src=${url}
+        @click=${handleGalleryClick}
+      />
     `;
   }
 }

@@ -1,0 +1,60 @@
+@mixin fzn-textfield
+{
+  display: block;
+  width: 100%;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  background: rgba(0, 0, 0, .2);
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: .25rem;
+  color: #FFFFFF;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  line-height: 1.5;
+}
+
+@mixin fzn-textfield-invisible
+{
+  background: transparent;
+  border-color: transparent;
+  outline: none;
+  color: #FFFFFF;
+  font-size: 1rem;
+}
+
+@mixin fzn-textfield-disabled
+{
+  color: rgba(255, 255, 255, .2);
+}
+
+@mixin fzn-textfield-focus
+{
+  background: #4c5a67;
+  border-color: #CEE61B;
+  box-shadow: 0 0 0 .2rem rgba(206, 230, 27, .25);
+  outline: none;
+}
+
+@mixin fzn-textfield-xs
+{
+  padding: .125rem .25rem;
+  font-size:  .75rem;
+  line-height: 1.5;
+  border-radius: .2rem;
+}
+
+@mixin fzn-textfield-s
+{
+  padding: .25rem .5rem;
+  font-size: .875rem;
+  line-height: 1.5;
+  border-radius: .2rem;
+}
+
+@mixin fzn-textfield-l
+{
+  padding: .5rem 1rem;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  border-radius: .3rem;
+}

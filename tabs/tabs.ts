@@ -52,6 +52,13 @@ export class Tabs extends ControllableMixin<string, typeof LitElement>(LitElemen
     this.addEventListener('tab-click', handleTabClick);
   }
 
+  disconnectedCallback (): void {
+    super.disconnectedCallback();
+    const { handleTabClick } = this;
+
+    this.removeEventListener('tab-click', handleTabClick);
+  }
+
   updated (changedProperties: any): void {
     changedProperties.forEach((_: any, propName: string) => {
       if ([ 'value', 'internalValue' ].includes(propName)) {
@@ -79,6 +86,7 @@ export class Tabs extends ControllableMixin<string, typeof LitElement>(LitElemen
   handleTabClick = (evt: CustomEvent): void => {
     evt.stopPropagation();
 
+    this.internalValue = evt.detail;
     // console.log('tab-clickerino', evt.target);
   };
 
@@ -178,9 +186,15 @@ export class Tab extends LitElement {
       return;
     }
 
-    const { router } = this;
+    const { key, router } = this;
 
-    this.dispatchEvent(new CustomEvent('tab-click', { bubbles: true }));
+    this.dispatchEvent(new CustomEvent(
+      'tab-click',
+      {
+        bubbles: true,
+        detail: key,
+      },
+    ));
 
     if (this.routerHref) {
       handleHrefClick(router)(evt, this.routerHref);

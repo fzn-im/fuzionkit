@@ -1,5 +1,5 @@
 import { LitElement, html } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 import { html as staticHtml, unsafeStatic } from 'lit-html/static.js';
 import { keyed } from 'lit/directives/keyed.js';
 import { consume, provide } from '@lit-labs/context';
@@ -127,21 +127,53 @@ export class Switch extends LitElement {
   @consume({ context: routeContext })
   parentRoute: Route;
 
+  @property({ attribute: true, type: Boolean, reflect: true })
+  controlled = false;
+
+  _currentPath: string;
+
+  @property({ attribute: true, type: String, reflect: true })
+  get currentPath (): string {
+    return this._currentPath;
+  }
+
+  set currentPath (currentPath: string) {
+    if (this._currentPath !== currentPath) {
+      const oldValue = this._currentPath;
+
+      this._currentPath = currentPath;
+
+      this.requestUpdate('currentPath', oldValue);
+
+      if (this.hasUpdated) {
+        this.navigate(currentPath);
+      }
+    }
+  }
+
   connectedCallback (): void {
     super.connectedCallback();
 
-    if (this.router) {
-      this.navigate(this.router.currentPath);
+    if (!this.controlled) {
+      if (this.router) {
+        this.navigate(this.router.currentPath);
+      }
+    } else {
+      this.navigate(this.currentPath);
     }
   }
 
   handleNavigate = ({ detail: path }: CustomEvent<string>): void => {
     // console.log('switch handling path', path);
 
-    this.navigate(path);
+    if (!this.controlled) {
+      this.navigate(path);
+    }
   };
 
   navigate (path: string): void {
+    // console.log('navigating', path);
+
     if (path === null) {
       return;
     }

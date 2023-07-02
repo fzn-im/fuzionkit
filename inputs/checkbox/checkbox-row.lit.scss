@@ -1,0 +1,46 @@
+:host
+{
+  display: flex;
+  line-height: 0;
+
+  &, *
+  {
+    user-select: none;
+  }
+
+  fzn-checkbox
+  {
+    flex-shrink: 0;
+  }
+
+  label
+  {
+    margin-bottom: 0;
+    flex-grow: 1;
+    line-height: 20px;
+
+    &, *
+    {
+      user-select: text;
+    }
+  }
+  label:first-child
+  {
+    flex-grow: 1;
+    padding-right: 8px;
+  }
+  label:last-child
+  {
+    flex-grow: 1;
+    padding-left: 8px;
+  }
+}
+
+:host([disabled])
+{
+  label
+  {
+    cursor: default;
+    opacity: .4;
+  }
+}

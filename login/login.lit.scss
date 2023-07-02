@@ -1,0 +1,25 @@
+@import '../resources/css/mixins/panel.scss';
+
+:host(fzn-login),
+:host(fzn-register)
+{
+  fzn-alert[variant='danger']
+  {
+    margin-top: 1rem;
+  }
+}
+
+:host(fzn-login),
+:host(fzn-register),
+:host(fzn-passcode)
+{
+  @include fzn-panel;
+}
+
+:host(fzn-passcode)
+{
+  fzn-checkbox-row[name='showPasscode']
+  {
+    margin-bottom: 1rem;
+  }
+}

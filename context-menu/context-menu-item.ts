@@ -344,6 +344,7 @@ export class ContextMenuItemButton extends LitElement {
       });
     } else if (routeTo) {
       handleHrefClick(router)(evt);
+
       contextMenu.close();
     }
   }

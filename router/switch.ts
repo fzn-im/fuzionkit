@@ -134,7 +134,7 @@ export class Switch extends LitElement {
 
   @property({ attribute: true, type: String, reflect: true })
   get currentPath (): string {
-    return this._currentPath;
+    return this.controlled ? this._currentPath : this.router?.currentPath;
   }
 
   set currentPath (currentPath: string) {

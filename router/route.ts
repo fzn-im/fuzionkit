@@ -124,17 +124,21 @@ export class Route extends LitElement {
     const regex = pathToRegexp(barePath, paramList, { end });
 
     let matches = null;
-    if (doBaseMatch || !this.parentRoute?.routeMatch.baseMatch) {
-      matches = this.switch.router.currentPath.match(regex);
+    if (
+      doBaseMatch
+      || !this.parentRoute?.routeMatch.baseMatch
+      || this.switch.controlled
+    ) {
+      matches = this.switch.currentPath.match(regex);
     } else {
-      let pathToMatch = this.switch.router.currentPath
+      let pathToMatch = this.switch.currentPath
         .substring(this.parentRoute.routeMatch.baseMatch.length);
       pathToMatch = pathToMatch === '' ? '/' : pathToMatch;
 
       matches = pathToMatch.match(regex);
     }
 
-    const baseMatch = doBaseMatch
+    const baseMatch = (doBaseMatch || this.switch.controlled)
       ? matches[0]
       : `${this.parentRoute?.routeMatch.baseMatch ?? ''}${matches[0]}`;
     let params = {};

@@ -10,12 +10,13 @@ import { ChangeEvent } from '../utils/events.js';
 import { takeOrEvaluate, TakeOrEvaluate } from '../utils/take-or-evaluate.js';
 import { ControllableMixin } from '../base/controllable-mixin.js';
 
-import { ContextMenu } from './context-menu.js';
+import { ContextMenu, ContextMenuOptions } from './context-menu.js';
 
 import styles from './context-menu-item.lit.css.js';
 
 export interface ContextMenuItemOptions {
   anchorOptions?: ContextMenu['anchorOptions'];
+  childOptions?: ContextMenuOptions;
   className?: string;
   element?: TakeOrEvaluate<HTMLElement>;
   href?: string;
@@ -59,6 +60,7 @@ export const renderContextMenuItem = (
   options: ContextMenuItemOptions,
 ): unknown => {
   const {
+    childOptions,
     element,
     href,
     items,
@@ -146,6 +148,7 @@ export const renderContextMenuItem = (
       <fzn-context-menu-item-button
         selected=${ifDefined(selected || undefined)}
         @click=${(): void => onClick && onClick(contextMenu)}
+        .childOptions=${childOptions}
         .contextMenu=${contextMenu}
         .contextMenuItemOptions=${options}
         .hasMore=${!!items}
@@ -295,6 +298,9 @@ export class ContextMenuItemButton extends LitElement {
   hasMore: boolean;
 
   @property({ attribute: false })
+  childOptions: ContextMenuOptions;
+
+  @property({ attribute: false })
   items: TakeOrEvaluate<ContextMenuItemOptions[]>;
 
   @property({ attribute: false })
@@ -328,20 +334,29 @@ export class ContextMenuItemButton extends LitElement {
   }
 
   handleClick (evt: MouseEvent): void {
-    const { contextMenu, items, router, routeTo } = this;
+    const { childOptions, contextMenu, items, router, routeTo } = this;
 
     if (items) {
       if (!this.contextMenuUuid) {
         this.contextMenuUuid = uuid();
       }
 
-      contextMenu.openChild({
+      const child = contextMenu.openChild({
         anchorTo: this,
         ignoredElements: [ this ],
         items,
         toggle: true,
         uuid: this.contextMenuUuid,
+        ...childOptions,
       });
+
+      if (child) {
+        this.classList.add('child-expand');
+
+        child.addEventListener('close', () => {
+          this.classList.remove('child-expand');
+        }, { once: true });
+      }
     } else if (routeTo) {
       handleHrefClick(router)(evt);
 

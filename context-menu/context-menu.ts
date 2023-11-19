@@ -32,6 +32,8 @@ type AnchorOptions = {
   }
 }
 
+export type ContextMenuOptions = Partial<Omit<ContextMenu, 'style'>> & OpenOptions;
+
 class ContextMenuPosition {
   top: string | number = 'auto';
   right: string | number = 'auto';
@@ -67,7 +69,7 @@ export class ContextMenuFactory {
   }
 
   create (
-    options: Partial<Omit<ContextMenu, 'style'>> & OpenOptions = {},
+    options: ContextMenuOptions = {},
   ): ContextMenu | null {
     const { container: defaultContainer, slot: defaultSlot } = this;
     const { appendTo, style = {}, toggle = true, ...contextMenuOptions } = options;
@@ -267,10 +269,10 @@ export class ContextMenu extends LitElement {
     this.repositionDebounceLeading();
   };
 
-  openChild = (options: Parameters<ContextMenuFactory['create']>[0]): void => {
+  openChild = (options: ContextMenuOptions): ContextMenu => {
     const { bounds, container, containerSlot, contextMenuFactory, root } = this;
 
-    this.child = contextMenuFactory.create({
+    const childOptions = {
       bounds,
       container,
       containerSlot,
@@ -282,13 +284,17 @@ export class ContextMenu extends LitElement {
       },
       root: root ?? this,
       ...options,
-    });
+    };
+
+    this.child = contextMenuFactory.create(childOptions);
 
     if (this.child) {
       this.child.addEventListener('close', () => {
         this.child = null;
       }, { once: true });
     }
+
+    return this.child;
   };
 
   getChildren (): ContextMenu[] {

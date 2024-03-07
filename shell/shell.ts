@@ -229,8 +229,8 @@ export class Shell extends EnhancedEventTargetMixin<
     } else if ('msMaxTouchPoints' in navigator) {
       this.hasTouchScreen = (navigator as any).msMaxTouchPoints > 0;
     } else {
-      const mQ = window.matchMedia && matchMedia('(pointer:coarse)');
-      if (mQ && mQ.media === '(pointer:coarse)') {
+      const mQ = window.matchMedia?.('(pointer:coarse)');
+      if (mQ?.media === '(pointer:coarse)') {
         this.hasTouchScreen = !!mQ.matches;
       } else if ('orientation' in window) {
         this.hasTouchScreen = true; // deprecated, but good fallback

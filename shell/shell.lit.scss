@@ -11,6 +11,57 @@
   }
 }
 
+:host(fzn-shell[flipvertical])
+{
+  background: red;
+
+  > div
+  {
+    & > .app-badge
+    {
+      &.has-back
+      {
+        bottom: 0;
+        top: auto;
+      }
+    }
+
+    & > .action-bar
+    {
+      position: fixed;
+      top: initial;
+      bottom: 0%;
+    }
+
+    & > .content-frame
+    {
+      padding-top: 0;
+      padding-bottom: 3rem;
+    }
+
+    & > .app-badge
+    {
+      position: fixed;
+      bottom: 0;
+    }
+
+    & > fzn-drawer
+    {
+      &::part(slide)
+      {
+        padding-top: 0;
+        padding-bottom: 3rem;
+      }
+
+      &::part(inner)
+      {
+        border-top: 0;
+        border-bottom: 2px solid rgba(0, 0, 0, .2);
+      }
+    }
+  }
+}
+
 :host(fzn-shell)
 {
   display: block;

@@ -111,6 +111,8 @@ export const defaultContextMenuFactory = new ContextMenuFactory();
 export class ContextMenu extends LitElement {
   static styles = [ styles ];
 
+  debug = false;
+
   @consume({ context: contextMenuFactoryContext })
   contextMenuFactory: ContextMenuFactory = defaultContextMenuFactory;
 
@@ -256,6 +258,7 @@ export class ContextMenu extends LitElement {
     this.reposition();
   }
 
+  // ?: this what fupdated
   fupdated (): void {
     this.reposition();
   }
@@ -263,6 +266,12 @@ export class ContextMenu extends LitElement {
   close (): void {
     this.dispatchEvent(new CustomEvent('close'));
   }
+
+  logd = (...args: Parameters<Console['log']>): void => {
+    if (this.debug) {
+      console.log(...args);
+    }
+  };
 
   repositionDebounce = (): void => {
     this.repositionDebounceTrailing();
@@ -313,7 +322,7 @@ export class ContextMenu extends LitElement {
   repositionDebounceLeading = debounce(() => this.reposition(), 1000 / 60, { isImmediate: true });
 
   reposition (): void {
-    const { anchorOptions, anchorTo, bounds, originParent, position } = this;
+    const { anchorOptions, anchorTo, bounds, logd, originParent, position } = this;
     const { matchWidth = false } = anchorOptions;
 
     if (anchorTo) {
@@ -412,12 +421,16 @@ export class ContextMenu extends LitElement {
       do {
         figuredAlign = null;
 
+        logd('Trying', chosenDir);
+
         switch (chosenDir) {
         case 'up':
           position.y = anchorToPosition.top - (anchorOptions.margin?.top || 0) - menuH;
+
           if (fug) {
             position.y = Math.max(boundTop, Math.min(boundBottom - menuH, position.y));
           }
+
           if (position.y + menuH > boundBottom + 2 || position.y + 2 < boundTop) {
             figuredDir = false;
           } else {
@@ -461,9 +474,11 @@ export class ContextMenu extends LitElement {
 
         case 'right':
           position.x = anchorToPosition.left + (anchorOptions.margin?.right || 0) + bindToW;
+
           if (fug) {
             position.x = Math.max(boundLeft, Math.min(boundRight - menuW, position.x));
           }
+
           if (position.x + menuW > boundRight + 2 || position.x + 2 < boundLeft) {
             figuredDir = false;
           } else {
@@ -510,9 +525,11 @@ export class ContextMenu extends LitElement {
 
         case 'left':
           position.x = anchorToPosition.left - (anchorOptions.margin?.left || 0) - menuW;
+
           if (fug) {
             position.x = Math.max(boundLeft, Math.min(boundRight - menuW, position.x));
           }
+
           if (position.x + menuW > boundRight + 2 || position.x + 2 < boundLeft) {
             figuredDir = false;
           } else {
@@ -557,11 +574,14 @@ export class ContextMenu extends LitElement {
 
         case 'down':
         default:
+
           chosenDir = 'down';
           position.y = anchorToPosition.top + bindToH + (anchorOptions.margin?.bottom || 0);
+
           if (fug) {
             position.y = Math.max(boundTop, Math.min(boundBottom - menuH, position.y));
           }
+
           if (position.y + menuH > boundBottom + 2 || position.y + 2 < boundTop) {
             figuredDir = false;
           } else {

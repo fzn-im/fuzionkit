@@ -26,8 +26,8 @@ export const getElementOffsetPosition = (element: HTMLElement | SVGElement): Top
 
 export const getViewportSize = (): HeightWidthSize => {
   return {
-    width: Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0),
-    height: Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0),
+    width: Math.max(document.documentElement.clientWidth || 0, window.visualViewport?.width || 0),
+    height: Math.max(document.documentElement.clientHeight || 0, window.visualViewport?.height || 0),
   };
 };
 

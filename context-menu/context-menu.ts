@@ -24,13 +24,32 @@ type AnchorOptions = {
   matchWidth?: boolean;
   alignX?: AnchorAlignX;
   alignY?: AnchorAlignY;
-  margin?: {
-    top?: number;
-    right?: number;
-    bottom?: number;
-    left?: number;
-  }
+  margin?: Margin;
 }
+
+type MarginDirections = {
+  top?: number;
+  right?: number;
+  bottom?: number;
+  left?: number;
+};
+
+type Margin = MarginDirections | number;
+
+const getMargin = (
+  margin: Margin,
+  direction: keyof MarginDirections,
+): number | undefined => {
+  if (typeof margin === 'number') {
+    return margin;
+  }
+
+  if (!margin) {
+    return;
+  }
+
+  return margin[direction];
+};
 
 export type ContextMenuOptions = Partial<Omit<ContextMenu, 'style'>> & OpenOptions;
 
@@ -60,6 +79,9 @@ export type ContextMenuFactoryOptions = {
 export class ContextMenuFactory {
   container: HTMLElement;
   slot?: string;
+  defaultAnchorOptions: AnchorOptions = {
+    margin: 5,
+  };
 
   constructor (options: ContextMenuFactoryOptions = {}) {
     const { container = window.document.body, slot } = options;
@@ -71,9 +93,9 @@ export class ContextMenuFactory {
   create (
     options: ContextMenuOptions = {},
   ): ContextMenu | null {
-    const { container: defaultContainer, slot: defaultSlot } = this;
+    const { container: defaultContainer, defaultAnchorOptions, slot: defaultSlot } = this;
     const { appendTo, style = {}, toggle = true, ...contextMenuOptions } = options;
-    const { uuid } = contextMenuOptions;
+    const { anchorOptions, uuid } = contextMenuOptions;
 
     const container = appendTo ?? defaultContainer;
 
@@ -85,7 +107,14 @@ export class ContextMenuFactory {
     const contextMenu = Object.assign(
       new ContextMenu(),
       contextMenuOptions,
-      { container, ...defaultSlot ? { slot: defaultSlot } : {} },
+      {
+        anchorOptions: {
+          ...defaultAnchorOptions,
+          ...anchorOptions,
+        },
+        container,
+        ...defaultSlot ? { slot: defaultSlot } : {},
+      },
     );
     Object.assign(contextMenu.style, style);
     window.CONTEXT_MENUS[uuid] = contextMenu;
@@ -325,6 +354,8 @@ export class ContextMenu extends LitElement {
     const { anchorOptions, anchorTo, bounds, logd, originParent, position } = this;
     const { matchWidth = false } = anchorOptions;
 
+    const borderWall = 5;
+
     if (anchorTo) {
       // Bind to an element... FUN
       let boundTop = null;
@@ -425,10 +456,10 @@ export class ContextMenu extends LitElement {
 
         switch (chosenDir) {
         case 'up':
-          position.y = anchorToPosition.top - (anchorOptions.margin?.top || 0) - menuH;
+          position.y = anchorToPosition.top - (getMargin(anchorOptions.margin, 'top') ?? 0) - menuH;
 
           if (fug) {
-            position.y = Math.max(boundTop, Math.min(boundBottom - menuH, position.y));
+            position.y = Math.max(boundTop + borderWall, Math.min(boundBottom - menuH - borderWall, position.y));
           }
 
           if (position.y + menuH > boundBottom + 2 || position.y + 2 < boundTop) {
@@ -450,9 +481,8 @@ export class ContextMenu extends LitElement {
                 break;
               }
 
-              if (fug) {
-                position.x = Math.max(boundLeft, Math.min(boundRight - menuW, position.x));
-              }
+              // if (fug) {
+              position.x = Math.max(boundLeft + borderWall, Math.min(boundRight - menuW - borderWall, position.x));
 
               if (position.x + menuW > boundRight + 2 || position.x + 2 < boundLeft) {
                 if (chosenAlign !== chosenAlignX) {
@@ -473,10 +503,10 @@ export class ContextMenu extends LitElement {
           break;
 
         case 'right':
-          position.x = anchorToPosition.left + (anchorOptions.margin?.right || 0) + bindToW;
+          position.x = anchorToPosition.left + (getMargin(anchorOptions.margin, 'right') ?? 0) + bindToW;
 
           if (fug) {
-            position.x = Math.max(boundLeft, Math.min(boundRight - menuW, position.x));
+            position.x = Math.max(boundLeft + borderWall, Math.min(boundRight - menuW - borderWall, position.x));
           }
 
           if (position.x + menuW > boundRight + 2 || position.x + 2 < boundLeft) {
@@ -497,9 +527,8 @@ export class ContextMenu extends LitElement {
                 break;
               }
 
-              if (fug) {
-                position.y = Math.max(boundTop, Math.min(boundBottom - menuH, position.y));
-              }
+              // if (fug) {
+              position.y = Math.max(boundTop + borderWall, Math.min(boundBottom - menuH - borderWall, position.y));
 
               if (position.y + menuH > boundBottom + 2 || position.y + 2 < boundTop) {
                 if (chosenAlign !== chosenAlignY) {
@@ -524,10 +553,10 @@ export class ContextMenu extends LitElement {
           break;
 
         case 'left':
-          position.x = anchorToPosition.left - (anchorOptions.margin?.left || 0) - menuW;
+          position.x = anchorToPosition.left - (getMargin(anchorOptions.margin, 'left') ?? 0) - menuW;
 
           if (fug) {
-            position.x = Math.max(boundLeft, Math.min(boundRight - menuW, position.x));
+            position.x = Math.max(boundLeft + borderWall, Math.min(boundRight - menuW - borderWall, position.x));
           }
 
           if (position.x + menuW > boundRight + 2 || position.x + 2 < boundLeft) {
@@ -548,9 +577,8 @@ export class ContextMenu extends LitElement {
                 break;
               }
 
-              if (fug) {
-                position.y = Math.max(boundTop, Math.min(boundBottom - menuH, position.y));
-              }
+              // if (fug) {
+              position.y = Math.max(boundTop + borderWall, Math.min(boundBottom - menuH - borderWall, position.y));
 
               if (position.y + menuH > boundBottom + 2 || position.y + 2 < boundTop) {
                 if (chosenAlign !== chosenAlignY) {
@@ -576,10 +604,10 @@ export class ContextMenu extends LitElement {
         default:
 
           chosenDir = 'down';
-          position.y = anchorToPosition.top + bindToH + (anchorOptions.margin?.bottom || 0);
+          position.y = anchorToPosition.top + bindToH + (getMargin(anchorOptions.margin, 'bottom') ?? 0);
 
           if (fug) {
-            position.y = Math.max(boundTop, Math.min(boundBottom - menuH, position.y));
+            position.y = Math.max(boundTop + borderWall, Math.min(boundBottom - menuH - borderWall, position.y));
           }
 
           if (position.y + menuH > boundBottom + 2 || position.y + 2 < boundTop) {
@@ -600,9 +628,8 @@ export class ContextMenu extends LitElement {
                 break;
               }
 
-              if (fug) {
-                position.x = Math.max(boundLeft, Math.min(boundRight - menuW, position.x));
-              }
+              // if (fug) {
+              position.x = Math.max(boundLeft + borderWall, Math.min(boundRight - menuW - borderWall, position.x));
 
               if (position.x + menuW > boundRight + 2 || position.x + 2 < boundLeft) {
                 if (chosenAlign !== chosenAlignX) {

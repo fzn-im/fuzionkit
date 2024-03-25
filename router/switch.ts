@@ -99,7 +99,6 @@ export class Switch extends LitElement {
   _router: Router;
 
   @consume({ context: routerContext })
-  @property({ attribute: false })
   get router(): Router {
     return this._router;
   }
@@ -123,7 +122,6 @@ export class Switch extends LitElement {
   }
 
   @provide({ context: switchContext })
-  @property({ attribute: false })
   switch = this;
 
   @consume({ context: routeContext })

@@ -104,10 +104,10 @@ export function extract<ValueType>({
         new ContextExtractor(this, {
           context,
           callback: async (value: ValueType): Promise<void> => {
-            // hacky af - have to prevent the update during update error
-            (this as any)[`__${nameOrContext.name.toString()}`] = value;
+            if (!this.isUpdatePending) {
+              await this.updateComplete;
+            }
 
-            await this.updateComplete;
             (this as any)[nameOrContext.name] = value;
           },
           qualifier,
@@ -119,10 +119,10 @@ export function extract<ValueType>({
           new ContextExtractor(element, {
             context,
             callback: async (value: ValueType): Promise<void> => {
-              // hacky af - have to prevent the update during update error
-              (element as any)[`__${nameOrContext.toString()}`] = value;
+              if (!element.isUpdatePending) {
+                await element.updateComplete;
+              }
 
-              await element.updateComplete;
               (element as any)[nameOrContext] = value;
             },
             qualifier,

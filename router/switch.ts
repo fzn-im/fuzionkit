@@ -2,7 +2,7 @@ import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { html as staticHtml, unsafeStatic } from 'lit-html/static.js';
 import { keyed } from 'lit/directives/keyed.js';
-import { consume, provide } from '@lit-labs/context';
+import { consume, provide } from '@lit/context';
 import { pathToRegexp } from 'path-to-regexp';
 
 import {
@@ -99,6 +99,7 @@ export class Switch extends LitElement {
   _router: Router;
 
   @consume({ context: routerContext })
+  @property({ attribute: false })
   get router(): Router {
     return this._router;
   }
@@ -122,6 +123,7 @@ export class Switch extends LitElement {
   }
 
   @provide({ context: switchContext })
+  @property({ attribute: false })
   switch = this;
 
   @consume({ context: routeContext })

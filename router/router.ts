@@ -1,6 +1,6 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { consume, ContextConsumer, provide } from '@lit-labs/context';
+import { consume, ContextConsumer, provide } from '@lit/context';
 import { History, Listener } from 'history';
 import { Store } from '@reduxjs/toolkit';
 

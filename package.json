@@ -5,6 +5,9 @@
   "files": [
     "*"
   ],
+  "exports": {
+    "./*": "./*"
+  },
   "watch": {
     "build:js": {
       "patterns": ".",
@@ -33,10 +36,13 @@
   },
   "author": "enzi (enzi@braindead.io)",
   "license": "ISC",
+  "@lit/context": {
+    "@lit/reactive-element": "^2.0.0"
+  },
   "dependencies": {
     "@fortawesome/fontawesome-free": "6.5.1",
     "@fortawesome/free-solid-svg-icons": "6.5.1",
-    "@lit-labs/context": "0.3.1",
+    "@lit/context": "^1.1.0",
     "@milkdown/core": "^6.4.1",
     "@milkdown/design-system": "^6.4.1",
     "@milkdown/plugin-history": "^6.5.0",
@@ -63,7 +69,7 @@
     "glob": "^10.2.6",
     "hammerjs": "^2.0.8",
     "history": "^5.3.0",
-    "lit": "2.7.4",
+    "lit": "^3.1.2",
     "material-icons": "^1.12.0",
     "npm-run-all": "^4.1.5",
     "path-to-regexp": "^6.2.1",

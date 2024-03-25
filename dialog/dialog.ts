@@ -6,7 +6,7 @@ import {
   queryAll,
   state,
 } from 'lit/decorators.js';
-import { consume } from '@lit-labs/context';
+import { consume } from '@lit/context';
 
 import { shellContext, Shell } from '../shell/context.js';
 import { Panel } from '../panel/panel.js';

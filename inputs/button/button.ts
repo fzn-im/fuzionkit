@@ -1,6 +1,6 @@
 import { html, LitElement, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { consume } from '@lit-labs/context';
+import { consume } from '@lit/context';
 
 import { SizedMixin } from '../../base/sized-mixin.js';
 import { VariantMixin } from '../../base/variant-mixin.js';

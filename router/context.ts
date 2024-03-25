@@ -1,5 +1,5 @@
 import { LitElement } from 'lit';
-import { createContext } from '@lit-labs/context';
+import { createContext } from '@lit/context';
 import { Store } from '@reduxjs/toolkit';
 
 import { handleRouterNavigation } from '../redux/actions/router.js';

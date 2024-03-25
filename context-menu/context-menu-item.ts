@@ -1,7 +1,7 @@
 import { html, LitElement } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit-html/directives/if-defined.js';
-import { consume } from '@lit-labs/context';
+import { consume } from '@lit/context';
 import { v4 as uuid } from 'uuid';
 
 import { handleHrefClick } from '../router/utils.js';

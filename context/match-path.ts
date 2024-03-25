@@ -1,6 +1,5 @@
 import { ReactiveElement } from 'lit';
-import { ContextConsumer } from '@lit-labs/context';
-import { decorateProperty } from '@lit/reactive-element/decorators/base.js';
+import { ContextConsumer } from '@lit/context';
 
 import { currentPathContext } from '../router/context.js';
 
@@ -12,44 +11,66 @@ export function matchPath({
 }: {
   path: string;
 }): MatchPathDecorator {
-  return decorateProperty({
-    finisher: (ctor: typeof ReactiveElement, name: PropertyKey) => {
-      ctor.addInitializer((element: ReactiveElement): void => {
+  return (<C extends ReactiveElement>(
+    protoOrTarget: ClassAccessorDecoratorTarget<C, any>,
+    nameOrContext: PropertyKey | ClassAccessorDecoratorContext<C, any>,
+  ) => {
+    function handle(element: ReactiveElement, name: string | symbol | PropertyKey, value: string): void {
+      const paramList = [];
+      const regex = pathToRegexp(path, paramList, { end: false });
+
+      const matches = value.match(regex);
+
+      if (!matches) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- have to force the property on the type
+        (element as any)[name] = null;
+
+        return;
+      }
+
+      let params = {};
+
+      matches.shift();
+
+      params = Object.fromEntries(
+        paramList
+          .map(({ name }, idx) => [ name, matches[idx] ]),
+      );
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- have to force the property on the type
+      (element as any)[name] = params;
+    }
+
+    if (typeof nameOrContext === 'object') {
+      nameOrContext.addInitializer(function (this: ReactiveElement): void {
         new ContextConsumer(
-          element,
+          this,
           {
             callback: (value: string): void => {
-              const paramList = [];
-              const regex = pathToRegexp(path, paramList, { end: false });
-
-              const matches = value.match(regex);
-
-              if (!matches) {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any -- have to force the property on the type
-                (element as any)[name] = null;
-
-                return;
-              }
-
-              let params = {};
-
-              matches.shift();
-
-              params = Object.fromEntries(
-                paramList
-                  .map(({ name }, idx) => [ name, matches[idx] ]),
-              );
-
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any -- have to force the property on the type
-              (element as any)[name] = params;
+              handle(this, nameOrContext.name, value);
             },
             context: currentPathContext,
             subscribe: true,
           },
         );
       });
-    },
-  });
+    } else {
+      (protoOrTarget.constructor as typeof ReactiveElement).addInitializer(
+        (element: ReactiveElement): void => {
+          new ContextConsumer(
+            this,
+            {
+              callback: (value: string): void => {
+                handle(element, nameOrContext, value);
+              },
+              context: currentPathContext,
+              subscribe: true,
+            },
+          );
+        },
+      );
+    }
+  }) as MatchPathDecorator;
 }
 
 type MatchPathDecorator = {

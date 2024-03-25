@@ -5,7 +5,7 @@ import { styleMap } from 'lit/directives/style-map.js';
 import Hammer from 'hammerjs';
 import { v4 as uuid } from 'uuid';
 import ResizeObserver from 'resize-observer-polyfill';
-import { consume, provide } from '@lit-labs/context';
+import { consume, provide } from '@lit/context';
 
 import Drawer from '../drawer/drawer.js';
 

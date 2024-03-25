@@ -3,7 +3,7 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { styleMap } from 'lit/directives/style-map.js';
-import { consume } from '@lit-labs/context';
+import { consume } from '@lit/context';
 
 import { ControllableMixin } from '../base/controllable-mixin.js';
 import { handleHrefClick } from '../router/utils.js';

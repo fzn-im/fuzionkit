@@ -4,9 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-import { Context, ContextType } from '@lit-labs/context';
+import { Context, ContextType } from '@lit/context';
 import { ReactiveController, ReactiveElement } from 'lit';
-import { decorateProperty } from '@lit/reactive-element/decorators/base.js';
 
 import { FieldMustMatchProvidedType } from './utils.js';
 
@@ -95,29 +94,65 @@ export function extract<ValueType>({
 }: {
   context: Context<unknown, ValueType>;
   qualifier?: string;
-}): ExtractorDecorator<ValueType> {
-  return decorateProperty({
-    finisher: (ctor: typeof ReactiveElement, name: PropertyKey) => {
-      ctor.addInitializer((element: ReactiveElement): void => {
-        new ContextExtractor(element, {
+}): ExtractDecorator<ValueType> {
+  return (<C extends ReactiveElement, V extends ValueType>(
+    protoOrTarget: ClassAccessorDecoratorTarget<C, V>,
+    nameOrContext: PropertyKey | ClassAccessorDecoratorContext<C, V>,
+  ) => {
+    if (typeof nameOrContext === 'object') {
+      nameOrContext.addInitializer(function (this: ReactiveElement): void {
+        new ContextExtractor(this, {
           context,
           callback: async (value: ValueType): Promise<void> => {
             // hacky af - have to prevent the update during update error
-            (element as any)[`__${name.toString()}`] = value;
+            (this as any)[`__${nameOrContext.name.toString()}`] = value;
 
-            await element.updateComplete;
-            (element as any)[name] = value;
+            await this.updateComplete;
+            (this as any)[nameOrContext.name] = value;
           },
           qualifier,
         });
       });
-    },
-  });
+    } else {
+      (protoOrTarget.constructor as typeof ReactiveElement).addInitializer(
+        (element: ReactiveElement): void => {
+          new ContextExtractor(element, {
+            context,
+            callback: async (value: ValueType): Promise<void> => {
+              // hacky af - have to prevent the update during update error
+              (element as any)[`__${nameOrContext.toString()}`] = value;
+
+              await element.updateComplete;
+              (element as any)[nameOrContext] = value;
+            },
+            qualifier,
+          });
+        },
+      );
+    }
+  }) as ExtractDecorator<ValueType>;
 }
 
-type ExtractorDecorator<ValueType> = {
-  <K extends PropertyKey, Proto extends ReactiveElement>(
+type Interface<T> = {
+  [K in keyof T]: T[K];
+};
+
+type ExtractDecorator<ValueType> = {
+  // legacy
+  <
+    K extends PropertyKey,
+    Proto extends Interface<Omit<ReactiveElement, 'renderRoot'>>,
+  >(
     protoOrDescriptor: Proto,
     name?: K
   ): FieldMustMatchProvidedType<Proto, K, ValueType>;
+
+  // standard
+  <
+    C extends Interface<Omit<ReactiveElement, 'renderRoot'>>,
+    V extends ValueType,
+  >(
+    value: ClassAccessorDecoratorTarget<C, V>,
+    context: ClassAccessorDecoratorContext<C, V>
+  ): void;
 };

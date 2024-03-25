@@ -2,7 +2,7 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { DialogFactory, dialogFactoryContext } from '../dialog/context';
-import { consume } from '@lit-labs/context';
+import { consume } from '@lit/context';
 import { createGalleryDialog } from './gallery-dialog';
 
 @customElement('fzn-nubblet')

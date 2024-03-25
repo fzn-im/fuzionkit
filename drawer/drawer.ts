@@ -2,7 +2,7 @@ import { html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
-import { consume } from '@lit-labs/context';
+import { consume } from '@lit/context';
 
 import { EnhancedEventTargetMixin } from '../utils/events.js';
 import { Shell } from '../shell/shell.js';

@@ -1,7 +1,7 @@
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { styleMap } from 'lit-html/directives/style-map.js';
-import { consume } from '@lit-labs/context';
+import { consume } from '@lit/context';
 
 import { shellContext, Shell } from '../shell/context.js';
 import { FznDialog } from '../dialog/index.js';

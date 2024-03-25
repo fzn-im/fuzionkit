@@ -1,5 +1,5 @@
 import { ReactiveElement } from 'lit';
-import { Context, provide } from '@lit-labs/context';
+import { Context, provide } from '@lit/context';
 import { Store, Unsubscribe } from '@reduxjs/toolkit';
 
 declare type Constructor<T> = new (...args: any[]) => T;

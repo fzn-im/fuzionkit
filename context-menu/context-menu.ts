@@ -1,7 +1,7 @@
 import { html, LitElement, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit-html/directives/class-map.js';
-import { consume } from '@lit-labs/context';
+import { consume } from '@lit/context';
 import { debounce } from 'ts-debounce';
 
 import { takeOrEvaluate, TakeOrEvaluate } from '../utils/take-or-evaluate';

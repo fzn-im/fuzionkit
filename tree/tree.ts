@@ -86,7 +86,7 @@ export class Tree extends LitElement {
   @property({ attribute: true })
   itemRight: string | null = null;
 
-  @queryAssignedNodes('top', true)
+  @queryAssignedNodes({ slot: 'top', flatten: true })
   top: HTMLElement[];
 
   _showEmptyNodes = true;

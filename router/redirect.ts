@@ -1,4 +1,4 @@
-import { consume } from '@lit-labs/context';
+import { consume } from '@lit/context';
 import { LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Router, routerContext } from './context';

@@ -1,6 +1,6 @@
-import { Context, ContextCallback } from '@lit-labs/context';
-import { ContextRequestEvent } from '@lit-labs/context/lib/context-request-event';
-import { ContextProviderEvent } from '@lit-labs/context/lib/controllers/context-provider';
+import { Context, ContextCallback } from '@lit/context';
+import { ContextRequestEvent } from '@lit/context/lib/context-request-event';
+import { ContextProviderEvent } from '@lit/context/lib/controllers/context-provider';
 
 /**
  * A ContextRoot can be used to gather unsatisfied context requests and

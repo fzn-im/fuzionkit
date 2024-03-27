@@ -6,7 +6,9 @@
     "*"
   ],
   "exports": {
-    "./*": "./*"
+    "./*.js": "./*.js",
+    "./*": "./*/index.js",
+    "./*/index.js": null
   },
   "watch": {
     "build:js": {

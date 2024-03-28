@@ -19,7 +19,6 @@
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
     "skipLibCheck": true,
-    "declarationDir": "lib",
     "outDir": "lib",
     "rootDir": "src",
     "typeRoots": [
@@ -38,6 +37,6 @@
     "src"
   ],
   "exclude": [
-    "rollup.config.ts"
+    "lib"
   ]
 }

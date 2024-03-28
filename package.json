@@ -7,9 +7,12 @@
     "*"
   ],
   "exports": {
+    "./resources/*": "./src/resources/*",
+    "./webpack/*.js": "./webpack/*.js",
     "./*.js": "./lib/*.js",
     "./*": "./lib/*/index.js",
-    "./*/index.js": null
+    "./*/index.js": null,
+    "./*/index.d.js": null
   },
   "watch": {
     "build:js": {

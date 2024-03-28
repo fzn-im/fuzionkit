@@ -260,7 +260,7 @@ const modules = (
               minimize: profile.mode === 'production',
               extensions: [ 'handlebars', 'hbs', '' ],
               helperDirs: [
-                path.resolve(__dirname, '../src/html/helpers/'),
+                path.resolve(__dirname, '../html/helpers/'),
               ],
             },
           },
@@ -272,7 +272,7 @@ const modules = (
       },
       {
         test: /\.pug$/,
-        include: path.join(__dirname, '../src'),
+        include: srcPath,
         loader: 'pug-loader',
       },
       {

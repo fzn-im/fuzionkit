@@ -5,6 +5,7 @@ node_modules
 !babel/**/*.js
 !scripts/**/*.js
 !resources/html/**/*.js
+!html/helpers/**/*
 
 **/*.js.map
 

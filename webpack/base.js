@@ -172,7 +172,7 @@ const modules = (
               {
                 loader: 'ts-loader',
                 options: {
-                  configFile: path.resolve(__dirname, '../src/worker-js/tsconfig.webpack.json'),
+                  configFile: path.resolve(__dirname, './tsconfig.worker.json'),
                 },
               },
             ],

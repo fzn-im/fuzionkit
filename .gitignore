@@ -3,22 +3,15 @@ lib
 types
 
 **/*.js
-!**/webpack/**/*.js
-!babel/**/*.js
 !scripts/**/*.js
 !resources/html/**/*.js
-!html/helpers/**/*
+!eslint.config.js
 
 **/*.js.map
 
 **/*.d.ts
-!**/webpack/**/*.d.ts
-
-**/*.css.ts
-
-!eslint.config.js
-
 !global.d.ts
 
 **/*.css
+**/*.css.ts
 **/*.css.map

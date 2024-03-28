@@ -169,7 +169,7 @@ export const renderContextMenuItem = (
 export class ContextMenuItemLoading extends LitElement {
   static styles = [ styles ];
 
-  render (): unknown {
+  render(): unknown {
     return [
       html`<fa-icon type="fa-solid fa-cog fa-spin"></fa-icon>`,
       html`<br />`,
@@ -186,11 +186,11 @@ export class ContextMenuItemAsync extends LitElement {
   _promise: TakeOrEvaluate<Promise<ContextMenuItemOptions[]>>;
 
   @property({ attribute: false })
-  get promise (): TakeOrEvaluate<Promise<ContextMenuItemOptions[]>> {
+  get promise(): TakeOrEvaluate<Promise<ContextMenuItemOptions[]>> {
     return this._promise;
   }
 
-  set promise (promise: TakeOrEvaluate<Promise<ContextMenuItemOptions[]>>) {
+  set promise(promise: TakeOrEvaluate<Promise<ContextMenuItemOptions[]>>) {
     if (this._promise !== promise) {
       const oldValue = this._promise;
       this._promise = promise;
@@ -205,7 +205,7 @@ export class ContextMenuItemAsync extends LitElement {
   @state()
   items: ContextMenuItemOptions[];
 
-  connectedCallback (): void {
+  connectedCallback(): void {
     super.connectedCallback();
 
     setTimeout(async () => {
@@ -213,11 +213,11 @@ export class ContextMenuItemAsync extends LitElement {
     }, 0);
   }
 
-  updated (): void {
+  updated(): void {
     this.contextMenu.reposition();
   }
 
-  render (): unknown {
+  render(): unknown {
     return this.items
       ? renderContextMenuItems(this.contextMenu, this.items)
       : html`<fzn-context-menu-item-loading></fzn-context-menu-item-loading>`;
@@ -237,13 +237,13 @@ export class ContextMenuItemElement extends LitElement {
   @query(':host > div')
   container: HTMLElement;
 
-  firstUpdated (): void {
+  firstUpdated(): void {
     if (this.element && this.container) {
       this.container.appendChild(takeOrEvaluate(this.element));
     }
   }
 
-  render (): unknown {
+  render(): unknown {
     const { renderElement } = this;
 
     return renderElement || html`<div></div>`;
@@ -257,7 +257,7 @@ export class ContextMenuItemHeader extends LitElement {
   @property({ attribute: false })
   renderElement: unknown;
 
-  render (): unknown {
+  render(): unknown {
     const { renderElement } = this;
 
     return renderElement || html`<slot></slot>`;
@@ -271,7 +271,7 @@ export class ContextMenuItemPlaceholder extends LitElement {
   @property({ attribute: false })
   renderElement: unknown;
 
-  render (): unknown {
+  render(): unknown {
     const { renderElement } = this;
 
     return renderElement || html`<slot></slot>`;
@@ -282,7 +282,7 @@ export class ContextMenuItemPlaceholder extends LitElement {
 export class ContextMenuItemSeparator extends LitElement {
   static styles = [ styles ];
 
-  render (): unknown {
+  render(): unknown {
     return null;
   }
 }
@@ -326,14 +326,14 @@ export class ContextMenuItemButton extends LitElement {
 
   contextMenuUuid: string;
 
-  connectedCallback (): void {
+  connectedCallback(): void {
     super.connectedCallback();
     const { contextMenu, contextMenuItemOptions, onItemCreate } = this;
 
     onItemCreate && onItemCreate(this, contextMenuItemOptions, contextMenu);
   }
 
-  handleClick (evt: MouseEvent): void {
+  handleClick(evt: MouseEvent): void {
     const { childOptions, contextMenu, items, router, routeTo } = this;
 
     if (items) {
@@ -364,7 +364,7 @@ export class ContextMenuItemButton extends LitElement {
     }
   }
 
-  render (): unknown {
+  render(): unknown {
     const { handleClick, hasMore, href, renderElement, routeTo, target } = this;
 
     const left = html`
@@ -415,7 +415,7 @@ export class ContextMenuItemToggle extends ControllableMixin<boolean, typeof Lit
     this.internalValue = !this.value;
   };
 
-  render (): unknown {
+  render(): unknown {
     const { handleClick, renderElement, value } = this;
 
     const left = html`
@@ -443,7 +443,7 @@ export class ContextMenuItemToggle extends ControllableMixin<boolean, typeof Lit
 export class ContextMenuItemSlider extends LitElement {
   static styles = [ styles ];
 
-  render (): unknown {
+  render(): unknown {
     return html`
       <slot></slot>
     `;

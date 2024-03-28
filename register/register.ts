@@ -48,7 +48,7 @@ export class Register extends ControllableMixin<
   @property({ attribute: true, type: Boolean, reflect: true })
   registered = false;
 
-  async submit (): Promise<void> {
+  async submit(): Promise<void> {
     const { value: detail } = this;
 
     this.dispatchEvent(new CustomEvent(
@@ -79,7 +79,7 @@ export class Register extends ControllableMixin<
     }
   };
 
-  render (): unknown {
+  render(): unknown {
     const {
       errorMap,
       handleInputChange,

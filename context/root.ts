@@ -11,7 +11,7 @@ import { ContextProviderEvent } from '@lit/context/lib/controllers/context-provi
  * consumers.
  */
 export class ContextRoot {
-  constructor () {
+  constructor() {
 
   }
 

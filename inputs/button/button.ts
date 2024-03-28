@@ -49,7 +49,7 @@ export default class Button extends ButtonBase {
     }
   };
 
-  render (): TemplateResult {
+  render(): TemplateResult {
     const { disabled, handleClick, href, routerHref, target } = this;
 
     return (!href && !target && !routerHref)

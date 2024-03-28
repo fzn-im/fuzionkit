@@ -20,11 +20,11 @@ export class EnhancedEventTarget<S = any> extends EventTarget {
 
   model: S = this as any;
 
-  isListenerCounted (type: string, listener: Parameters<typeof EventTarget.prototype.addEventListener>[1]): boolean {
+  isListenerCounted(type: string, listener: Parameters<typeof EventTarget.prototype.addEventListener>[1]): boolean {
     return (this.listenersMap[type] && this.listenersMap[type].includes(listener)) || false;
   }
 
-  getCountedEventListener (type: string): number {
+  getCountedEventListener(type: string): number {
     return this.listenersMap[type]?.length ?? 0;
   }
 
@@ -116,7 +116,7 @@ export class EnhancedEventTarget<S = any> extends EventTarget {
     }
   };
 
-  isListeningTo (
+  isListeningTo(
     target: any,
     type: string,
     listener: Parameters<typeof EventTarget.prototype.addEventListener>[1],
@@ -126,7 +126,7 @@ export class EnhancedEventTarget<S = any> extends EventTarget {
     ));
   }
 
-  listenTo (
+  listenTo(
     target: any,
     type: string,
     listener: Parameters<typeof EventTarget.prototype.addEventListener>[1],
@@ -139,7 +139,7 @@ export class EnhancedEventTarget<S = any> extends EventTarget {
     }
   }
 
-  stopListeningTo (
+  stopListeningTo(
     target: any,
     type: string,
     listener: Parameters<typeof EventTarget.prototype.addEventListener>[1],
@@ -154,7 +154,7 @@ export class EnhancedEventTarget<S = any> extends EventTarget {
     }
   }
 
-  stopListening (): void {
+  stopListening(): void {
     for (const { target, type, listener, options } of this.listeningMap) {
       target.removeEventListener(type, listener, options);
     }
@@ -171,7 +171,7 @@ type Constructor<T = Record<string, unknown>> = {
 
 export type IEnhancedEventTarget<S = any> = EnhancedEventTarget<S>;
 
-export function EnhancedEventTargetMixin<T extends Constructor<Omit<LitElement, '__instanceProperties'>>, S = T> (
+export function EnhancedEventTargetMixin<T extends Constructor<Omit<LitElement, '__instanceProperties'>>, S = T>(
   constructor: T,
 ): T & Constructor<IEnhancedEventTarget<S>> {
   class EnhancedEventTarget extends constructor {
@@ -186,11 +186,11 @@ export function EnhancedEventTargetMixin<T extends Constructor<Omit<LitElement, 
 
     model = this as any;
 
-    isListenerCounted (type: string, listener: Parameters<typeof EventTarget.prototype.addEventListener>[1]): boolean {
+    isListenerCounted(type: string, listener: Parameters<typeof EventTarget.prototype.addEventListener>[1]): boolean {
       return (this.listenersMap[type] && this.listenersMap[type].includes(listener)) || false;
     }
 
-    getCountedEventListener (type: string): number {
+    getCountedEventListener(type: string): number {
       return this.listenersMap[type]?.length ?? 0;
     }
 
@@ -280,7 +280,7 @@ export function EnhancedEventTargetMixin<T extends Constructor<Omit<LitElement, 
       }
     };
 
-    isListeningTo (
+    isListeningTo(
       target: any,
       type: string,
       listener: Parameters<typeof EventTarget.prototype.addEventListener>[1],
@@ -290,7 +290,7 @@ export function EnhancedEventTargetMixin<T extends Constructor<Omit<LitElement, 
       ));
     }
 
-    listenTo (
+    listenTo(
       target: any,
       type: string,
       listener: Parameters<typeof EventTarget.prototype.addEventListener>[1],
@@ -303,7 +303,7 @@ export function EnhancedEventTargetMixin<T extends Constructor<Omit<LitElement, 
       }
     }
 
-    stopListeningTo (
+    stopListeningTo(
       target: any,
       type: string,
       listener: Parameters<typeof EventTarget.prototype.addEventListener>[1],
@@ -318,7 +318,7 @@ export function EnhancedEventTargetMixin<T extends Constructor<Omit<LitElement, 
       }
     }
 
-    stopListening (): void {
+    stopListening(): void {
       for (const { target, type, listener, options } of this.listeningMap) {
         target.removeEventListener(type, listener, options);
       }

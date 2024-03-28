@@ -11,7 +11,7 @@ export default class Button extends LitElement {
   @property({ attribute: true, type: Boolean, reflect: true })
   inline = false;
 
-  render (): TemplateResult {
+  render(): TemplateResult {
     return html`
       <slot></slot>
     `;

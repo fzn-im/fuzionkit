@@ -1,7 +1,13 @@
-const { glob } = require('glob');
-const sass = require('sass');
-const fs = require('fs');
-const path = require('path');
+// @ts-check
+
+import { glob } from 'glob';
+import { compileAsync } from 'sass';
+import { writeFileSync } from 'fs';
+import { basename, dirname, resolve } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const build = async () => {
   const { default: stringToTemplateLiteral } = await import('string-to-template-literal');
@@ -14,13 +20,13 @@ const build = async () => {
   )
     .map((file) => file.fullpath());
 
-  const parentNodeModules = path.resolve(__dirname, '../../');
+  const parentNodeModules = resolve(__dirname, '../../');
 
   for (const file of files) {
-    const result = await sass.compileAsync(file, {
+    const result = await compileAsync(file, {
       loadPaths: [
         'node_modules',
-        ...(path.basename(parentNodeModules) === 'node_modules' ? [ parentNodeModules ] : []),
+        ...(basename(parentNodeModules) === 'node_modules' ? [ parentNodeModules ] : []),
       ],
       sourceMap: true,
       verbose: true,
@@ -29,7 +35,7 @@ const build = async () => {
     const { css } = result;
 
     const cssFilename = file.replace(/\.scss$/, '.css');
-    fs.writeFileSync(cssFilename, css);
+    writeFileSync(cssFilename, css);
 
     const jsFilename = file.replace(/\.scss$/, '.css.ts');
 
@@ -37,7 +43,7 @@ const build = async () => {
 export default css${stringToTemplateLiteral(css)};
 `;
 
-    fs.writeFileSync(jsFilename, fileContents);
+    writeFileSync(jsFilename, fileContents);
   }
 };
 

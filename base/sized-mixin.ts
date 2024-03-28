@@ -25,7 +25,7 @@ export interface SizedElementInterface {
   size: ElementSize;
 }
 
-export function SizedMixin<T extends Constructor<ReactiveElement>> (
+export function SizedMixin<T extends Constructor<ReactiveElement>>(
   constructor: T,
   {
     validSizes = [ 'xs', 's', 'm', 'l', 'xl' ],
@@ -37,11 +37,11 @@ export function SizedMixin<T extends Constructor<ReactiveElement>> (
 ): T & Constructor<SizedElementInterface> {
   class SizedElement extends constructor {
     @property({ type: String, reflect: true })
-    public get size (): ElementSize {
+    public get size(): ElementSize {
       return this._size || 'm';
     }
 
-    public set size (value: ElementSize) {
+    public set size(value: ElementSize) {
       const defaultSize = noDefaultSize ? null : 'm';
       const size = (value
         ? value.toLocaleLowerCase()
@@ -62,7 +62,7 @@ export function SizedMixin<T extends Constructor<ReactiveElement>> (
 
     private _size: ElementSize | null = 'm';
 
-    protected firstUpdated (changes: PropertyValues): void {
+    protected firstUpdated(changes: PropertyValues): void {
       super.firstUpdated(changes);
       if (!this.hasAttribute('size') && !noDefaultSize) {
         this.setAttribute('size', this.size);

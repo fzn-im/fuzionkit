@@ -92,15 +92,15 @@ export class RouterWait {
   routerWait = false;
   browserWait = false;
 
-  constructor (router: Router) {
-    this.router= router;
+  constructor(router: Router) {
+    this.router = router;
   }
 
-  isActive (): boolean {
+  isActive(): boolean {
     return this.router.waits.includes(this);
   }
 
-  refreshActive (): void {
+  refreshActive(): void {
     const active = this.isActive();
 
     if (!active && (this.routerWait || this.browserWait)) {
@@ -110,7 +110,7 @@ export class RouterWait {
     }
   }
 
-  addRouterWait (): void {
+  addRouterWait(): void {
     if (!this.routerWait) {
       this.routerWait = true;
       this.router.routerWaits++;
@@ -118,7 +118,7 @@ export class RouterWait {
     }
   }
 
-  removeRouterWait (): void {
+  removeRouterWait(): void {
     if (this.routerWait) {
       this.routerWait = false;
       this.router.routerWaits--;
@@ -126,7 +126,7 @@ export class RouterWait {
     }
   }
 
-  addBrowserWait (): void {
+  addBrowserWait(): void {
     if (!this.browserWait) {
       this.browserWait = true;
       this.router.browserWaits++;
@@ -134,7 +134,7 @@ export class RouterWait {
     }
   }
 
-  removeBrowserWait (): void {
+  removeBrowserWait(): void {
     if (this.browserWait) {
       this.browserWait = false;
       this.router.browserWaits--;
@@ -142,16 +142,16 @@ export class RouterWait {
     }
   }
 
-  addWaitAll (): void {
+  addWaitAll(): void {
     this.addRouterWait();
     this.addBrowserWait();
   }
 
-  removeWaitAll (): void {
+  removeWaitAll(): void {
     this.remove();
   }
 
-  remove (): void {
+  remove(): void {
     this.removeBrowserWait();
     this.removeRouterWait();
   }

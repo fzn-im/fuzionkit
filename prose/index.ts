@@ -1,3 +1,3 @@
-import { ProseEditor } from "./prose";
+import { ProseEditor } from './prose';
 
 export { ProseEditor };

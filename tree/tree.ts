@@ -33,7 +33,7 @@ export type NodePlacementEvent<T> = {
   placement: NodePlacement<T>;
 }
 
-function hasNonItemChildren (node: TreeNode<unknown>): boolean {
+function hasNonItemChildren(node: TreeNode<unknown>): boolean {
   for (const child of node.children || []) {
     const { children } = child;
     if (children === undefined) {
@@ -49,7 +49,7 @@ function hasNonItemChildren (node: TreeNode<unknown>): boolean {
 export class Tree extends LitElement {
   static styles = [ styles ];
 
-  get isRoot (): boolean { return this.root === this; }
+  get isRoot(): boolean { return this.root === this; }
 
   context: any = null;
 
@@ -59,11 +59,11 @@ export class Tree extends LitElement {
   _nodeChildren: TreeNode<unknown>[];
 
   @property({ attribute: false })
-  get nodeChildren (): TreeNode<unknown>[] {
+  get nodeChildren(): TreeNode<unknown>[] {
     return this._nodeChildren;
   }
 
-  set nodeChildren (nodeChildren: TreeNode<unknown>[]) {
+  set nodeChildren(nodeChildren: TreeNode<unknown>[]) {
     const oldValue = this._nodeChildren;
     this._nodeChildren = nodeChildren;
     this.requestUpdate('nodeChildren', oldValue);
@@ -92,11 +92,11 @@ export class Tree extends LitElement {
   _showEmptyNodes = true;
 
   @property({ attribute: true, type: Boolean })
-  get showEmptyNodes (): boolean {
+  get showEmptyNodes(): boolean {
     return this._showEmptyNodes;
   }
 
-  set showEmptyNodes (showEmptyNodes) {
+  set showEmptyNodes(showEmptyNodes) {
     const oldValue = this._showEmptyNodes;
     this._showEmptyNodes = showEmptyNodes;
     this.requestUpdate('showEmptyNodes', oldValue);
@@ -112,7 +112,7 @@ export class Tree extends LitElement {
 
   // === root ===
 
-  get root (): Tree { return this.rootProp || this; }
+  get root(): Tree { return this.rootProp || this; }
 
   @property({ attribute: false })
   rootProp: Tree;
@@ -122,7 +122,7 @@ export class Tree extends LitElement {
   @property({ attribute: true, type: Boolean })
   allowDragging = false;
 
-  get canDrag (): boolean { return this.root.allowDragging; }
+  get canDrag(): boolean { return this.root.allowDragging; }
 
   @property({ attribute: false })
   allowMove: (root: Tree, node: TreeNode<unknown>) => unknown = (): boolean => true;
@@ -139,15 +139,15 @@ export class Tree extends LitElement {
   @property({ attribute: false })
   lastPlacementProperty: NodePlacement<unknown> | null = null;
 
-  get lastPlacement (): NodePlacement<unknown> | null { return this._lastPlacementState || this.lastPlacementProperty; }
+  get lastPlacement(): NodePlacement<unknown> | null { return this._lastPlacementState || this.lastPlacementProperty; }
 
   _draggedNode: TreeNode<unknown | null> = null;
 
-  get draggedNode (): TreeNode<unknown> | null { return this.root._draggedNode; }
+  get draggedNode(): TreeNode<unknown> | null { return this.root._draggedNode; }
 
-  set draggedNode (node: TreeNode<unknown> | null) { this.root._draggedNode = node; }
+  set draggedNode(node: TreeNode<unknown> | null) { this.root._draggedNode = node; }
 
-  handleFilteredNodesUpdate (): void {
+  handleFilteredNodesUpdate(): void {
     const { nodeChildren, showEmptyNodes } = this;
     this.filteredNodeChildren = nodeChildren.filter((child) => {
       const { children } = child;
@@ -239,7 +239,7 @@ export class Tree extends LitElement {
     evt.stopPropagation();
   };
 
-  render (): TemplateResult[] {
+  render(): TemplateResult[] {
     const {
       canDrag,
       draggedNode,
@@ -455,7 +455,7 @@ export class TreeItem extends LitElement {
     }
   };
 
-  render (): TemplateResult[] {
+  render(): TemplateResult[] {
     const {
       handleClick,
       handleMouseover,
@@ -545,7 +545,7 @@ export class TreeDragIndicator extends LitElement {
     `,
   ];
 
-  render (): TemplateResult {
+  render(): TemplateResult {
     return html`<div><div></div></div>`;
   }
 }
@@ -563,7 +563,7 @@ export class TreeEmptyNodePlaceholder extends LitElement {
     `,
   ];
 
-  render (): TemplateResult {
+  render(): TemplateResult {
     return html`
       <div>( empty )</div>
     `;

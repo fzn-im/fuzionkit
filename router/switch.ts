@@ -31,7 +31,7 @@ export const buildSwitches = (routes: SwitchRoute[]): unknown => (
     <fzn-switch>
      ${
       routes.map((route) => {
-        const [ path, content, options = {} ] = route; 
+        const [ path, content, options = {} ] = route;
         const { keyed: keyedFn } = options as SwitchRouteOptions;
 
         if (typeof content === 'function') {
@@ -86,7 +86,7 @@ export const buildSwitches = (routes: SwitchRoute[]): unknown => (
             ></fzn-route>
           `;
         }
-        
+
         return null;
       })
      }
@@ -133,11 +133,11 @@ export class Switch extends LitElement {
   _currentPath: string;
 
   @property({ attribute: true, type: String, reflect: true })
-  get currentPath (): string {
+  get currentPath(): string {
     return this.controlled ? this._currentPath : this.router?.currentPath;
   }
 
-  set currentPath (currentPath: string) {
+  set currentPath(currentPath: string) {
     if (this._currentPath !== currentPath) {
       const oldValue = this._currentPath;
 
@@ -151,7 +151,7 @@ export class Switch extends LitElement {
     }
   }
 
-  connectedCallback (): void {
+  connectedCallback(): void {
     super.connectedCallback();
 
     if (!this.controlled) {
@@ -171,7 +171,7 @@ export class Switch extends LitElement {
     }
   };
 
-  navigate (path: string): void {
+  navigate(path: string): void {
     // console.log('navigating', path);
 
     if (path === null) {
@@ -190,7 +190,7 @@ export class Switch extends LitElement {
     this.dispatchEvent(new CustomEvent('navigate', { detail: path, bubbles: false }));
   }
 
-  getRoute (
+  getRoute(
     parsedPath: string,
   ): Route | null {
     for (const child of this.children) {
@@ -239,7 +239,7 @@ export class Switch extends LitElement {
     return null;
   }
 
-  render (): unknown {
+  render(): unknown {
     return html`
       <slot name="active"></slot>
     `;

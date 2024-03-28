@@ -7,7 +7,7 @@ import styles from './dialog-parts.lit.css.js';
 export class DialogCloseButton extends LitElement {
   static styles = [ styles ];
 
-  render (): unknown {
+  render(): unknown {
     return html`
       <fa-icon type="fa fa-times"></fa-icon>
     `;
@@ -21,15 +21,15 @@ export class ClosablePanelHeader extends LitElement {
   @property({ attribute: true, type: Boolean, reflect: true })
   closeable = true;
 
-  handleClose (): void {
+  handleClose(): void {
     this.dispatchEvent(new CustomEvent('close'));
   }
 
-  startWindowDrag (): void {
+  startWindowDrag(): void {
     return;
   }
 
-  render (): unknown {
+  render(): unknown {
     const { handleClose, closeable, startWindowDrag } = this;
 
     return html`

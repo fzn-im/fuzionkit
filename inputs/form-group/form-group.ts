@@ -14,7 +14,7 @@ export class FormGroup extends LitElement {
   @property({ attribute: true, type: String })
   helperText?: [string, ...any][] | [string, ...any] | string[] | string;
 
-  render (): unknown {
+  render(): unknown {
     const { helperText, label } = this;
 
     return [

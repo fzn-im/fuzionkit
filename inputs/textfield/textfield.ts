@@ -56,7 +56,7 @@ export class TextField extends ControllableMixin<string, typeof LitElement>(Size
     }
   };
 
-  render (): unknown {
+  render(): unknown {
     const {
       autoComplete,
       disabled,

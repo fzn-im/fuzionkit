@@ -17,11 +17,11 @@ export class Route extends LitElement {
   _slot: string | undefined;
 
   @property({ noAccessor: false })
-  get slot (): string | undefined {
+  get slot(): string | undefined {
     return super.slot;
   }
 
-  set slot (slot: string | undefined) {
+  set slot(slot: string | undefined) {
     if (this._slot !== slot) {
       const { handleNavigate } = this;
 
@@ -44,11 +44,11 @@ export class Route extends LitElement {
   _switch: Switch;
 
   @consume({ context: switchContext })
-  get switch (): Switch {
+  get switch(): Switch {
     return this._switch;
   }
 
-  set switch (_switch: Switch) {
+  set switch(_switch: Switch) {
     if (this._switch !== _switch) {
       const { handleNavigate, slot } = this;
 
@@ -161,13 +161,13 @@ export class Route extends LitElement {
     // console.log(this, 'params', this.routeMatch.params, 'parentRoute', parentRoute);
   };
 
-  updated (): void {
+  updated(): void {
     // console.log('this.switch', this.switch);
     // console.log('this.parentRoute', this.parentRoute);
   }
 
-  render (): unknown {
-    const { component, path, routeMatch, slot } = this;
+  render(): unknown {
+    const { component, routeMatch, slot } = this;
 
     if (slot) {
       if (component) {

@@ -20,7 +20,7 @@ export interface ControllableElementInterface<V> {
 
 const altProperty = property;
 
-export function ControllableMixin<V, T extends Constructor<ReactiveElement>> (
+export function ControllableMixin<V, T extends Constructor<ReactiveElement>>(
   constructor: T,
   {
     defaultValue,
@@ -33,7 +33,7 @@ export function ControllableMixin<V, T extends Constructor<ReactiveElement>> (
   } = {},
 ): T & Constructor<ControllableElementInterface<V>> {
   class ControllableElement extends constructor {
-    connectedCallback (): void {
+    connectedCallback(): void {
       super.connectedCallback();
 
       this.__internalValue = this.defaultValue;
@@ -42,17 +42,17 @@ export function ControllableMixin<V, T extends Constructor<ReactiveElement>> (
     @altProperty({ attribute: true, type: valueType })
     defaultValue: V = defaultValue;
 
-    get controlled (): boolean {
+    get controlled(): boolean {
       return this.__propValue !== undefined;
     }
 
     __internalValue: V = defaultValue;
 
-    get internalValue (): V {
+    get internalValue(): V {
       return this.__internalValue;
     }
 
-    set internalValue (value: V) {
+    set internalValue(value: V) {
       if (!this.controlled) {
         const oldValue = this.internalValue;
         this.__internalValue = value;
@@ -69,11 +69,11 @@ export function ControllableMixin<V, T extends Constructor<ReactiveElement>> (
     __propValue: V;
 
     @altProperty({ attribute: isAttribute, type: valueType })
-    get value (): V {
+    get value(): V {
       return this.__propValue !== undefined ? this.__propValue : this.__internalValue;
     }
 
-    set value (value: V) {
+    set value(value: V) {
       const oldValue = this.__propValue;
       this.__propValue = value;
       this.requestUpdate('value', oldValue);

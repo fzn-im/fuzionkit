@@ -1,7 +1,7 @@
 import { css, html, LitElement, TemplateResult } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
-import { defaultValueCtx, Editor, themeFactory, ThemeBorder, ThemeColor, ThemeSize, rootCtx } from '@milkdown/core';
+import { defaultValueCtx, Editor, rootCtx } from '@milkdown/core';
 import { commonmark } from '@milkdown/preset-commonmark';
 import { nord } from '@milkdown/theme-nord';
 import { emotionConfigCtx } from '@milkdown/design-system';
@@ -31,7 +31,7 @@ export class ProseEditor extends LitElement {
     `,
   ];
 
-  connectedCallback (): void {
+  connectedCallback(): void {
     super.connectedCallback();
 
     Editor.make()
@@ -59,7 +59,7 @@ export class ProseEditor extends LitElement {
       .create();
   }
 
-  render (): TemplateResult {
+  render(): TemplateResult {
     return html`
       <slot></slot>
     `;

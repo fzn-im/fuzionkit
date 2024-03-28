@@ -15,7 +15,7 @@ export class FaIcon extends LitElement {
   @property({ attribute: true, type: String })
   type: string;
 
-  render (): TemplateResult {
+  render(): TemplateResult {
     const { type } = this;
     return html`<i class=${type} part="icon"><slot></slot></i>`;
   }

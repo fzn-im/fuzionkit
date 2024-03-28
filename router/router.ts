@@ -53,7 +53,7 @@ export class Router extends LitElement {
     },
   );
 
-  get history (): History {
+  get history(): History {
     return this._history.value;
   }
 
@@ -65,11 +65,11 @@ export class Router extends LitElement {
   storeHandler?: (evt: CustomEvent<string>) => void;
 
   @property({ attribute: false })
-  get store (): Store {
+  get store(): Store {
     return this._store;
   }
 
-  set store (store: Store) {
+  set store(store: Store) {
     if (store !== this._store) {
       const oldValue = this._store;
 
@@ -95,7 +95,7 @@ export class Router extends LitElement {
   @property()
   router: Router = this;
 
-  get path (): string {
+  get path(): string {
     const { pathname } = this.history.location;
 
     return pathname;
@@ -115,7 +115,7 @@ export class Router extends LitElement {
     this.navigateFromPath();
   };
 
-  navigateFromPath (): void {
+  navigateFromPath(): void {
     if (!this.triggerNext) {
       return;
     }
@@ -153,7 +153,7 @@ export class Router extends LitElement {
     }
   };
 
-  navigate (path: string, options: NavigateOptions = {}): void {
+  navigate(path: string, options: NavigateOptions = {}): void {
     const { replace = false, trigger = true } = options;
 
     this.triggerNext = trigger;
@@ -164,7 +164,7 @@ export class Router extends LitElement {
     }
   }
 
-  renavigate (): void {
+  renavigate(): void {
     const { currentPath } = this;
 
     if (this.currentPath) {
@@ -175,7 +175,7 @@ export class Router extends LitElement {
     }
   }
 
-  createWait (waitType: RouterWaitType): RouterWait {
+  createWait(waitType: RouterWaitType): RouterWait {
     switch (waitType) {
     case 'router':
       return this.createRouterWait();
@@ -188,7 +188,7 @@ export class Router extends LitElement {
     }
   }
 
-  createRouterWait (): RouterWait {
+  createRouterWait(): RouterWait {
     const wait = new RouterWait(this);
 
     wait.addRouterWait();
@@ -196,7 +196,7 @@ export class Router extends LitElement {
     return wait;
   }
 
-  createBrowserWait (): RouterWait {
+  createBrowserWait(): RouterWait {
     const wait = new RouterWait(this);
 
     wait.addBrowserWait();
@@ -204,7 +204,7 @@ export class Router extends LitElement {
     return wait;
   }
 
-  createWaitAll (): RouterWait {
+  createWaitAll(): RouterWait {
     const wait = new RouterWait(this);
 
     wait.addWaitAll();
@@ -212,17 +212,17 @@ export class Router extends LitElement {
     return wait;
   }
 
-  removeAllWaits (): void {
+  removeAllWaits(): void {
     [ ...this.waits ].forEach((wait) => {
       wait.remove();
     });
   }
 
-  _addWait (wait: RouterWait): void {
+  _addWait(wait: RouterWait): void {
     this.waits.push(wait);
   }
 
-  _removeWait (wait: RouterWait): void {
+  _removeWait(wait: RouterWait): void {
     const index = this.waits.indexOf(wait);
 
     if (index > -1) {
@@ -230,7 +230,7 @@ export class Router extends LitElement {
     }
   }
 
-  render (): unknown {
+  render(): unknown {
     return html`<slot></slot>`;
   }
 }

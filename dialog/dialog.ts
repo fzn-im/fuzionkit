@@ -37,7 +37,7 @@ export type DialogFactoryOptions = {
 export class DialogFactory {
   container: HTMLElement;
 
-  constructor (options: DialogFactoryOptions = {}) {
+  constructor(options: DialogFactoryOptions = {}) {
     const { container = window.document.body } = options;
 
     this.container = container;
@@ -121,7 +121,7 @@ export class FznDialog extends LitElement {
   @query('fzn-panel')
   panel: Panel;
 
-  connectedCallback (): void {
+  connectedCallback(): void {
     super.connectedCallback();
     const { handleClick } = this;
 
@@ -131,7 +131,7 @@ export class FznDialog extends LitElement {
     this.addEventListener('click', handleClick);
   }
 
-  disconnectedCallback (): void {
+  disconnectedCallback(): void {
     super.disconnectedCallback();
     const { handleClick, handleKeyDown } = this;
 
@@ -141,7 +141,7 @@ export class FznDialog extends LitElement {
     this.unlockScroll();
   }
 
-  lockScroll (): void {
+  lockScroll(): void {
     const { scrollLocked, shell } = this;
 
     if (!scrollLocked) {
@@ -150,7 +150,7 @@ export class FznDialog extends LitElement {
     }
   }
 
-  unlockScroll (): void {
+  unlockScroll(): void {
     const { scrollLocked, shell } = this;
 
     if (scrollLocked) {
@@ -171,7 +171,7 @@ export class FznDialog extends LitElement {
     }
   };
 
-  close (): void {
+  close(): void {
     this.dispatchEvent(new CustomEvent('close'));
   }
 
@@ -179,7 +179,7 @@ export class FznDialog extends LitElement {
     this.close();
   };
 
-  internalClose (): void {
+  internalClose(): void {
     if (!this.allowInternalClose) {
       return;
     }
@@ -187,11 +187,11 @@ export class FznDialog extends LitElement {
     this.dispatchEvent(new CustomEvent('close'));
   }
 
-  get allowInternalClose (): boolean {
+  get allowInternalClose(): boolean {
     return true;
   }
 
-  didOpen (): void {
+  didOpen(): void {
     this.addEventListener('keydown', this.handleKeyDown, { capture: true, passive: true });
     this.tabIndex = 0;
     window.document.body.appendChild(this);
@@ -205,7 +205,7 @@ export class FznDialog extends LitElement {
     }
   };
 
-  handleKeyDown (evt: KeyboardEvent): void {
+  handleKeyDown(evt: KeyboardEvent): void {
     switch (evt.code) {
     case 'Escape':
       this.internalClose();
@@ -214,7 +214,7 @@ export class FznDialog extends LitElement {
     }
   }
 
-  handleSlotChange (): void {
+  handleSlotChange(): void {
     this.requestUpdate();
   }
 
@@ -305,7 +305,7 @@ export class FznDialog extends LitElement {
 
     // Y
     switch (target) {
-    case 'tl':  
+    case 'tl':
     case 't':
     case 'tr':
       this.floatingYOffset = mouseY;
@@ -361,7 +361,7 @@ export class FznDialog extends LitElement {
     this.handleResizeStart(evt, 'l');
   };
 
-  render (inner?: unknown): unknown {
+  render(inner?: unknown): unknown {
     const { floating, handleBackdropClick } = this;
     const {
       floatingXOffset,

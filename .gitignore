@@ -1,5 +1,6 @@
 node_modules
 **/*.js
+!**/webpack/*.js
 !babel/**/*.js
 !scripts/**/*.js
 !resources/html/**/*.js

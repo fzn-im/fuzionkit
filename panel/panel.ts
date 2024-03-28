@@ -14,7 +14,7 @@ export class Panel extends VariantMixin<
   @property({ attribute: true, type: Boolean, reflect: true })
   foggedGlass = false;
 
-  render (): unknown {
+  render(): unknown {
     return html`<slot></slot>`;
   }
 }
@@ -23,7 +23,7 @@ export class Panel extends VariantMixin<
 export class PanelHeader extends LitElement {
   static styles = [ styles ];
 
-  render (): unknown {
+  render(): unknown {
     return [
       html`<slot></slot>`,
       html`<slot name="right"></slot>`,
@@ -35,7 +35,7 @@ export class PanelHeader extends LitElement {
 export class PanelBody extends LitElement {
   static styles = [ styles ];
 
-  render (): unknown {
+  render(): unknown {
     return html`<slot></slot>`;
   }
 }
@@ -44,7 +44,7 @@ export class PanelBody extends LitElement {
 export class PanelFooter extends LitElement {
   static styles = [ styles ];
 
-  render (): unknown {
+  render(): unknown {
     return [
       html`<div class="left"><slot name="left"></slot></div>`,
       html`<div class="right"><slot></slot></div>`,

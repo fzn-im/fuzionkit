@@ -11,7 +11,7 @@ export interface VariantElementInterface {
   variant: string;
 }
 
-export function VariantMixin<T extends Constructor<ReactiveElement>> (
+export function VariantMixin<T extends Constructor<ReactiveElement>>(
   constructor: T,
   {
     defaultVariant,
@@ -31,11 +31,11 @@ export function VariantMixin<T extends Constructor<ReactiveElement>> (
       },
       reflect: true,
     })
-    public get variant (): string {
+    public get variant(): string {
       return this._variant || defaultVariant;
     }
 
-    public set variant (value: string) {
+    public set variant(value: string) {
       const variant = (value
         ? value.toLocaleLowerCase()
         : value);
@@ -53,7 +53,7 @@ export function VariantMixin<T extends Constructor<ReactiveElement>> (
 
     private _variant: string | null = defaultVariant;
 
-    protected firstUpdated (changes: PropertyValues): void {
+    protected firstUpdated(changes: PropertyValues): void {
       super.firstUpdated(changes);
 
       if (!this.hasAttribute('variant') && defaultVariant !== undefined) {

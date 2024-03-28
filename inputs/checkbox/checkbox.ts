@@ -23,7 +23,7 @@ export class Checkbox extends ControllableMixin<boolean, typeof LitElement>(
     }
   };
 
-  render (): unknown {
+  render(): unknown {
     return html`
       <i
         class=${classMap({
@@ -59,7 +59,7 @@ export class CheckboxRow extends LitElement {
     }
   };
 
-  render (): unknown {
+  render(): unknown {
     const { defaultValue, disabled, handleLabelClick, value } = this;
 
     return html`

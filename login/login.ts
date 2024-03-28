@@ -44,7 +44,7 @@ export class Login extends ControllableMixin<
   @property({ attribute: true, type: String })
   error?: string;
 
-  async submit (): Promise<void> {
+  async submit(): Promise<void> {
     const { value } = this;
 
     this.dispatchEvent(new CustomEvent(
@@ -79,7 +79,7 @@ export class Login extends ControllableMixin<
     }
   };
 
-  render (): unknown {
+  render(): unknown {
     const {
       error,
       handleForgotPasswordClick,

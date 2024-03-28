@@ -29,7 +29,7 @@ export class Nubblet extends LitElement {
   @state()
   pressed = false;
 
-  connectedCallback (): void {
+  connectedCallback(): void {
     super.connectedCallback();
     const { handleMousedown, handleMouseup } = this;
 
@@ -37,7 +37,7 @@ export class Nubblet extends LitElement {
     this.addEventListener('mouseup', handleMouseup);
   }
 
-  disconnectedCallback (): void {
+  disconnectedCallback(): void {
     super.disconnectedCallback();
     const { handleMousedown, handleMouseup } = this;
 
@@ -53,7 +53,7 @@ export class Nubblet extends LitElement {
     this.pressed = false;
   };
 
-  render (): unknown {
+  render(): unknown {
     const { active, pressed } = this;
 
     return html`
@@ -68,7 +68,7 @@ export class Nubblet extends LitElement {
   }
 }
 
-interface GalleryItem {
+interface IGalleryItem {
   url: string;
 }
 
@@ -95,7 +95,7 @@ class GalleryItem extends LitElement {
   ];
 
   @property({ attribute: false })
-  item: GalleryItem;
+  item: IGalleryItem;
 
   @consume({ context: dialogFactoryContext })
   dialogFactory: DialogFactory;
@@ -103,11 +103,11 @@ class GalleryItem extends LitElement {
   handleGalleryClick = (): void => {
     const { dialogFactory } = this;
     const { url } = this.item;
-    
+
     dialogFactory.show(createGalleryDialog({ url }));
   };
 
-  render (): unknown {
+  render(): unknown {
     const { handleGalleryClick } = this;
     const { url } = this.item;
 
@@ -162,7 +162,7 @@ export class Gallery extends LitElement {
   @state()
   selectedIndex = 0;
 
-  render (): unknown {
+  render(): unknown {
     const { items, selectedIndex } = this;
     const selectedItem = items[selectedIndex];
 

@@ -58,7 +58,7 @@ export default class Drawer extends EnhancedEventTargetMixin<typeof LitElement, 
     this.dispatchEvent(new CustomEvent<DrawerResizeEvent>('resize', { detail: { width: pageX } }));
   };
 
-  render (): unknown {
+  render(): unknown {
     const { handleCloseClick, handleDragStart, open, showDrag, width } = this;
 
     const adjustedWidth = open ? width : 0;

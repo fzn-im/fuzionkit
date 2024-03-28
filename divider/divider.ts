@@ -7,11 +7,11 @@ import styles from './divider.lit.css.js';
 export class Divider extends LitElement {
   static styles = [ styles ];
 
-  get hasContent (): boolean {
+  get hasContent(): boolean {
     return !!this.querySelectorAll('*');
   }
 
-  render (): unknown {
+  render(): unknown {
     const { hasContent } = this;
 
     return html`

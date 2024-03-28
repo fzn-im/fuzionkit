@@ -55,13 +55,13 @@ export class ContextExtractor<
     this.host.addController(this);
   }
 
-  hostConnected (): void {
+  hostConnected(): void {
     this.dispatchRequest();
   }
 
-  hostDisconnected (): void {}
+  hostDisconnected(): void {}
 
-  private dispatchRequest (): void {
+  private dispatchRequest(): void {
     this.host.addEventListener('context-provider', (evt: any) => {
       const { context, qualifier } = this;
 

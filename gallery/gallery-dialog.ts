@@ -26,14 +26,14 @@ class GalleryDialog extends FznDialog {
   @state()
   loading = true;
 
-  connectedCallback (): void {
+  connectedCallback(): void {
     super.connectedCallback();
     const { shell } = this;
 
     shell?.lockScroll();
   }
 
-  disconnectedCallback (): void {
+  disconnectedCallback(): void {
     super.disconnectedCallback();
     const { shell } = this;
 
@@ -44,7 +44,7 @@ class GalleryDialog extends FznDialog {
     this.loading = false;
   };
 
-  render (): unknown {
+  render(): unknown {
     const { handleMediaLoad, loading, url } = this;
 
     return super.render(html`

@@ -60,7 +60,7 @@ class ContextMenuPosition {
   left: string | number = 'auto';
   width?: string | number;
 
-  toStyle (): any {
+  toStyle(): any {
     return {
       top: typeof this.top === 'number' ? `${this.top}px` : this.top,
       right: typeof this.right === 'number' ? `${this.right}px` : this.right,
@@ -83,14 +83,14 @@ export class ContextMenuFactory {
     margin: 5,
   };
 
-  constructor (options: ContextMenuFactoryOptions = {}) {
+  constructor(options: ContextMenuFactoryOptions = {}) {
     const { container = window.document.body, slot } = options;
 
     this.container = container;
     this.slot = slot;
   }
 
-  create (
+  create(
     options: ContextMenuOptions = {},
   ): ContextMenu | null {
     const { container: defaultContainer, defaultAnchorOptions, slot: defaultSlot } = this;
@@ -163,11 +163,11 @@ export class ContextMenu extends LitElement {
   _items: TakeOrEvaluate<ContextMenuItemOptions[]> | null = null;
 
   @state()
-  get items (): TakeOrEvaluate<ContextMenuItemOptions[]> {
+  get items(): TakeOrEvaluate<ContextMenuItemOptions[]> {
     return this._items;
   }
 
-  set items (items: TakeOrEvaluate<ContextMenuItemOptions[]>) {
+  set items(items: TakeOrEvaluate<ContextMenuItemOptions[]>) {
     if (this._items !== items) {
       const oldValue = this._items;
       this._items = items;
@@ -194,11 +194,11 @@ export class ContextMenu extends LitElement {
 
   _anchorTo: TakeOrEvaluate<HTMLElement> | null;
 
-  get anchorTo (): TakeOrEvaluate<HTMLElement> | null {
+  get anchorTo(): TakeOrEvaluate<HTMLElement> | null {
     return this._anchorTo;
   }
 
-  set anchorTo (anchorTo: TakeOrEvaluate<HTMLElement> | null) {
+  set anchorTo(anchorTo: TakeOrEvaluate<HTMLElement> | null) {
     if (this._anchorTo !== anchorTo) {
       const oldAnchorTo = takeOrEvaluate(this._anchorTo);
       if (oldAnchorTo) {
@@ -224,11 +224,11 @@ export class ContextMenu extends LitElement {
   _container: HTMLElement;
   originParent: HTMLElement;
 
-  get container (): HTMLElement {
+  get container(): HTMLElement {
     return this._container;
   }
 
-  set container (container: HTMLElement) {
+  set container(container: HTMLElement) {
     if (this.container) {
       this.resizeObserver.unobserve(this.container);
     }
@@ -244,12 +244,12 @@ export class ContextMenu extends LitElement {
 
   containerSlot: string | undefined;
 
-  constructor () {
+  constructor() {
     super();
     this.resizeObserver.observe(this);
   }
 
-  connectedCallback (): void {
+  connectedCallback(): void {
     super.connectedCallback();
     const { documentEvent, documentEventClick, manageClose } = this;
 
@@ -264,7 +264,7 @@ export class ContextMenu extends LitElement {
     }
   }
 
-  disconnectedCallback (): void {
+  disconnectedCallback(): void {
     super.disconnectedCallback();
     const { documentEvent, documentEventClick, manageClose } = this;
 
@@ -279,7 +279,7 @@ export class ContextMenu extends LitElement {
     }
   }
 
-  firstUpdated (): void {
+  firstUpdated(): void {
     this.container = this.parentElement;
 
     // console.log('this.originParent', this.originParent,
@@ -288,11 +288,11 @@ export class ContextMenu extends LitElement {
   }
 
   // ?: this what fupdated
-  fupdated (): void {
+  fupdated(): void {
     this.reposition();
   }
 
-  close (): void {
+  close(): void {
     this.dispatchEvent(new CustomEvent('close'));
   }
 
@@ -335,7 +335,7 @@ export class ContextMenu extends LitElement {
     return this.child;
   };
 
-  getChildren (): ContextMenu[] {
+  getChildren(): ContextMenu[] {
     if (this.child) {
       return [ this.child, ...this.child.getChildren() ];
     }
@@ -350,7 +350,7 @@ export class ContextMenu extends LitElement {
   repositionDebounceTrailing = debounce(() => this.reposition(), 1000 / 60, { isImmediate: false });
   repositionDebounceLeading = debounce(() => this.reposition(), 1000 / 60, { isImmediate: true });
 
-  reposition (): void {
+  reposition(): void {
     const { anchorOptions, anchorTo, bounds, logd, originParent, position } = this;
     const { matchWidth = false } = anchorOptions;
 
@@ -748,7 +748,7 @@ export class ContextMenu extends LitElement {
     [ 0, 2 ].includes(evt.button) && this.documentEvent(evt);
   };
 
-  getEventTarget (evt: Event): HTMLElement {
+  getEventTarget(evt: Event): HTMLElement {
     if (typeof evt.composedPath === 'function') {
       const path = evt.composedPath();
       return path[0] as HTMLElement;
@@ -787,7 +787,7 @@ export class ContextMenu extends LitElement {
     }
   };
 
-  render (): TemplateResult {
+  render(): TemplateResult {
     const { collapse, items, loading } = this;
 
     const evalItems = takeOrEvaluate(items, this);

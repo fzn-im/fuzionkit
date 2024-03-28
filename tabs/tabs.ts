@@ -33,33 +33,33 @@ export class Tabs extends ControllableMixin<string, typeof LitElement>(LitElemen
   @query('.body')
   body: HTMLElement;
 
-  get activeTab (): Tab | null {
+  get activeTab(): Tab | null {
     const slot = this.shadowRoot.querySelector('slot');
     const childNodes = slot.assignedNodes({ flatten: true });
     return childNodes.find((node) => node instanceof Tab && node.active === true && node.key) as Tab | null;
   }
 
-  constructor () {
+  constructor() {
     super();
 
     this.resizeObserver.observe(this);
   }
 
-  connectedCallback (): void {
+  connectedCallback(): void {
     super.connectedCallback();
     const { handleTabClick } = this;
 
     this.addEventListener('tab-click', handleTabClick);
   }
 
-  disconnectedCallback (): void {
+  disconnectedCallback(): void {
     super.disconnectedCallback();
     const { handleTabClick } = this;
 
     this.removeEventListener('tab-click', handleTabClick);
   }
 
-  updated (changedProperties: any): void {
+  updated(changedProperties: any): void {
     changedProperties.forEach((_: any, propName: string) => {
       if ([ 'value', 'internalValue' ].includes(propName)) {
         this.handleSlotChange();
@@ -108,7 +108,7 @@ export class Tabs extends ControllableMixin<string, typeof LitElement>(LitElemen
     }
   };
 
-  render (): TemplateResult {
+  render(): TemplateResult {
     const {
       handleResize,
       handleSlotChange,
@@ -201,7 +201,7 @@ export class Tab extends LitElement {
     }
   };
 
-  render (): TemplateResult {
+  render(): TemplateResult {
     const { active, disabled, handleClick, href, icon, routerHref } = this;
 
     return html`
@@ -226,7 +226,7 @@ export class Tab extends LitElement {
 export class TabCrumb extends LitElement {
   static styles = [ styles ];
 
-  render (): TemplateResult {
+  render(): TemplateResult {
     return html`
       <fa-icon type="fa-solid fa-chevron-right"></fa-icon>
     `;

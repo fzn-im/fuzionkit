@@ -47,11 +47,11 @@ export class Shell extends EnhancedEventTargetMixin<
   _contentTitle: HTMLElement | null = null;
 
   @property({ attribute: false })
-  get contentTitle (): HTMLElement {
+  get contentTitle(): HTMLElement {
     return this._contentTitle;
   }
 
-  set contentTitle (contentTitle: HTMLElement) {
+  set contentTitle(contentTitle: HTMLElement) {
     const oldValue = this._contentTitle;
 
     if (oldValue !== null) {
@@ -98,11 +98,11 @@ export class Shell extends EnhancedEventTargetMixin<
 
   resizeObserver: ResizeObserver;
 
-  constructor () {
+  constructor() {
     super();
   }
 
-  async connectedCallback (): Promise<void> {
+  async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
     this.initMobileScreen();
@@ -144,7 +144,7 @@ export class Shell extends EnhancedEventTargetMixin<
     this.resizeObserver.observe(this);
   }
 
-  async firstUpdated (): Promise<void> {
+  async firstUpdated(): Promise<void> {
     this.dispatchEvent(new CustomEvent('first-updated'));
 
     await this.updateComplete;
@@ -171,47 +171,47 @@ export class Shell extends EnhancedEventTargetMixin<
     this.dispatchEvent(new CustomEvent('resize'));
   };
 
-  lockMouseGuard (): void {
+  lockMouseGuard(): void {
     if (++this.mouseGuardLocks) {
       this.mouseGuard = true;
       this.dispatchChange({ mouseGuard: true });
     }
   }
 
-  unlockMouseGuard (): void {
+  unlockMouseGuard(): void {
     if (!--this.mouseGuardLocks) {
       this.mouseGuard = false;
       this.dispatchChange({ mouseGuard: false });
     }
   }
 
-  lockScroll (): void {
+  lockScroll(): void {
     if (++this.scrollLocks) {
       this.scrollLock = true;
       document.body.style.overflow = 'hidden';
     }
   }
 
-  unlockScroll (): void {
+  unlockScroll(): void {
     if (!--this.scrollLocks) {
       this.scrollLock = false;
       document.body.style.overflow = 'auto';
     }
   }
 
-  clearContentTitle (): void {
+  clearContentTitle(): void {
     this.contentTitle = null;
   }
 
-  setContentTitle (contentTitle: HTMLElement): void {
+  setContentTitle(contentTitle: HTMLElement): void {
     this.contentTitle = contentTitle;
   }
 
-  getContentFrameHeight (): number {
+  getContentFrameHeight(): number {
     return parseInt(getComputedStyle(this.contentFrame).height.split('px')[0], 10);
   }
 
-  getContentFrameVisibleWidth (): number {
+  getContentFrameVisibleWidth(): number {
     return parseInt(getComputedStyle(this.contentFrame).width.split('px')[0], 10);
   }
 
@@ -222,7 +222,7 @@ export class Shell extends EnhancedEventTargetMixin<
     );
   };
 
-  initMobileScreen (): void {
+  initMobileScreen(): void {
     this.hasTouchScreen = false;
     if ('maxTouchPoints' in navigator) {
       this.hasTouchScreen = navigator.maxTouchPoints > 0;
@@ -266,7 +266,7 @@ export class Shell extends EnhancedEventTargetMixin<
     this.drawerWidth = Math.min(Math.max(width, drawerMinWidth), this.drawerMaxWidth);
   };
 
-  render (): TemplateResult {
+  render(): TemplateResult {
     const {
       contentFramePadding,
       collapsed,
@@ -383,7 +383,7 @@ export class Shell extends EnhancedEventTargetMixin<
 export class FuzionActionBarButton extends LitElement {
   static styles = [ styles ];
 
-  render (): TemplateResult {
+  render(): TemplateResult {
     return html`
       <a><slot></slot></a>
     `;

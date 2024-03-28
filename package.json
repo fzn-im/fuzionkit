@@ -7,7 +7,7 @@
     "*"
   ],
   "exports": {
-    "./resources/*": "./src/resources/*",
+    "./resources/*": "./lib/resources/*",
     "./*.lit.scss": "./src/*.lit.scss",
     "./webpack/*.js": "./webpack/*.js",
     "./*.js": "./lib/*.js",
@@ -29,10 +29,11 @@
     }
   },
   "scripts": {
-    "build": "run-s clean:dist build:css build:js",
+    "build": "run-s clean:dist build:css build:js build:resources",
     "clean:dist": "node scripts/clean-dist.js",
     "build:js": "tsc || exit 1",
     "build:css": "node scripts/build-css.js || exit 1",
+    "build:resources": "mkdir -p lib/resources && cp -r src/resources/* lib/resources/",
     "lint": "eslint .",
     "lint:debug": "eslint --debug .",
     "lint:fix": "eslint --fix .",
@@ -72,6 +73,7 @@
     "@typescript-eslint/parser": "5.37.0",
     "babel-loader": "^9.1.3",
     "babel-plugin-template-html-minifier": "^4.1.0",
+    "copyfiles": "^2.4.1",
     "css-loader": "^6.10.0",
     "eslint": "^8.41.0",
     "eslint-config-prettier": "^8.8.0",

@@ -8,9 +8,9 @@
   ],
   "exports": {
     "./resources/*": "./src/resources/*",
+    "./*.lit.scss": "./src/*.lit.scss",
     "./webpack/*.js": "./webpack/*.js",
     "./*.js": "./lib/*.js",
-    "./*.lit.scss": "./lib/*.lit.scss",
     "./*": "./lib/*/index.js",
     "./*/index.js": null,
     "./*/index.d.js": null

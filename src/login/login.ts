@@ -4,7 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { ChangeEvent, EnhancedEventTargetMixin } from '../utils/events.js';
 import { ControllableMixin } from '../base/controllable-mixin.js';
 
-import '../inputs/checkbox';
+import '../inputs/checkbox.js';
 import '../inputs/form-group';
 import '../inputs/textfield';
 

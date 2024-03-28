@@ -5,12 +5,14 @@ import { unlink } from 'fs';
 
 const build = async () => {
   const files = (
-    await glob('*/**/*.{d.ts,js,js.map,css,css.d.ts,css.js,css.js.map,css.map,css.ts}', {
+    await glob('src/**/*.{d.ts,js,js.map,css,css.d.ts,css.js,css.js.map,css.map,css.ts}', {
       ignore: [
         'node_modules/**',
         'resources/**',
         'scripts/**',
         'webpack/**',
+        'html/helpers/**',
+        'src/global.d.ts'
       ],
       withFileTypes: true,
     })

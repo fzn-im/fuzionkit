@@ -4,13 +4,13 @@ import { classMap } from 'lit-html/directives/class-map.js';
 import { consume } from '@lit/context';
 import { debounce } from 'ts-debounce';
 
-import { takeOrEvaluate, TakeOrEvaluate } from '../utils/take-or-evaluate';
+import { takeOrEvaluate, TakeOrEvaluate } from '../utils/take-or-evaluate.js';
 import { getElementOffsetPosition, getElementOuterSize, getViewportSize } from '../utils/elements.js';
 
 import { contextMenuFactoryContext } from './context.js';
 import { ContextMenuItemOptions, renderContextMenuItems } from './context-menu-item.js';
 
-import '../panel';
+import '../panel/index.js';
 
 import styles from './context-menu.lit.css.js';
 

@@ -19,7 +19,7 @@ import { instill } from '../context/instill.js';
 
 import { shellContext } from './context.js';
 
-import fuzionLogo from '../resources/img/fuzion.png';
+import fuzionLogo from '../../resources/img/fuzion.png';
 
 import styles from './shell.lit.css.js';
 

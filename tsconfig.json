@@ -6,10 +6,10 @@
       "dom.iterable",
       "scripthost"
     ],
-    "target": "esnext",
+    "target": "es2016",
     "module": "esnext",
+    "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node",
     "allowJs": false,
     "strict": false,
     "isolatedModules": false,
@@ -19,8 +19,9 @@
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
     "skipLibCheck": true,
-    "declarationDir": ".",
-    "outDir": ".",
+    "declarationDir": "lib",
+    "outDir": "lib",
+    "rootDir": "src",
     "typeRoots": [
       "node_modules/@types"
     ],
@@ -34,7 +35,7 @@
     ]
   },
   "include": [
-    "."
+    "src"
   ],
   "exclude": [
     "rollup.config.ts"

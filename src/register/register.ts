@@ -4,7 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { ChangeEvent, EnhancedEventTargetMixin } from '../utils/events.js';
 import { ControllableMixin } from '../base/controllable-mixin.js';
 
-import 'fuzionkit/inputs/checkbox';
+import 'fuzionkit/inputs/checkbox.js';
 
 import styles from '../login/login.lit.css.js';
 

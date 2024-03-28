@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "lib": ["webworker"],
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "jsx": "preserve"
+  },
+  "include": [
+    "./"
+  ]
+}

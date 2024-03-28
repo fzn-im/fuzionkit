@@ -1,4 +1,4 @@
-import { RouterNavigation, ROUTER_NAVIGATION } from '../actions/router';
+import { RouterNavigation, ROUTER_NAVIGATION } from '../actions/router.js';
 
 export const currentPath = (
   state = null,

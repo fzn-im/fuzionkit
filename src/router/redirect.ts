@@ -1,7 +1,7 @@
 import { consume } from '@lit/context';
 import { LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { Router, routerContext } from './context';
+import { Router, routerContext } from './context.js';
 
 @customElement('fzn-redirect')
 export class Redirect extends LitElement {

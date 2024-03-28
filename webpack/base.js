@@ -54,7 +54,7 @@ const modules = (
             resourceQuery: /lit/,
             use: [
               { loader: 'lit-scss-loader', options: { minify: false } },
-              { loader: path.resolve(__dirname, './escape-lit-scss.js') },
+              { loader: path.resolve(__dirname, './loaders/escape-lit-scss.js') },
               {
                 loader: 'extract-loader',
                 options: {

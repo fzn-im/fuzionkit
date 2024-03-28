@@ -90,6 +90,7 @@
     "prism-themes": "^1.9.0",
     "pug-loader": "^2.4.0",
     "resize-observer-polyfill": "^1.5.1",
+    "resolve-url-loader": "^5.0.0",
     "sass": "^1.71.1",
     "sass-embedded": "^1.71.1",
     "sass-loader": "^14.1.1",

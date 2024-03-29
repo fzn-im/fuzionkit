@@ -4,7 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { ChangeEvent, EnhancedEventTargetMixin } from '../utils/events.js';
 import { ControllableMixin } from '../base/controllable-mixin.js';
 
-import 'fuzionkit/inputs/checkbox.js';
+import '../inputs/checkbox/checkbox.js';
 
 import styles from '../login/login.lit.css.js';
 
@@ -39,10 +39,13 @@ export class Register extends ControllableMixin<
 ) {
   static styles = [ styles ];
 
-  @state()
+  @property({ attribute: true, type: Boolean })
   submitting = false;
 
-  @state()
+  @property({ attribute: true, type: String })
+  error?: string;
+
+  @property({ attribute: false })
   errorMap?: { [key: string]: string[] };
 
   @property({ attribute: true, type: Boolean, reflect: true })
@@ -58,11 +61,11 @@ export class Register extends ControllableMixin<
   }
 
   handleInputChange = (
-    {
-      currentTarget,
-      detail: { value },
-    }: CustomEvent<ChangeEvent<unknown>> & { currentTarget: HTMLElement },
+    evt: CustomEvent<ChangeEvent<unknown>> & { currentTarget: HTMLElement },
   ): void => {
+    evt.stopPropagation();
+    const { currentTarget, detail: { value } } = evt;
+
     this.internalValue = {
       ...this.value,
       [currentTarget.getAttribute('name')]: value,
@@ -81,13 +84,24 @@ export class Register extends ControllableMixin<
 
   render(): unknown {
     const {
+      error,
       errorMap,
       handleInputChange,
       handleRegisterClick,
       registered,
       submitting,
+      value,
     } = this;
-    const { agree } = this.value;
+    const {
+      agree,
+      email,
+      emailConfirm,
+      password,
+      passwordConfirm,
+      username,
+    } = value;
+
+    const canSubmit = agree && !submitting;
 
     return [
       !registered
@@ -101,6 +115,7 @@ export class Register extends ControllableMixin<
                 ?disabled=${submitting}
                 name="username"
                 @change=${handleInputChange}
+                .value=${username}
               ></fzn-textfield>
             </fzn-form-group>
 
@@ -114,6 +129,7 @@ export class Register extends ControllableMixin<
                 name="password"
                 @change=${handleInputChange}
                 type="password"
+                .value=${password}
               ></fzn-textfield>
             </fzn-form-group>
 
@@ -127,6 +143,7 @@ export class Register extends ControllableMixin<
                 name="passwordConfirm"
                 @change=${handleInputChange}
                 type="password"
+                .value=${passwordConfirm}
               ></fzn-textfield>
             </fzn-form-group>
 
@@ -138,6 +155,7 @@ export class Register extends ControllableMixin<
                 ?disabled=${submitting}
                 name="email"
                 @change=${handleInputChange}
+                .value=${email}
               ></fzn-textfield>
             </fzn-form-group>
 
@@ -149,6 +167,7 @@ export class Register extends ControllableMixin<
                 ?disabled=${submitting}
                 name="emailConfirm"
                 @change=${handleInputChange}
+                .value=${emailConfirm}
               ></fzn-textfield>
             </fzn-form-group>
 
@@ -156,14 +175,17 @@ export class Register extends ControllableMixin<
               ?disabled=${submitting}
               name="agree"
               @change=${handleInputChange}
+              .value=${agree}
             >
               I agree to the terms of service.
             </fzn-checkbox-row>
 
             ${
-              errorMap
+              error
                 ? html`
-                  <fzn-alert></fzn-alert>
+                  <fzn-alert>
+                    ${error}
+                  </fzn-alert>
                 `
                 : null
             }
@@ -184,7 +206,7 @@ export class Register extends ControllableMixin<
           <fzn-panel-footer>
             <fzn-button
               @click=${handleRegisterClick}
-              ?disabled=${!agree}
+              ?disabled=${!canSubmit}
               size="s"
             >
               ${

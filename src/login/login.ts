@@ -4,9 +4,9 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { ChangeEvent, EnhancedEventTargetMixin } from '../utils/events.js';
 import { ControllableMixin } from '../base/controllable-mixin.js';
 
-import '../inputs/checkbox.js';
-import '../inputs/form-group';
-import '../inputs/textfield';
+import '../inputs/checkbox/checkbox.js';
+import '../inputs/form-group/index.js';
+import '../inputs/textfield/index.js';
 
 import styles from './login.lit.css.js';
 
@@ -38,7 +38,7 @@ export class Login extends ControllableMixin<
   @state()
   showPasscode = false;
 
-  @property({ attribute: true, type: String })
+  @property({ attribute: true, type: Boolean })
   submitting = false;
 
   @property({ attribute: true, type: String })
@@ -54,11 +54,11 @@ export class Login extends ControllableMixin<
   }
 
   handleInputChange = (
-    {
-      currentTarget,
-      detail: { value },
-    }: CustomEvent<ChangeEvent<unknown>> & { currentTarget: HTMLElement },
+    evt: CustomEvent<ChangeEvent<unknown>> & { currentTarget: HTMLElement },
   ): void => {
+    evt.stopPropagation();
+    const { currentTarget, detail: { value } } = evt;
+
     this.internalValue = {
       ...this.value,
       [currentTarget.getAttribute('name')]: value,
@@ -88,12 +88,13 @@ export class Login extends ControllableMixin<
       handleInputChange,
       showPasscode,
       submitting,
+      value,
     } = this;
     const {
       password,
       remember,
       username,
-    } = this.value;
+    } = value;
 
     return [
       html`

@@ -60,7 +60,7 @@ export function ControllableMixin<V, T extends Constructor<ReactiveElement>>(
       }
 
       this.dispatchEvent(new CustomEvent<ChangeEvent<V>>('change', {
-        bubbles: true,
+        // bubbles: true,
         composed: true,
         detail: { value: value },
       }));

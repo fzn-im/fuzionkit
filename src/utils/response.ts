@@ -11,9 +11,9 @@ export const handleResponseError = <T = ResponseError, D = any> (
     if (callback) {
       callback(err);
     } else {
-      const { error } = err.response.data;
+      const { error } = err.response.data || { error: 'internal_error' };
 
-      if (err.response.status === 504) {
+      if (!err.response || err.response.status === 504) {
         throw new Error('request_failed');
       }
 

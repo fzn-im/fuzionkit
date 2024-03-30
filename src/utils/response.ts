@@ -11,11 +11,13 @@ export const handleResponseError = <T = ResponseError, D = any> (
     if (callback) {
       callback(err);
     } else {
-      const { error } = err.response.data || { error: 'internal_error' };
+      const { response } = err;
 
-      if (!err.response || err.response.status === 504) {
+      if (!response || response.status === 504) {
         throw new Error('request_failed');
       }
+
+      const { data: { error } = { error: 'internal_error' } } = response;
 
       throw new Error(error);
     }

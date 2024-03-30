@@ -40,6 +40,9 @@ export class Login extends ControllableMixin<
   @state()
   showPasscode = false;
 
+  @state()
+  showForgotPassword = false;
+
   @property({ attribute: true, type: Boolean })
   submitting = false;
 
@@ -88,6 +91,7 @@ export class Login extends ControllableMixin<
       handleLoginClick,
       handleKeyUp,
       handleInputChange,
+      showForgotPassword,
       showPasscode,
       submitting,
       value,
@@ -149,7 +153,7 @@ export class Login extends ControllableMixin<
       html`
         <fzn-panel-footer>
           ${
-            !submitting
+            !submitting && showForgotPassword
               ? html`
                 <div slot="left">
                   <fzn-button

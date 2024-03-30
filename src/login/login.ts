@@ -7,6 +7,8 @@ import { ControllableMixin } from '../base/controllable-mixin.js';
 import '../inputs/checkbox/checkbox.js';
 import '../inputs/form-group/index.js';
 import '../inputs/textfield/index.js';
+import '../alert/alert.js';
+import '../fa-icon/index.js';
 
 import styles from './login.lit.css.js';
 

@@ -1,0 +1,36 @@
+:host(fzn-alert)
+{
+  display: block;
+  border: 1px solid rgba(255, 255, 255, .1);
+  background: rgba(15, 15, 15, .7);
+  padding: .25rem;
+  border-radius: .25rem;
+}
+
+:host(fzn-alert[variant="info"])
+{
+  color: rgb(1, 67, 97);
+  background-color: rgb(229, 246, 253);
+  border-color: rgb(1, 67, 97);
+}
+
+:host(fzn-alert[variant="danger"])
+{
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+:host(fzn-alert[variant="warning"])
+{
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+:host(fzn-alert[variant="success"])
+{
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}

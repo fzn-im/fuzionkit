@@ -13,6 +13,10 @@ export const handleResponseError = <T = ResponseError, D = any> (
     } else {
       const { error } = err.response.data;
 
+      if (err.response.status === 504) {
+        throw new Error('request_failed');
+      }
+
       throw new Error(error);
     }
   } {

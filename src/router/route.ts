@@ -90,7 +90,7 @@ export class Route extends LitElement {
     const { path } = this;
 
     // prevent renavigating if path has not changed
-    if (this.currentPath === this.switch.router.currentPath) {
+    if (this.currentPath === this.switch.currentPath) {
       return;
     }
 
@@ -108,7 +108,7 @@ export class Route extends LitElement {
       doBaseMatch = false;
     }
 
-    this.currentPath = this.switch.router.currentPath;
+    this.currentPath = this.switch.currentPath;
 
     // console.log(
     //   'route handling path',

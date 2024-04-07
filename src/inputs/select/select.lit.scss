@@ -1,0 +1,47 @@
+@import "../../resources/css/mixins/textfield.scss";
+
+:host
+{
+  > select
+  {
+    @include fzn-textfield;
+
+    &:focus,
+    &.focus
+    {
+      @include fzn-textfield-focus;
+    }
+  }
+}
+
+:host([disabled])
+{
+  > select
+  {
+    @include fzn-textfield-disabled;
+  }
+}
+
+:host([size='xs'])
+{
+  > select
+  {
+    @include fzn-textfield-xs;
+  }
+}
+
+:host([size='s'])
+{
+  > select
+  {
+    @include fzn-textfield-s;
+  }
+}
+
+:host([size='l'])
+{
+  > select
+  {
+    @include fzn-textfield-l;
+  }
+}

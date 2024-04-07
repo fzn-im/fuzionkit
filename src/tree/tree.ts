@@ -56,7 +56,7 @@ export class Tree extends LitElement {
   @state()
   filteredNodeChildren: TreeNode<unknown>[];
 
-  _nodeChildren: TreeNode<unknown>[];
+  _nodeChildren: TreeNode<unknown>[] = [];
 
   @property({ attribute: false })
   get nodeChildren(): TreeNode<unknown>[] {

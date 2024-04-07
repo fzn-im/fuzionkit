@@ -70,6 +70,12 @@ export class Shell extends EnhancedEventTargetMixin<
   @property({ attribute: true, type: Boolean, reflect: true })
   collapsed = false;
 
+  @property({ attribute: true, type: String })
+  logo?: string;
+
+  @property({ attribute: true, type: String })
+  logoText?: string;
+
   @state()
   userAvatarUrl: string | null = null;
 
@@ -275,6 +281,8 @@ export class Shell extends EnhancedEventTargetMixin<
       drawerWidth,
       handleDrawerResize,
       handleUpActionClick,
+      logo,
+      logoText,
       pageHandlesPadding,
       router,
     } = this;
@@ -312,7 +320,7 @@ export class Shell extends EnhancedEventTargetMixin<
                 </span>
 
                 <div class="icon">
-                  <img src=${fuzionLogo} />
+                  <img src=${logo ?? fuzionLogo} />
                 </div>
               </span>
             </a>
@@ -322,7 +330,7 @@ export class Shell extends EnhancedEventTargetMixin<
               href="/"
               @click=${handleRouteClick(router)}
             >
-              Fuzion
+              ${logoText}
             </a>
           </div>${
             !drawerOpen

@@ -103,11 +103,13 @@ export default class Select<T> extends SizedMixin(LitElement) {
   render(): unknown {
     const { disabled, handleChange, options, value } = this;
 
+    const selectedKey = value?.key;
+
     return html`
       <select
         ?disabled=${disabled}
         @input=${handleChange}
-        .value=${value.key}
+        .value=${selectedKey}
       >
         ${
           repeat(
@@ -115,7 +117,7 @@ export default class Select<T> extends SizedMixin(LitElement) {
             ({ key }) => key,
             ({ key, label }) => {
               return html`
-                <option value=${key} ?selected=${value.key === key}>
+                <option value=${key} ?selected=${key === selectedKey}>
                   ${label}
                 </option>
               `;

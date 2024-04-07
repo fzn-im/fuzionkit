@@ -330,7 +330,7 @@ export class Shell extends EnhancedEventTargetMixin<
               href="/"
               @click=${handleRouteClick(router)}
             >
-              ${logoText}
+              ${logoText ?? 'Fuzion'}
             </a>
           </div>${
             !drawerOpen

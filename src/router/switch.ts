@@ -127,10 +127,11 @@ export class Switch extends LitElement {
   @consume({ context: routeContext })
   parentRoute: Route;
 
-  @property({ attribute: true, type: Boolean, reflect: true })
-  controlled = false;
+  get controlled(): boolean {
+    return ![ null, undefined ].includes(this._currentPath);
+  }
 
-  _currentPath: string;
+  _currentPath?: string;
 
   @property({ attribute: true, type: String, reflect: true })
   get currentPath(): string {

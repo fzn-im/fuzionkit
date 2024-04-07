@@ -54,7 +54,7 @@ export class Tree extends LitElement {
   context: any = null;
 
   @state()
-  filteredNodeChildren: TreeNode<unknown>[];
+  filteredNodeChildren: TreeNode<unknown>[] = [];
 
   _nodeChildren: TreeNode<unknown>[] = [];
 

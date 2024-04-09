@@ -147,6 +147,10 @@ export class Tree extends LitElement {
 
   set draggedNode(node: TreeNode<unknown> | null) { this.root._draggedNode = node; }
 
+  handleSlotChange = () => {
+    this.requestUpdate();
+  };
+
   handleFilteredNodesUpdate(): void {
     const { nodeChildren, showEmptyNodes } = this;
     this.filteredNodeChildren = nodeChildren.filter((child) => {
@@ -250,6 +254,7 @@ export class Tree extends LitElement {
       handleItemClick,
       handleItemContextmenu,
       handleMouseMove,
+      handleSlotChange,
       isRoot,
       item,
       itemBottom,
@@ -263,7 +268,7 @@ export class Tree extends LitElement {
     } = this;
 
     return [
-      html`<slot name="top"></slot>`,
+      html`<slot name="top" @slotchange=${handleSlotChange}></slot>`,
       html`
         <div class=${classMap({ children: true, 'is-root': isRoot, 'has-top': top.length })}>
           ${
@@ -409,7 +414,7 @@ export class Tree extends LitElement {
           }
         </div>
       `,
-      html`<slot name="bottom"></slot>`,
+      html`<slot name="bottom" @slotchange=${handleSlotChange}></slot>`,
     ];
   }
 }

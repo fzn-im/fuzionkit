@@ -30,7 +30,7 @@ export function throwAxiosError(err: AxiosError<ResponseError>) {
   throw new Error(error);
 }
 
-export async function wrapResponseError<T, E = unknown>(
+export async function wrapResponseError<T, E = ResponseError>(
   promise: Promise<T>,
   callback?: (_: AxiosError<E>) => void,
 ): Promise<T> {

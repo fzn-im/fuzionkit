@@ -11,20 +11,24 @@ export const handleResponseError = <T = ResponseError, D = any> (
     if (callback) {
       callback(err);
     } else {
-      const { response } = err;
-
-      if (!response || response.status === 504) {
-        throw new Error('request_failed');
-      }
-
-      const { data: { error } = { error: 'internal_error' } } = response;
-
-      throw new Error(error);
+      throwAxiosError(err);
     }
   } {
     throw err;
   }
 };
+
+export function throwAxiosError(err: AxiosError<ResponseError>) {
+  const { response } = err;
+
+  if (!response || response.status === 504) {
+    throw new Error('request_failed');
+  }
+
+  const { data: { error } = { error: 'internal_error' } } = response;
+
+  throw new Error(error);
+}
 
 export async function wrapResponseError<T, E = unknown>(
   promise: Promise<T>,

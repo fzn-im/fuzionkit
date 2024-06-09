@@ -18,16 +18,23 @@ export const handleResponseError = <T = ResponseError, D = any> (
   }
 };
 
-export function throwAxiosError(err: AxiosError<ResponseError>) {
+export function throwAxiosError<E = ResponseError>(err: AxiosError<E>) {
   const { response } = err;
 
   if (!response || response.status === 504) {
     throw new Error('request_failed');
   }
 
-  const { data: { error } = { error: 'internal_error' } } = response;
+  if (
+    typeof response.data === 'object' &&
+    'error' in response.data &&
+    typeof response.data.error === 'string'
+  ) {
+    const { data: { error } = { error: 'internal_error' } } = response;
+    throw new Error(error);
+  }
 
-  throw new Error(error);
+  throw err;
 }
 
 export async function wrapResponseError<T, E = ResponseError>(

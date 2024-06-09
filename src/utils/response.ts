@@ -28,10 +28,11 @@ export const handleResponseError = <T = ResponseError, D = any> (
 
 export async function wrapResponseError<T>(
   promise: Promise<T>,
+  callback?: (_: AxiosError<T>) => void,
 ): Promise<T> {
   try {
     return await promise;
   } catch (err) {
-    handleResponseError(err);
+    handleResponseError(err, callback);
   }
 }

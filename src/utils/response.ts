@@ -26,9 +26,9 @@ export const handleResponseError = <T = ResponseError, D = any> (
   }
 };
 
-export async function wrapResponseError<T>(
+export async function wrapResponseError<T, E = unknown>(
   promise: Promise<T>,
-  callback?: (_: AxiosError<T>) => void,
+  callback?: (_: AxiosError<E>) => void,
 ): Promise<T> {
   try {
     return await promise;

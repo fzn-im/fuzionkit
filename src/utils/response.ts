@@ -1,4 +1,4 @@
-import { AxiosError } from 'axios';
+import { AxiosError, isAxiosError } from 'axios';
 
 export type ResponseError = { error: string };
 
@@ -7,7 +7,7 @@ export const handleResponseError = <T = ResponseError, D = any> (
   err: Error,
   callback?: (_: AxiosError<T, D>) => void,
 ) => {
-  if (err instanceof AxiosError) {
+  if (isAxiosError(err)) {
     if (callback) {
       callback(err);
     } else {

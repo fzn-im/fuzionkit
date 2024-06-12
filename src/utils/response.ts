@@ -1,6 +1,6 @@
 import { AxiosError, isAxiosError } from 'axios';
 
-import { ErrorMap, ErrorMapError } from './errors.js';
+import { ErrorMap, ErrorMapError, LocalizedError } from './errors.js';
 
 export type ResponseError = { error: string };
 
@@ -44,7 +44,7 @@ export function throwAxiosError<E = ResponseError>(err: AxiosError<E>) {
       throw new ErrorMapError(error, errors as ErrorMap);
     }
 
-    throw new Error(error);
+    throw new LocalizedError(error);
   }
 
   throw err;

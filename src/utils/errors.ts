@@ -32,3 +32,15 @@ export class ErrorMapError extends Error {
     );
   }
 }
+
+export class LocalizedError extends Error {
+  error: string;
+
+  constructor(message: string) {
+    super(i18next.t(`error.${message}`));
+    this.name = 'LocalizedError';
+    this.error = message;
+
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}

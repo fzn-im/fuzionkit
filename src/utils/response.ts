@@ -1,5 +1,7 @@
 import { AxiosError, isAxiosError } from 'axios';
 
+import { ErrorMap, ErrorMapError } from './errors';
+
 export type ResponseError = { error: string };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -31,6 +33,17 @@ export function throwAxiosError<E = ResponseError>(err: AxiosError<E>) {
     typeof response.data.error === 'string'
   ) {
     const { data: { error } = { error: 'internal_error' } } = response;
+
+    if (
+      'type' in response.data &&
+      response.data.type === 'error_map' &&
+      'errors' in response.data
+    ) {
+      const { data: { errors } } = response;
+
+      throw new ErrorMapError(error, errors as ErrorMap);
+    }
+
     throw new Error(error);
   }
 

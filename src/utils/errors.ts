@@ -9,11 +9,13 @@ export type ErrorMapFormatted = {
 };
 
 export class ErrorMapError extends Error {
+  error: string;
   errorMap: ErrorMap;
 
   constructor(message: string, errorMap: ErrorMap) {
-    super(message);
+    super(i18next.t(`error.${message}`));
     this.name = 'ErrorMapError';
+    this.error = message;
     this.errorMap = errorMap;
 
     Object.setPrototypeOf(this, new.target.prototype);

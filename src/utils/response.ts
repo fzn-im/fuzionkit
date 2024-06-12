@@ -1,6 +1,6 @@
 import { AxiosError, isAxiosError } from 'axios';
 
-import { ErrorMap, ErrorMapError } from './errors';
+import { ErrorMap, ErrorMapError } from './errors.js';
 
 export type ResponseError = { error: string };
 

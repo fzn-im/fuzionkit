@@ -37,11 +37,11 @@ export function throwAxiosError<E = ResponseError>(err: AxiosError<E>) {
     if (
       'type' in response.data &&
       response.data.type === 'error_map' &&
-      'errors' in response.data
+      'details' in response.data
     ) {
-      const { data: { errors } } = response;
+      const { data: { details } } = response;
 
-      throw new ErrorMapError(error, errors as ErrorMap);
+      throw new ErrorMapError(error, details as ErrorMap);
     }
 
     throw new LocalizedError(error);

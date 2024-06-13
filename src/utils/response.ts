@@ -36,7 +36,7 @@ export function throwAxiosError<E = ResponseError>(err: AxiosError<E>) {
 
     if (
       'type' in response.data &&
-      response.data.type === 'error_map' &&
+      response.data.type === 'ERROR_MAP' &&
       'details' in response.data
     ) {
       const { data: { details } } = response;

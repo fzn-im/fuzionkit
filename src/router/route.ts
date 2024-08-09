@@ -79,7 +79,7 @@ export class Route extends LitElement {
   routeMatch: RouteMatch = { baseMatch: '', params: {} };
 
   @property({ attribute: true, type: String, reflect: true })
-  path: string;
+  path: string | string[];
 
   currentPath: string;
 
@@ -87,78 +87,85 @@ export class Route extends LitElement {
   component: ((routeMatch?: RouteMatch) => unknown) | string;
 
   handleNavigate = (): void => {
-    const { path } = this;
-
     // prevent renavigating if path has not changed
-    if (this.currentPath === this.switch.currentPath) {
-      return;
+    // removed because it didn't work as thought
+    // if (this.currentPath === this.switch.currentPath) {
+    //   return;
+    // }
+
+    const paths = this.getAttribute('path').split(',');
+
+    for (const path of paths) {
+      let end = false;
+      let doBaseMatch = true;
+      let barePath = path;
+
+      if (barePath.endsWith('$')) {
+        barePath = barePath.slice(0, -1);
+        end = true;
+      }
+
+      if (barePath.startsWith('./')) {
+        barePath = barePath.slice(1);
+        doBaseMatch = false;
+      }
+
+      this.currentPath = this.switch.currentPath;
+
+      // console.log(
+      //   'route handling path',
+      //   barePath,
+      //   'with',
+      //   (doBaseMatch || !this.parentRoute?.routeMatch.baseMatch)
+      //     ? this.switch.router.currentPath
+      //     : this.switch.router.currentPath
+      //       .substring(this.parentRoute.routeMatch.baseMatch.length),
+      // );
+
+      const paramList = [];
+      const regex = pathToRegexp(barePath, paramList, { end });
+
+      let matches = null;
+      if (
+        doBaseMatch
+        || !this.parentRoute?.routeMatch.baseMatch
+        || this.switch.controlled
+      ) {
+        matches = this.switch.currentPath.match(regex);
+      } else {
+        let pathToMatch = this.switch.currentPath
+          .substring(this.parentRoute.routeMatch.baseMatch.length);
+        pathToMatch = pathToMatch === '' ? '/' : pathToMatch;
+
+        matches = pathToMatch.match(regex);
+      }
+
+      if (!matches) {
+        return;
+      }
+
+      const baseMatch = (doBaseMatch || this.switch.controlled)
+        ? matches[0]
+        : `${this.parentRoute?.routeMatch.baseMatch ?? ''}${matches[0]}`;
+      let params = {};
+
+      matches.shift();
+
+      params = Object.fromEntries(
+        paramList
+          .map(({ name }, idx) => [ name, matches[idx] ]),
+      );
+
+      this.routeMatch = {
+        baseMatch,
+        params: {
+          ...this.parentRoute?.routeMatch?.params ?? {},
+          ...params,
+        },
+      };
+
+      break;
     }
-
-    let end = false;
-    let doBaseMatch = true;
-    let barePath = path;
-
-    if (barePath.endsWith('$')) {
-      barePath = barePath.slice(0, -1);
-      end = true;
-    }
-
-    if (barePath.startsWith('./')) {
-      barePath = barePath.slice(1);
-      doBaseMatch = false;
-    }
-
-    this.currentPath = this.switch.currentPath;
-
-    // console.log(
-    //   'route handling path',
-    //   barePath,
-    //   'with',
-    //   (doBaseMatch || !this.parentRoute?.routeMatch.baseMatch)
-    //     ? this.switch.router.currentPath
-    //     : this.switch.router.currentPath
-    //       .substring(this.parentRoute.routeMatch.baseMatch.length),
-    // );
-
-    const paramList = [];
-    const regex = pathToRegexp(barePath, paramList, { end });
-
-    let matches = null;
-    if (
-      doBaseMatch
-      || !this.parentRoute?.routeMatch.baseMatch
-      || this.switch.controlled
-    ) {
-      matches = this.switch.currentPath.match(regex);
-    } else {
-      let pathToMatch = this.switch.currentPath
-        .substring(this.parentRoute.routeMatch.baseMatch.length);
-      pathToMatch = pathToMatch === '' ? '/' : pathToMatch;
-
-      matches = pathToMatch.match(regex);
-    }
-
-    const baseMatch = (doBaseMatch || this.switch.controlled)
-      ? matches[0]
-      : `${this.parentRoute?.routeMatch.baseMatch ?? ''}${matches[0]}`;
-    let params = {};
-
-    matches.shift();
-
-    params = Object.fromEntries(
-      paramList
-        .map(({ name }, idx) => [ name, matches[idx] ]),
-    );
-
-    this.routeMatch = {
-      baseMatch,
-      params: {
-        ...this.parentRoute?.routeMatch?.params ?? {},
-        ...params,
-      },
-    };
-
-    // console.log(this, 'params', this.routeMatch.params, 'parentRoute', parentRoute);
   };
 
   updated(): void {

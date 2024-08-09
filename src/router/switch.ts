@@ -15,12 +15,12 @@ import {
 import { Route } from './route.js';
 
 export type SwitchRoute =
-  [ string, (match: RouteMatch) => unknown ] |
-  [ string, (match: RouteMatch) => unknown, SwitchRouteOptions ] |
-  [ string, string ] |
-  [ string, string, SwitchRouteOptions ] |
-  [ string, SwitchRoute[] ] |
-  [ string, SwitchRoute[], SwitchRouteOptions ];
+  [ string | string[], (match: RouteMatch) => unknown ] |
+  [ string | string[], (match: RouteMatch) => unknown, SwitchRouteOptions ] |
+  [ string | string[], string ] |
+  [ string | string[], string, SwitchRouteOptions ] |
+  [ string | string[], SwitchRoute[] ] |
+  [ string | string[], SwitchRoute[], SwitchRouteOptions ];
 
 export interface SwitchRouteOptions {
   keyed: (match: RouteMatch) => string,
@@ -199,41 +199,45 @@ export class Switch extends LitElement {
         return;
       }
 
-      let end = false;
-      let doBaseMatch = true;
-      let barePath = child.getAttribute('path');
+      const paths = child.getAttribute('path').split(',');
 
-      if (barePath.endsWith('$')) {
-        barePath = barePath.slice(0, -1);
-        end = true;
-      }
+      for (const path of paths) {
+        let end = false;
+        let doBaseMatch = true;
+        let barePath = path;
 
-      if (barePath.startsWith('./')) {
-        barePath = barePath.slice(1);
-        doBaseMatch = false;
-      }
-
-      if (typeof barePath === 'string') {
-        const regex = pathToRegexp(barePath, [], { end });
-
-        let matches = null;
-        if (doBaseMatch || !this.parentRoute?.routeMatch.baseMatch) {
-          matches = parsedPath.match(regex);
-        } else {
-          let pathToMatch = parsedPath
-            .substring(this.parentRoute.routeMatch.baseMatch.length);
-          pathToMatch = pathToMatch === '' ? '/' : pathToMatch;
-
-          matches = pathToMatch.match(regex);
+        if (barePath.endsWith('$')) {
+          barePath = barePath.slice(0, -1);
+          end = true;
         }
 
-        if (!matches) {
-          continue;
+        if (barePath.startsWith('./')) {
+          barePath = barePath.slice(1);
+          doBaseMatch = false;
         }
 
-        // console.log('matches', matches);
+        if (typeof barePath === 'string') {
+          const regex = pathToRegexp(barePath, [], { end });
 
-        return child;
+          let matches = null;
+          if (doBaseMatch || !this.parentRoute?.routeMatch.baseMatch) {
+            matches = parsedPath.match(regex);
+          } else {
+            let pathToMatch = parsedPath
+              .substring(this.parentRoute.routeMatch.baseMatch.length);
+            pathToMatch = pathToMatch === '' ? '/' : pathToMatch;
+
+            matches = pathToMatch.match(regex);
+          }
+
+          if (!matches) {
+            continue;
+          }
+
+          // console.log('matches', matches);
+
+          return child;
+        }
       }
     }
 

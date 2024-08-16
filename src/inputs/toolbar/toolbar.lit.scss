@@ -1,0 +1,20 @@
+:host(fzn-toolbar)
+{
+  display: flex;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  div.left
+  {
+    display: inline-flex;
+    flex-wrap: wrap;
+    flex-grow: 1;
+  }
+
+  div.right
+  {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+}

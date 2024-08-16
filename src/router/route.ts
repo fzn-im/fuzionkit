@@ -2,6 +2,7 @@ import { consume, provide } from '@lit/context';
 import { LitElement, html } from 'lit';
 import { html as staticHtml, unsafeStatic } from 'lit-html/static.js';
 import { customElement, property } from 'lit/decorators.js';
+import { spread, spreadEvents, spreadProps } from '@open-wc/lit-helpers';
 import { pathToRegexp } from 'path-to-regexp';
 
 import {
@@ -85,6 +86,21 @@ export class Route extends LitElement {
 
   @property({ attribute: true })
   component: ((routeMatch?: RouteMatch) => unknown) | string;
+
+  @property({ attribute: false })
+  attrs?: {
+    [key: string]: unknown;
+  };
+
+  @property({ attribute: false })
+  props?: {
+    [key: string]: unknown;
+  };
+
+  @property({ attribute: false })
+  events?: {
+    [key: string]: unknown;
+  };
 
   handleNavigate = (): void => {
     // prevent renavigating if path has not changed
@@ -174,13 +190,16 @@ export class Route extends LitElement {
   }
 
   render(): unknown {
-    const { component, routeMatch, slot } = this;
+    const { attrs, component, events, props, routeMatch, slot } = this;
 
     if (slot) {
       if (component) {
         if (typeof component === 'string') {
           return staticHtml`
             <${unsafeStatic(component)}
+              ${spread(attrs)}
+              ${spreadProps(events)}
+              ${spreadEvents(props)}
             ></${unsafeStatic(component)}>
           `;
         }

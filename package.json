@@ -60,6 +60,7 @@
     "@milkdown/preset-commonmark": "^6.4.2",
     "@milkdown/prose": "^6.4.1",
     "@milkdown/theme-nord": "^6.4.1",
+    "@open-wc/lit-helpers": "^0.7.0",
     "@reduxjs/toolkit": "^1.9.5",
     "@stylistic/eslint-plugin-js": "^1.7.0",
     "@types/hammerjs": "^2.0.41",

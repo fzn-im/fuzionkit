@@ -1,4 +1,4 @@
-@import '../resources/css/mixins/scrollbars.scss';
+@use '../resources/css/mixins/scrollbars.scss';
 
 @include scrollbars;
 

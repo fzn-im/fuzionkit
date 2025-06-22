@@ -363,11 +363,6 @@
           {
             .avatar
             {
-              & *
-              {
-                cursor: pointer;
-              }
-
               float: left;
               display: flex;
               width: 2rem;
@@ -377,6 +372,11 @@
               border-radius: .1875rem;
               align-items: center;
               justify-content: center;
+
+              & *
+              {
+                cursor: pointer;
+              }
 
               img
               {
@@ -388,17 +388,17 @@
 
             & > .username
             {
-              & *
-              {
-                cursor: pointer;
-              }
-
               float: left;
               line-height: 3rem;
               font-size: .875rem;
               color: #FFFFFF;
               font-weight: bold;
               padding-left: .75rem;
+
+              & *
+              {
+                cursor: pointer;
+              }
             }
           }
         }

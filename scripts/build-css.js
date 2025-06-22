@@ -24,6 +24,7 @@ const build = async () => {
 
   for (const file of files) {
     const result = await compileAsync(file, {
+      quietDeps: true,
       loadPaths: [
         'node_modules',
         ...(basename(parentNodeModules) === 'node_modules' ? [ parentNodeModules ] : []),

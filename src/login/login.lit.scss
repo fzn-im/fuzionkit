@@ -1,4 +1,4 @@
-@use '../resources/css/mixins/panel.scss';
+@use '../resources/css/mixins/panel.scss' as *;
 
 :host(fzn-login),
 :host(fzn-register)

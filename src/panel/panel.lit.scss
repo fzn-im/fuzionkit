@@ -1,6 +1,6 @@
 @use "sass:map";
 
-@use '../resources/css/mixins/spacing.scss';
+@use '../resources/css/mixins/spacing.scss' as *;
 
 :host(fzn-panel)
 {

@@ -87,7 +87,7 @@ export class EnhancedEventTarget<S = any> extends EventTarget {
     }
   };
 
-  dispatchChange = (values: Partial<S>): void => {
+  dispatchChange(values: Partial<S>): void {
     for (const [ key, value ] of Object.entries(values)) {
       this.dispatchEvent(new CustomEvent<ChangeEvent<unknown>>(`${key}-change`, {
         detail: { value },
@@ -99,7 +99,7 @@ export class EnhancedEventTarget<S = any> extends EventTarget {
     }));
   };
 
-  applyChange = (fields: Partial<S>, { silent = false }: { silent?: boolean } = {}): void => {
+  applyChange(fields: Partial<S>, { silent = false }: { silent?: boolean } = {}): void {
     const changes = Object
       .entries(fields)
       .reduce((acc, [ key, value ]) => {

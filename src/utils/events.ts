@@ -100,14 +100,19 @@ export class EnhancedEventTarget<S = any> extends EventTarget {
   };
 
   applyChange(fields: Partial<S>, { silent = false }: { silent?: boolean } = {}): void {
-    const changes = Object
-      .entries(fields)
+    const { model } = this;
+
+    const changes = Object.entries(fields)
       .reduce((acc, [ key, value ]) => {
-        if (this[key] !== value) {
+        if (model[key] !== value) {
           acc[key] = value;
         }
         return acc;
       }, {});
+
+    if (!Object.entries(changes).length) {
+      return;
+    }
 
     Object.assign(this.model, changes);
 
@@ -253,7 +258,7 @@ export function EnhancedEventTargetMixin<T extends Constructor<Omit<LitElement, 
       }
     };
 
-    dispatchChange = (values: Partial<S>): void => {
+    dispatchChange(values: Partial<S>): void {
       for (const [ key, value ] of Object.entries(values)) {
         this.dispatchEvent(new CustomEvent<ChangeEvent<unknown>>(`${key}-change`, {
           detail: { value },
@@ -263,22 +268,28 @@ export function EnhancedEventTargetMixin<T extends Constructor<Omit<LitElement, 
       this.dispatchEvent(new CustomEvent<ChangesEvent<S>>('change', {
         detail: { values },
       }));
-    };
+    }
 
-    applyChange = (fields: Partial<S>, { silent = false }: { silent?: boolean } = {}): void => {
-      const changes = Object.entries(fields).reduce((acc, [ key, value ]) => {
-        if (this[key] !== value) {
-          acc[key] = value;
-        }
-        return acc;
-      }, {});
+    applyChange(fields: Partial<S>, { silent = false }: { silent?: boolean } = {}): void {
+      const { model } = this;
+      const changes = Object.entries(fields)
+        .reduce((acc, [ key, value ]) => {
+          if (model[key] !== value) {
+            acc[key] = value;
+          }
+          return acc;
+        }, {});
+
+      if (!Object.entries(changes).length) {
+        return;
+      }
 
       Object.assign(this.model, changes);
 
       if (!silent) {
         this.dispatchChange(changes);
       }
-    };
+    }
 
     isListeningTo(
       target: any,

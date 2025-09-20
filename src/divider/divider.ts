@@ -18,11 +18,13 @@ export class Divider extends LitElement {
       <div></div>
 
       ${
-        hasContent ? html`
-          <div class="content">
-            <slot></slot>
-          </div>
-        ` : html`<slot></slot>`
+        hasContent
+          ? html`
+            <div class="content">
+              <slot></slot>
+            </div>
+          `
+          : html`<slot></slot>`
       }
 
       <div></div>

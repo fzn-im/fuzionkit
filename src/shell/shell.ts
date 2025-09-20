@@ -76,6 +76,9 @@ export class Shell extends EnhancedEventTargetMixin<
   @property({ attribute: true, type: String })
   logoText?: string;
 
+  @property({ attribute: true, type: Boolean })
+  flipVertical = false;
+
   @state()
   userAvatarUrl: string | null = null;
 
@@ -93,6 +96,10 @@ export class Shell extends EnhancedEventTargetMixin<
 
   @query('fzn-drawer')
   drawer: Drawer;
+
+  get contentSlot(): HTMLSlotElement {
+    return this.querySelector('slot:not([name])')
+  }
 
   hasTouchScreen = false;
 
@@ -279,6 +286,7 @@ export class Shell extends EnhancedEventTargetMixin<
       drawerMinWidth,
       drawerOpen,
       drawerWidth,
+      flipVertical,
       handleDrawerResize,
       handleUpActionClick,
       logo,
@@ -369,7 +377,13 @@ export class Shell extends EnhancedEventTargetMixin<
             paddingBottom: !pageHandlesPadding && contentFramePadding ? `${contentFramePadding}px` : '0',
           })}
         >
-          <slot></slot>
+          <slot
+            style=${styleMap({
+              marginBottom: (flipVertical && this.actionBar?.clientHeight)
+                ? `${this.actionBar.clientHeight}px`
+                : 0,
+            })}
+          ></slot>
         </div>
 
         <fzn-drawer

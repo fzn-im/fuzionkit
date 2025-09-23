@@ -3,6 +3,7 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit-html/directives/if-defined.js';
 import { consume } from '@lit/context';
 import { v4 as uuid } from 'uuid';
+import { unsafeStatic } from 'lit-html/static.js';
 
 import { handleHrefClick } from '../router/utils.js';
 import { Router, routerContext } from '../router/context.js';
@@ -14,27 +15,71 @@ import { ContextMenu, ContextMenuOptions } from './context-menu.js';
 
 import styles from './context-menu-item.lit.css.js';
 
-export interface ContextMenuItemOptions {
-  anchorOptions?: ContextMenu['anchorOptions'];
+type OnItemCreate = (item: HTMLElement, props: ContextMenuItemOptions, ctx: ContextMenu) => void;
+type OnClick = (ctx: ContextMenu, evt?: Event, src?: any) => void;
+type OnChangeStop = (ctx: ContextMenu, evt?: Event, src?: any) => void;
+type ItemElement = TakeOrEvaluate<HTMLElement>;
+type RenderElement = unknown;
+type ItemLabel = string;
+type SliderValue = number;
+type ToggleValue = boolean;
+type Items = TakeOrEvaluate<ContextMenuItemOptions[]>;
+type ItemsPromise = TakeOrEvaluate<Promise<ContextMenuItemOptions[]>>;
+
+export type ContextMenuItemOptions = {
+  type:
+    ContextMenuItemType.Loading |
+    ContextMenuItemType.Separator
+} |
+{
+  type: ContextMenuItemType.Async;
+  onItemCreate?: OnItemCreate;
+  promise?: ItemsPromise;
+} |
+{
+  type: ContextMenuItemType.Element;
+  element?: ItemElement;
+  renderElement?: RenderElement;
+} |
+{
+  type: ContextMenuItemType.Header;
+  label?: ItemLabel;
+  renderElement?: RenderElement;
+} |
+{
+  type: ContextMenuItemType.Placeholder;
+  label?: ItemLabel;
+  renderElement?: RenderElement;
+} |
+{
+  type: ContextMenuItemType.Slider;
+  onChangeStop?: OnChangeStop;
+  value?: SliderValue;
+} |
+{
+  type: ContextMenuItemType.Toggle;
+  label?: ItemLabel;
+  onChangeStop?: OnChangeStop;
+  value?: ToggleValue;
+} |
+{
+  type: ContextMenuItemType.TagElement;
+  element: string;
+  contextMenu: ContextMenu,
+} |
+{
+  type?: ContextMenuItemType.Button;
   childOptions?: ContextMenuOptions;
-  className?: string;
-  element?: TakeOrEvaluate<HTMLElement>;
   href?: string;
-  items?: TakeOrEvaluate<ContextMenuItemOptions[]>;
+  items?: Items;
   label?: string;
-  onChangeStop?: (ctx: ContextMenu, evt?: Event, src?: any) => void;
-  onChildClose?: any;
-  onChildOpen?: any;
-  onClick?: (ctx: ContextMenu, evt?: Event, src?: any) => void;
-  onItemCreate?: (item: HTMLElement, props: ContextMenuItemOptions, ctx: ContextMenu) => void,
-  promise?: TakeOrEvaluate<Promise<ContextMenuItemOptions[]>>;
+  onClick?: OnClick;
+  onItemCreate?: OnItemCreate;
+  renderElement?: RenderElement;
   routeTo?: string;
-  selected?: boolean;
+  selected?: boolean
   target?: string;
-  type?: ContextMenuItemType;
-  value?: any;
-  renderElement?: unknown,
-}
+};
 
 export enum ContextMenuItemType {
   Async = 'async',
@@ -46,6 +91,7 @@ export enum ContextMenuItemType {
   Separator = 'separator',
   Slider = 'slider',
   Toggle = 'toggle',
+  TagElement = 'tag-element',
 }
 
 export const renderContextMenuItems = (
@@ -59,42 +105,47 @@ export const renderContextMenuItem = (
   contextMenu: ContextMenu,
   options: ContextMenuItemOptions,
 ): unknown => {
-  const {
-    childOptions,
-    element,
-    href,
-    items,
-    label,
-    onChangeStop,
-    onClick,
-    onItemCreate,
-    promise,
-    renderElement,
-    routeTo,
-    selected,
-    target,
-    type,
-    value,
-  } = options;
 
-  switch (type) {
+  switch (options.type) {
   case ContextMenuItemType.Async:
+  {
+    const {
+      onItemCreate,
+      promise,
+    } = options;
+
     return html`
       <fzn-context-menu-item-async
         .contextMenu=${contextMenu}
+        .contextMenuItemOptions=${options}
         .promise=${promise}
+        .onItemCreate=${onItemCreate}
       ></fzn-context-menu-item-async>
     `;
+  }
 
   case ContextMenuItemType.Element:
+  {
+    const {
+      element,
+      renderElement,
+    } = options;
+
     return html`
       <fzn-context-menu-item-element
         .element=${element}
         .renderElement=${renderElement}
       ></fzn-context-menu-item-element>
     `;
+  }
 
   case ContextMenuItemType.Header:
+  {
+    const {
+      label,
+      renderElement,
+    } = options;
+
     return html`
       <fzn-context-menu-item-header
         .renderElement=${renderElement}
@@ -102,11 +153,20 @@ export const renderContextMenuItem = (
         ${label}
       </fzn-context-menu-item-header>
     `;
+  }
 
   case ContextMenuItemType.Loading:
+  {
     return html`<fzn-context-menu-item-loading></fzn-context-menu-item-loading>`;
+  }
 
   case ContextMenuItemType.Placeholder:
+  {
+    const {
+      label,
+      renderElement,
+    } = options;
+
     return html`
       <fzn-context-menu-item-placeholder
         .renderElement=${renderElement}
@@ -114,11 +174,20 @@ export const renderContextMenuItem = (
         ${label}
       </fzn-context-menu-item-placeholder>
     `;
+  }
 
   case ContextMenuItemType.Separator:
+  {
     return html`<fzn-context-menu-item-separator></fzn-context-menu-item-separator>`;
+  }
 
   case ContextMenuItemType.Slider:
+  {
+    const {
+      onChangeStop,
+      value,
+    } = options;
+
     return html`
       <fzn-context-menu-item-slider @dragstart=${(): boolean => false}>
         <fzn-slider
@@ -129,8 +198,16 @@ export const renderContextMenuItem = (
         ></fzn-slider>
       </fzn-context-menu-item-slider>
     `;
+  }
 
   case ContextMenuItemType.Toggle:
+  {
+    const {
+      label,
+      onChangeStop,
+      value,
+    } = options;
+
     return html`
       <fzn-context-menu-item-toggle
         @change=${(evt: CustomEvent<ChangeEvent<boolean>>): void => {
@@ -141,9 +218,38 @@ export const renderContextMenuItem = (
         ${label}
       </fzn-context-menu-item-toggle>
     `;
+  }
+
+  case ContextMenuItemType.TagElement:
+  {
+    const {
+      contextMenu,
+      element,
+    } = options;
+
+    return html`
+      <${unsafeStatic(element)} 
+        .contextMenu=${contextMenu}
+      ></${unsafeStatic(element)}>
+    `
+  }
 
   case ContextMenuItemType.Button:
   default:
+  {
+    const {
+      childOptions,
+      href,
+      items,
+      label,
+      onClick,
+      onItemCreate,
+      renderElement,
+      routeTo,
+      selected,
+      target,
+    } = options;
+
     return html`
       <fzn-context-menu-item-button
         selected=${ifDefined(selected || undefined)}
@@ -162,6 +268,7 @@ export const renderContextMenuItem = (
         ${label}
       </fzn-context-menu-item-button>
     `;
+  }
   }
 };
 
@@ -183,34 +290,45 @@ export class ContextMenuItemAsync extends LitElement {
   @property({ attribute: false })
   contextMenu: ContextMenu;
 
-  _promise: TakeOrEvaluate<Promise<ContextMenuItemOptions[]>>;
+  @property({ attribute: false })
+  contextMenuItemOptions: ContextMenuItemOptions;
 
   @property({ attribute: false })
-  get promise(): TakeOrEvaluate<Promise<ContextMenuItemOptions[]>> {
+  onItemCreate: OnItemCreate;
+
+  _promise: ItemsPromise;
+
+  @property({ attribute: false })
+  get promise(): ItemsPromise {
     return this._promise;
   }
 
-  set promise(promise: TakeOrEvaluate<Promise<ContextMenuItemOptions[]>>) {
+  set promise(promise: ItemsPromise) {
     if (this._promise !== promise) {
       const oldValue = this._promise;
       this._promise = promise;
       this.requestUpdate('promise', oldValue);
 
-      setTimeout(async () => {
-        this.items = await takeOrEvaluate(this.promise);
-      }, 0);
+      this.refresh();
     }
   }
 
   @state()
   items: ContextMenuItemOptions[];
 
-  connectedCallback(): void {
-    super.connectedCallback();
-
+  refresh(): void {
     setTimeout(async () => {
       this.items = await takeOrEvaluate(this.promise);
     }, 0);
+  }
+
+  connectedCallback(): void {
+    super.connectedCallback();
+    const { contextMenu, contextMenuItemOptions, onItemCreate } = this;
+
+    onItemCreate && onItemCreate(this, contextMenuItemOptions, contextMenu);
+
+    this.refresh();
   }
 
   updated(): void {
@@ -229,7 +347,7 @@ export class ContextMenuItemElement extends LitElement {
   static styles = [ styles ];
 
   @property({ attribute: false })
-  element: TakeOrEvaluate<HTMLElement>;
+  element: ItemElement;
 
   @property({ attribute: false })
   renderElement: unknown;
@@ -301,7 +419,7 @@ export class ContextMenuItemButton extends LitElement {
   childOptions: ContextMenuOptions;
 
   @property({ attribute: false })
-  items: TakeOrEvaluate<ContextMenuItemOptions[]>;
+  items?: Items;
 
   @property({ attribute: false })
   contextMenu: ContextMenu;
@@ -322,7 +440,7 @@ export class ContextMenuItemButton extends LitElement {
   renderElement: unknown;
 
   @property({ attribute: false })
-  onItemCreate: ContextMenuItemOptions['onItemCreate'];
+  onItemCreate: OnItemCreate;
 
   contextMenuUuid: string;
 
@@ -447,5 +565,14 @@ export class ContextMenuItemSlider extends LitElement {
     return html`
       <slot></slot>
     `;
+  }
+}
+
+export class ContextMenuItemLitElement extends LitElement {
+  @property({ attribute: false })
+  contextMenu: ContextMenu;
+
+  render(): unknown {
+    return null;
   }
 }

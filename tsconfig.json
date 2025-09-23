@@ -29,7 +29,7 @@
         "name": "typescript-plugin-css-modules"
       },
       {
-        "name": "ts-lit-plugin"
+        "name": "@jackolope/ts-lit-plugin"
       }
     ]
   },

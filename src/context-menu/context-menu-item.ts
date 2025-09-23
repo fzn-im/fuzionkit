@@ -25,6 +25,7 @@ type SliderValue = number;
 type ToggleValue = boolean;
 type Items = TakeOrEvaluate<ContextMenuItemOptions[]>;
 type ItemsPromise = TakeOrEvaluate<Promise<ContextMenuItemOptions[]>>;
+type Properties = Record<string, unknown>;
 
 export type ContextMenuItemOptions = {
   type:
@@ -65,7 +66,7 @@ export type ContextMenuItemOptions = {
 {
   type: ContextMenuItemType.TagElement;
   element: string;
-  contextMenu: ContextMenu,
+  properties: Properties;
 } |
 {
   type?: ContextMenuItemType.Button;
@@ -223,13 +224,14 @@ export const renderContextMenuItem = (
   case ContextMenuItemType.TagElement:
   {
     const {
-      contextMenu,
       element,
+      properties,
     } = options;
 
     return html`
       <${unsafeStatic(element)} 
         .contextMenu=${contextMenu}
+        .properties=${properties}
       ></${unsafeStatic(element)}>
     `
   }
@@ -571,6 +573,16 @@ export class ContextMenuItemSlider extends LitElement {
 export class ContextMenuItemLitElement extends LitElement {
   @property({ attribute: false })
   contextMenu: ContextMenu;
+
+  @property({ attribute: false })
+  properties: Properties;
+
+  connectedCallback(): void {
+    super.connectedCallback();
+    const { properties } = this;
+
+    Object.assign(this, properties ?? {});
+  }
 
   render(): unknown {
     return null;

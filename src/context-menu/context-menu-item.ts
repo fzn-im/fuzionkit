@@ -3,7 +3,7 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit-html/directives/if-defined.js';
 import { consume } from '@lit/context';
 import { v4 as uuid } from 'uuid';
-import { unsafeStatic } from 'lit-html/static.js';
+import { html as staticHtml, StaticValue } from 'lit-html/static.js';
 
 import { handleHrefClick } from '../router/utils.js';
 import { Router, routerContext } from '../router/context.js';
@@ -65,7 +65,7 @@ export type ContextMenuItemOptions = {
 } |
 {
   type: ContextMenuItemType.TagElement;
-  element: string;
+  element: StaticValue;
   properties: Properties;
 } |
 {
@@ -228,11 +228,11 @@ export const renderContextMenuItem = (
       properties,
     } = options;
 
-    return html`
-      <${unsafeStatic(element)} 
+    return staticHtml`
+      <${element} 
         .contextMenu=${contextMenu}
         .properties=${properties}
-      ></${unsafeStatic(element)}>
+      ></${element}>
     `
   }
 

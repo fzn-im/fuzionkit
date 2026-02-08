@@ -55,7 +55,7 @@ export type ContextMenuItemOptions = {
 {
   type: ContextMenuItemType.Slider;
   onChangeStop?: OnChangeStop;
-  defaultValue?: ToggleValue;
+  defaultValue?: SliderValue;
   value?: SliderValue;
 } |
 {

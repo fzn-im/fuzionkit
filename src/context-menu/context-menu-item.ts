@@ -55,12 +55,14 @@ export type ContextMenuItemOptions = {
 {
   type: ContextMenuItemType.Slider;
   onChangeStop?: OnChangeStop;
+  defaultValue?: ToggleValue;
   value?: SliderValue;
 } |
 {
   type: ContextMenuItemType.Toggle;
   label?: ItemLabel;
   onChangeStop?: OnChangeStop;
+  defaultValue?: ToggleValue;
   value?: ToggleValue;
 } |
 {
@@ -185,6 +187,7 @@ export const renderContextMenuItem = (
   case ContextMenuItemType.Slider:
   {
     const {
+      defaultValue,
       onChangeStop,
       value,
     } = options;
@@ -195,7 +198,8 @@ export const renderContextMenuItem = (
           @change=${(evt: CustomEvent<ChangeEvent<number>>): void => {
             onChangeStop && onChangeStop(contextMenu, evt, evt.target);
           }}
-          .defaultValue=${value}
+          .defaultValue=${defaultValue}
+          .value=${value}
         ></fzn-slider>
       </fzn-context-menu-item-slider>
     `;
@@ -204,6 +208,7 @@ export const renderContextMenuItem = (
   case ContextMenuItemType.Toggle:
   {
     const {
+      defaultValue,
       label,
       onChangeStop,
       value,
@@ -214,7 +219,8 @@ export const renderContextMenuItem = (
         @change=${(evt: CustomEvent<ChangeEvent<boolean>>): void => {
           onChangeStop && onChangeStop(contextMenu, evt, evt.target);
         }}
-        .defaultValue=${value}
+        .defaultValue=${defaultValue}
+        .value=${value}
       >
         ${label}
       </fzn-context-menu-item-toggle>

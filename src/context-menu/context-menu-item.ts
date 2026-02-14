@@ -61,14 +61,15 @@ export type ContextMenuItemOptions = {
 {
   type: ContextMenuItemType.Toggle;
   label?: ItemLabel;
-  onChangeStop?: OnChangeStop;
+  onChange?: OnChangeStop;
   defaultValue?: ToggleValue;
   value?: ToggleValue;
+  style?: string;
 } |
 {
   type: ContextMenuItemType.TagElement;
   element: StaticValue;
-  properties: Properties;
+  properties?: Properties;
 } |
 {
   type?: ContextMenuItemType.Button;
@@ -196,7 +197,7 @@ export const renderContextMenuItem = (
       <fzn-context-menu-item-slider @dragstart=${(): boolean => false}>
         <fzn-slider
           @change=${(evt: CustomEvent<ChangeEvent<number>>): void => {
-            onChangeStop && onChangeStop(contextMenu, evt, evt.target);
+            onChangeStop?.(contextMenu, evt, evt.target);
           }}
           .defaultValue=${defaultValue}
           .value=${value}
@@ -210,17 +211,19 @@ export const renderContextMenuItem = (
     const {
       defaultValue,
       label,
-      onChangeStop,
+      onChange,
+      style,
       value,
     } = options;
 
     return html`
       <fzn-context-menu-item-toggle
         @change=${(evt: CustomEvent<ChangeEvent<boolean>>): void => {
-          onChangeStop && onChangeStop(contextMenu, evt, evt.target);
+          onChange?.(contextMenu, evt, evt.target);
         }}
         .defaultValue=${defaultValue}
         .value=${value}
+        style=${style}
       >
         ${label}
       </fzn-context-menu-item-toggle>

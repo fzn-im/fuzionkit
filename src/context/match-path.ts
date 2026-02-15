@@ -58,7 +58,7 @@ export function matchPath({
       (protoOrTarget.constructor as typeof ReactiveElement).addInitializer(
         (element: ReactiveElement): void => {
           new ContextConsumer(
-            this,
+            element,
             {
               callback: (value: string): void => {
                 handle(element, nameOrContext, value);

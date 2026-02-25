@@ -1,9 +1,11 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
-import { DialogFactory, dialogFactoryContext } from '../dialog/context';
 import { consume } from '@lit/context';
-import { createGalleryDialog } from './gallery-dialog';
+
+import { DialogFactory, dialogFactoryContext } from '../dialog/context.js';
+
+import { createGalleryDialog } from './gallery-dialog.js';
 
 @customElement('fzn-nubblet')
 export class Nubblet extends LitElement {

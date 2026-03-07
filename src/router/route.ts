@@ -23,7 +23,7 @@
 import { consume, provide } from '@lit/context';
 import { LitElement, html } from 'lit';
 import { html as staticHtml, unsafeStatic } from 'lit-html/static.js';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 // todo: switch when fixed
 // import { spread, spreadEvents, spreadProps } from '@open-wc/lit-helpers';
 import { pathToRegexp } from 'path-to-regexp';
@@ -127,6 +127,14 @@ export class Route extends LitElement {
     [key: string]: unknown;
   };
 
+  @property({ attribute: false })
+  preload?: () => Promise<unknown>;
+
+  _preloadPromise?: Promise<unknown>;
+
+  @state()
+  _preloadPromiseFulfilled = false;
+
   handleNavigate = (): void => {
     // prevent renavigating if path has not changed
     // removed because it didn't work as thought
@@ -218,6 +226,20 @@ export class Route extends LitElement {
     const { attrs, component, events, props, routeMatch, slot } = this;
 
     if (slot) {
+      if (this.preload) {
+        if (!this._preloadPromise) {
+          this._preloadPromise = this.preload();
+        }
+
+        if (!this._preloadPromiseFulfilled) {
+          this._preloadPromise.then(() => {
+            this._preloadPromiseFulfilled = true
+          });
+
+          return;
+        }
+      }
+
       if (component) {
         if (typeof component === 'string') {
           return staticHtml`
@@ -235,7 +257,6 @@ export class Route extends LitElement {
       return html`<slot></slot>`;
     }
 
-    // console.log('route removed', path);
     return null;
   }
 }

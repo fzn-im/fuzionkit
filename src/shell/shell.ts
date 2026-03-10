@@ -74,6 +74,9 @@ export class Shell extends EnhancedEventTargetMixin<
   logo?: string;
 
   @property({ attribute: true, type: String })
+  logoRouterHref: string = '/';
+
+  @property({ attribute: true, type: String })
   logoText?: string;
 
   @property({ attribute: true, type: Boolean })
@@ -110,10 +113,6 @@ export class Shell extends EnhancedEventTargetMixin<
   scrollLocks = 0;
 
   resizeObserver: ResizeObserver;
-
-  constructor() {
-    super();
-  }
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
@@ -290,6 +289,7 @@ export class Shell extends EnhancedEventTargetMixin<
       handleDrawerResize,
       handleUpActionClick,
       logo,
+      logoRouterHref,
       logoText,
       pageHandlesPadding,
       router,
@@ -335,7 +335,7 @@ export class Shell extends EnhancedEventTargetMixin<
 
             <a
               class="title select pointer"
-              href="/"
+              href=${logoRouterHref}
               @click=${handleRouteClick(router)}
             >
               ${logoText ?? 'Fuzion'}

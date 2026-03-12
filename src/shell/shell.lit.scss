@@ -463,6 +463,8 @@
 {
   > div
   {
+    min-height: 100vh;
+
     & > .app-badge > .branding > .title
     {
       display: none;

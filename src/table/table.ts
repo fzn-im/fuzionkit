@@ -136,10 +136,10 @@ export class RustiveTable<T> extends ControllableMixin<
     if (!this.controlled) {
       this.__internalValue = value;
       this.requestUpdate('value', oldValue);
-      setImmediate(async () => {
+      setTimeout(async () => {
         await this.updateComplete;
         this.handleColumnsChange();
-      });
+      }, 0);
     }
 
     this.dispatchEvent(new CustomEvent<ChangeEvent<T[]>>(
@@ -165,10 +165,10 @@ export class RustiveTable<T> extends ControllableMixin<
     const oldValue = this.__propValue;
     this.__propValue = value;
     this.requestUpdate('value', oldValue);
-    setImmediate(async () => {
+    setTimeout(async () => {
       await this.updateComplete;
       this.handleColumnsChange();
-    });
+    }, 0);
   }
 
   // === VALUE END ===

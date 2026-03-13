@@ -142,7 +142,7 @@
 
           > td
           {
-            // box-shadow: 0 0 1px inset red;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             @include fzn-spacing('p', 'y', .25);
             @include fzn-spacing('p', 'x', .5);
 

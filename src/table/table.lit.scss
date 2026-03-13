@@ -92,6 +92,8 @@
 
     > .table-holder
     {
+      display: flex;
+      flex-direction: column;
       flex-grow: 1;
       overflow: auto;
       width: 100%;
@@ -104,6 +106,7 @@
         max-height: 100%;
         border-collapse: seperate;
         border-spacing: 0;
+        flex-grow: 0;
 
         > thead > tr
         {
@@ -158,9 +161,13 @@
 
       > .empty
       {
+        display: flex;
+        text-align: center;
+        flex-grow: 1;
+        align-items: center;
+        justify-content: center;
         @include fzn-spacing('p', 'x', 2);
         @include fzn-spacing('p', 'y', 4);
-        text-align: center;
       }
     }
 

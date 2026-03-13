@@ -136,10 +136,6 @@ export class RustiveTable<T> extends ControllableMixin<
     if (!this.controlled) {
       this.__internalValue = value;
       this.requestUpdate('value', oldValue);
-      setTimeout(async () => {
-        await this.updateComplete;
-        this.handleColumnsChange();
-      }, 0);
     }
 
     this.dispatchEvent(new CustomEvent<ChangeEvent<T[]>>(
@@ -165,10 +161,6 @@ export class RustiveTable<T> extends ControllableMixin<
     const oldValue = this.__propValue;
     this.__propValue = value;
     this.requestUpdate('value', oldValue);
-    setTimeout(async () => {
-      await this.updateComplete;
-      this.handleColumnsChange();
-    }, 0);
   }
 
   // === VALUE END ===
@@ -232,34 +224,9 @@ export class RustiveTable<T> extends ControllableMixin<
     });
   };
 
-  handleColumnsChange = (): void => {
-    this.resizeObserver.disconnect();
-    for (const element of this.firstRowElements) {
-      this.resizeObserver.observe(element);
-    }
-    this.handleResize();
-  };
+  handleResize = (): void => {};
 
-  handleResize = (): void => {
-    // const elements = this.firstRowElements;
-    // const headElementInners = this.headElementInners;
-    //
-    // if (elements.length) {
-    //   this.headerElementWidths = [
-    //     ...elements,
-    //   ].map((element) => element.offsetWidth);
-    //
-    //   elements.forEach((element, idx) => {
-    //     element.style.minWidth = `${headElementInners[idx].offsetWidth}px`;
-    //   });
-    // } else {
-    //   this.headerElementWidths = null;
-    // }
-  };
-
-  handleTableScroll = (evt: Event & { target: HTMLElement }): void => {
-  //   this.headElement.scrollLeft = evt.target.scrollLeft;
-  };
+  handleTableScroll = (_evt: Event & { target: HTMLElement }): void => {};
 
   resizeObserver: ResizeObserver = new ResizeObserver(this.handleResize);
 
@@ -407,26 +374,33 @@ export class RustiveTable<T> extends ControllableMixin<
           class="table-holder"
           @scroll=${handleTableScroll}
         >
-          ${
-            value && value.length
-              ? html`
-                <table>
-                  <thead>
-                    <tr>
-                      ${
-                        columns.map((column, idx) => (
-                          defaultColumnHeadRenderer(column, idx, this)
-                        ))
-                      }
-                    </tr>
-                  </thead>
+          <table>
+            <thead>
+              <tr>
+                ${
+                  columns.map((column, idx) => (
+                    defaultColumnHeadRenderer(column, idx, this)
+                  ))
+                }
+              </tr>
+            </thead>
 
-                  <tbody>
-                    ${rowsRender()}
-                  </tbody>
-                </table>
-              `
-              : defaultEmptyRenderer(columns, this)
+            ${
+              value && value.length
+                ? html`
+
+                    <tbody>
+                      ${rowsRender()}
+                    </tbody>
+                `
+                : null
+            }
+          </table>
+
+          ${
+            !value || !value.length
+              ? html`<div class="empty">No results</div>`
+              : null
           }
         </div>
 

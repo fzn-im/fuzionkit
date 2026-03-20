@@ -1,0 +1,179 @@
+@use "../../resources/css/mixins/textfield.scss" as *;
+
+* { box-sizing: border-box; }
+
+:host
+{
+  display: block;
+
+  > div
+  {
+    position: relative;
+
+    &:focus,
+    &.focused
+    {
+      > div
+      {
+        @include fzn-textfield-focus;
+      }
+    }
+
+    &.empty > div input
+    {
+      width: calc(100% - 2px) !important;
+      margin-right: 0;
+    }
+
+    > div
+    {
+      cursor: text;
+      @include fzn-textfield;
+      overflow: hidden;
+      position: relative;
+
+      .spacer
+      {
+        vertical-align: top;
+        display: inline-block;
+        width: 0;
+      }
+
+      .selection
+      {
+        vertical-align: top;
+        user-select: none;
+        display: inline-block;
+        color: #454545;
+        background: rgba(255, 255, 255, .8);
+        border-radius: 2px;
+
+        fa-icon
+        {
+          cursor: pointer;
+        }
+      }
+
+      input
+      {
+        vertical-align: top;
+        display: inline-block;
+        background: transparent;
+        color: #FFFFFF;
+        border: 0;
+        max-width: 100%;
+        padding-top: 0;
+        padding-bottom: 0;
+        outline: 0;
+
+        &:focus
+        {
+          outline: none;
+        }
+      }
+    }
+  }
+}
+
+:host
+{
+  > div.empty > div input
+  {
+    width: calc(100% - .375rem) !important;
+    margin-right: 0;
+  }
+
+  > div > div
+  {
+    padding: .375rem 0 0 .375rem !important;
+
+    .selection,
+    input
+    {
+      margin: 0 .375rem .375rem 0;
+    }
+
+    .spacer
+    {
+      line-height: 1.5;
+      margin-bottom: .375rem;
+    }
+
+    .selection
+    {
+      padding: 0 .3125rem;
+      line-height: 1.5;
+      font-size: 1rem;
+    }
+
+    input
+    {
+      line-height: 1.5;
+      font-size: 1rem;
+    }
+  }
+}
+
+:host([disabled])
+{
+  > div > div
+  {
+    @include fzn-textfield-disabled;
+  }
+}
+
+:host([size='xs'])
+{
+  > div > div
+  {
+    @include fzn-textfield-xs;
+  }
+}
+
+:host([size='s'])
+{
+  > div.empty > div input
+  {
+    width: calc(100% - .25rem) !important;
+    margin-right: 0;
+  }
+
+  > div > div
+  {
+    @include fzn-textfield-s;
+    padding: .25rem 0 0 .25rem !important;
+
+    .selection,
+    input
+    {
+      margin: 0 .25rem .25rem 0;
+    }
+
+    .spacer
+    {
+      line-height: 1.5;
+      margin-bottom: .25rem;
+    }
+
+    .selection
+    {
+      padding: 0 .3125rem;
+      line-height: 1.5;
+      font-size: .875rem;
+    }
+
+    input
+    {
+      line-height: 1.5;
+      font-size: .875rem;
+    }
+  }
+}
+
+:host([size='l'])
+{
+  > div > div
+  {
+    @include fzn-textfield-l;
+  }
+}

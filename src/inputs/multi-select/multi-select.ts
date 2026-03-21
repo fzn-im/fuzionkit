@@ -23,14 +23,14 @@ import { SelectOption } from '../select/select.js';
 
 import styles from './multi-select.lit.css.js';
 
-export type FetchOptions<T> = {
+export type FetchOptions<T, D = unknown> = {
   delay?: number;
   transport: (
     params: { query: string },
-    success: (data: T) => void,
+    success: (data: D) => void,
     failure: () => void,
   ) => void;
-  process: (data: T, params: { query: string }) => ({ results: SelectOption<T>[] });
+  process: (data: D, params: { query: string }) => ({ results: SelectOption<T>[] });
 };
 
 const toContextMenuItemOptions = <T> (

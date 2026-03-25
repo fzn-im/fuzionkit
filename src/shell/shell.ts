@@ -139,13 +139,11 @@ export class Shell extends EnhancedEventTargetMixin<
     hammerTime.on('swiperight swipeleft', (evt) => {
       evt.preventDefault();
 
-      if (!(evt.pointers && evt.pointers.length)) {
-        return;
-      }
+      // Swipe fires on INPUT_END; deltaX/Y are in client (viewport) space — same as center.
+      const startX = evt.center.x - evt.deltaX;
+      const edgeLimit = window.innerWidth / 3;
 
-      const x = evt.pointers[0].pageX - evt.deltaX;
-
-      if (evt.type === 'swiperight' && x >= 0 && x <= 20) {
+      if (evt.type === 'swiperight' && startX <= edgeLimit) {
         this.drawerOpen = true;
       } else if (evt.type === 'swipeleft') {
         this.drawerOpen = false;

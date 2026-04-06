@@ -361,7 +361,7 @@ export class FznDialog extends LitElement {
     this.handleResizeStart(evt, 'l');
   };
 
-  render(inner?: unknown): unknown {
+  render(inner?: unknown, options?: { noPanel?: boolean }): unknown {
     const { floating, handleBackdropClick } = this;
     const {
       floatingXOffset,
@@ -388,13 +388,17 @@ export class FznDialog extends LitElement {
       this.style.height = `${floatingHeight}px`;
     }
 
-    const panel = html`
-      <fzn-panel ?foggedGlass=${foggedGlass}>
-        ${
-          inner || html`<slot></slot>`
-        }
-      </fzn-panel>
-    `;
+    const { noPanel } = options;
+
+    const panel = noPanel
+      ? inner || html`<slot></slot>`
+      : html`
+        <fzn-panel ?foggedGlass=${foggedGlass}>
+          ${
+            inner || html`<slot></slot>`
+          }
+        </fzn-panel>
+      `;
 
     return floating
       ? html`

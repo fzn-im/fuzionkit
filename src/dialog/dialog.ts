@@ -388,7 +388,7 @@ export class FznDialog extends LitElement {
       this.style.height = `${floatingHeight}px`;
     }
 
-    const { noPanel } = options;
+    const { noPanel = false } = options || {};
 
     const panel = noPanel
       ? inner || html`<slot></slot>`

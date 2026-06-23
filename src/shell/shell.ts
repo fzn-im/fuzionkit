@@ -109,6 +109,8 @@ export class Shell extends EnhancedEventTargetMixin<
   mouseGuard = false;
   mouseGuardLocks = 0;
 
+  private mouseGuardOverlay: HTMLElement | null = null;
+
   scrollLock = false;
   scrollLocks = 0;
 
@@ -182,17 +184,44 @@ export class Shell extends EnhancedEventTargetMixin<
   };
 
   lockMouseGuard(): void {
-    if (++this.mouseGuardLocks) {
+    this.mouseGuardLocks += 1;
+
+    if (this.mouseGuardLocks === 1) {
       this.mouseGuard = true;
+      this.showMouseGuardOverlay();
       this.dispatchChange({ mouseGuard: true });
     }
   }
 
   unlockMouseGuard(): void {
-    if (!--this.mouseGuardLocks) {
+    if (this.mouseGuardLocks <= 0) {
+      return;
+    }
+
+    this.mouseGuardLocks -= 1;
+
+    if (this.mouseGuardLocks === 0) {
       this.mouseGuard = false;
+      this.hideMouseGuardOverlay();
       this.dispatchChange({ mouseGuard: false });
     }
+  }
+
+  private showMouseGuardOverlay(): void {
+    if (this.mouseGuardOverlay) {
+      return;
+    }
+
+    const overlay = document.createElement('div');
+    overlay.className = 'fzn-shell-mouse-guard';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:2147483646;';
+    document.body.appendChild(overlay);
+    this.mouseGuardOverlay = overlay;
+  }
+
+  private hideMouseGuardOverlay(): void {
+    this.mouseGuardOverlay?.remove();
+    this.mouseGuardOverlay = null;
   }
 
   lockScroll(): void {

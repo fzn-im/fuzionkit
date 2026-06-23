@@ -261,8 +261,6 @@ export class FznDialog extends LitElement {
     shell?.lockMouseGuard();
     this.bringToFront();
 
-    console.log('resizing', target);
-
     const listener = handleResizeMousemove(target);
     listener(evt);
     window.addEventListener('mousemove', listener);

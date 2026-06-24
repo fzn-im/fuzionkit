@@ -45,6 +45,20 @@ function hasNonItemChildren(node: TreeNode<unknown>): boolean {
   return false;
 }
 
+function defaultTreeNodeToId(node: TreeNode<unknown>): unknown {
+  const { data } = node;
+
+  if (data != null && typeof data === 'object') {
+    const { id, key } = data as { id?: unknown; key?: unknown };
+
+    if (id != null || key != null) {
+      return id ?? key;
+    }
+  }
+
+  return node;
+}
+
 @customElement('fzn-tree')
 export class Tree extends LitElement {
   static styles = [ styles ];
@@ -72,19 +86,19 @@ export class Tree extends LitElement {
   }
 
   @property({ attribute: true })
-  folderHeaderRight: string | null = null;
+  folderHeaderRight?: string;
 
   @property({ attribute: true })
-  item: string | null = null;
+  item?: string = null;
 
   @property({ attribute: true })
-  itemBottom: string | null = null;
+  itemBottom?: string = null;
 
   @property({ attribute: true })
-  itemIcon: string | null = null;
+  itemIcon?: string = null;
 
   @property({ attribute: true })
-  itemRight: string | null = null;
+  itemRight?: string = null;
 
   @queryAssignedNodes({ slot: 'top', flatten: true })
   top: HTMLElement[];
@@ -105,10 +119,16 @@ export class Tree extends LitElement {
   }
 
   @property({ attribute: true, type: String })
-  emptyNodeIndicator = 'fzn-tree-empty-node-placeholder';
+  emptyNodeIndicator?: string;
+
+  @property({ attribute: true, type: String })
+  dragIndicator?: string;
+
+  @property({ attribute: true, type: String })
+  subtree?: string;
 
   @property({ attribute: false })
-  treeNodeToId: (node: TreeNode<unknown>) => unknown = (node: TreeNode<unknown>): TreeNode<unknown> => node;
+  treeNodeToId: (node: TreeNode<unknown>) => unknown = defaultTreeNodeToId;
 
   // === root ===
 
@@ -143,13 +163,107 @@ export class Tree extends LitElement {
 
   _draggedNode: TreeNode<unknown | null> = null;
 
+  _dragSessionCleanup: (() => void) | null = null;
+
+  _touchDragPointerId: number | null = null;
+
+  static DRAG_THRESHOLD_PX = 8;
+
+  private static _prefersNativeDrag: boolean | undefined;
+
+  static prefersNativeDrag(): boolean {
+    if (Tree._prefersNativeDrag === undefined) {
+      Tree._prefersNativeDrag = typeof window === 'undefined'
+        || (
+          !('ontouchstart' in window)
+          && navigator.maxTouchPoints === 0
+          && window.matchMedia('(hover: hover) and (pointer: fine)').matches
+        );
+    }
+
+    return Tree._prefersNativeDrag;
+  }
+
+  get useNativeDrag(): boolean { return Tree.prefersNativeDrag(); }
+
+  isTreeElement(element: Node | null): element is Tree {
+    return element instanceof HTMLElement
+      && 'filteredNodeChildren' in element
+      && 'nodeChildren' in element;
+  }
+
+  collectAllTreeNodeHosts(): Array<{
+    host: HTMLElement;
+    inside: boolean;
+    tree: Tree;
+  }> {
+    const results: Array<{
+      host: HTMLElement;
+      inside: boolean;
+      tree: Tree;
+    }> = [];
+
+    const collect = (current: Tree): void => {
+      const { shadowRoot } = current;
+
+      if (!shadowRoot) {
+        return;
+      }
+
+      for (const el of shadowRoot.querySelectorAll('[data-tree-node-id]')) {
+        if (el instanceof HTMLElement) {
+          results.push({
+            host: el,
+            inside: el.dataset.treeNodeInside !== undefined,
+            tree: current,
+          });
+        }
+      }
+
+      const subtreeTag = current.subtree ?? current.localName;
+
+      for (const el of shadowRoot.querySelectorAll(subtreeTag)) {
+        if (this.isTreeElement(el)) {
+          collect(el);
+        }
+      }
+    };
+
+    collect(this.root);
+    return results;
+  }
+
   get draggedNode(): TreeNode<unknown> | null { return this.root._draggedNode; }
 
   set draggedNode(node: TreeNode<unknown> | null) { this.root._draggedNode = node; }
 
+  nodeEquals(
+    a: TreeNode<unknown> | null | undefined,
+    b: TreeNode<unknown> | null | undefined,
+  ): boolean {
+    if (a == null || b == null) {
+      return a === b;
+    }
+
+    const { treeNodeToId } = this.root;
+    const idA = treeNodeToId(a);
+    const idB = treeNodeToId(b);
+
+    if (idA == null || idB == null) {
+      return a === b;
+    }
+
+    return idA === idB;
+  }
+
   handleSlotChange = () => {
     this.requestUpdate();
   };
+
+  disconnectedCallback(): void {
+    this.root._dragSessionCleanup?.();
+    super.disconnectedCallback();
+  }
 
   handleFilteredNodesUpdate(): void {
     const { nodeChildren, showEmptyNodes } = this;
@@ -183,9 +297,249 @@ export class Tree extends LitElement {
     }));
   };
 
-  handleMouseMove = (child: TreeNode<unknown>, evt: MouseEvent, inside = false): void => {
+  findChildByNodeId(nodeId: string): TreeNode<unknown> | null {
+    const { filteredNodeChildren, treeNodeToId } = this;
+
+    return filteredNodeChildren.find((child) => String(treeNodeToId(child)) === nodeId) ?? null;
+  }
+
+  setPlacementForChild = (
+    child: TreeNode<unknown>,
+    position: NodePlacementPosition,
+  ): void => {
     const { root } = this;
     const { draggedNode, isDragging } = root;
+
+    if (!isDragging) {
+      return;
+    }
+
+    const nodePlacement = { node: child, position };
+
+    root._lastPlacementState = root.placementValidator(root, {
+      node: draggedNode,
+      placement: nodePlacement,
+    })
+      ? nodePlacement
+      : null;
+    root.requestUpdate();
+  };
+
+  placementPositionFromClientY = (
+    clientY: number,
+    element: HTMLElement,
+    inside = false,
+  ): NodePlacementPosition => {
+    if (inside) {
+      return NodePlacementPosition.INSIDE;
+    }
+
+    const { top, height } = element.getBoundingClientRect();
+
+    return clientY > top + height / 2
+      ? NodePlacementPosition.BELOW
+      : NodePlacementPosition.ABOVE;
+  };
+
+  findTreeNodeHostFromElement(element: Element): {
+    host: HTMLElement;
+    inside: boolean;
+    tree: Tree;
+  } | null {
+    let node: Node | null = element;
+
+    while (node) {
+      if (node instanceof HTMLElement && node.dataset.treeNodeId != null) {
+        const host = node;
+        let parent: Node | null = node;
+
+        while (parent) {
+          if (this.isTreeElement(parent)) {
+            return {
+              host,
+              inside: host.dataset.treeNodeInside !== undefined,
+              tree: parent,
+            };
+          }
+
+          if (parent instanceof ShadowRoot) {
+            parent = parent.host;
+          } else if (parent instanceof HTMLElement) {
+            const root = parent.getRootNode();
+
+            parent = parent.parentElement
+              ?? (root instanceof ShadowRoot ? root.host : null);
+          } else {
+            break;
+          }
+        }
+      }
+
+      if (node instanceof ShadowRoot) {
+        node = node.host;
+      } else if (node instanceof HTMLElement) {
+        const root = node.getRootNode();
+
+        node = node.parentElement
+          ?? (root instanceof ShadowRoot ? root.host : null);
+      } else {
+        break;
+      }
+    }
+
+    return null;
+  }
+
+  findTreeNodeHostFromPoint(clientX: number, clientY: number): {
+    host: HTMLElement;
+    inside: boolean;
+    tree: Tree;
+  } | null {
+    const { draggedNode, root } = this;
+    const entries = root.collectAllTreeNodeHosts();
+    type TreeNodeHostEntry = typeof entries[number];
+
+    const isDraggedHost = (entry: TreeNodeHostEntry): boolean => {
+      const child = entry.tree.findChildByNodeId(entry.host.dataset.treeNodeId!);
+
+      return !!child && !!draggedNode && root.nodeEquals(draggedNode, child);
+    };
+
+    for (const entry of entries) {
+      if (isDraggedHost(entry)) {
+        continue;
+      }
+
+      const { host } = entry;
+      const rect = host.getBoundingClientRect();
+
+      if (
+        clientX >= rect.left && clientX <= rect.right
+        && clientY >= rect.top && clientY <= rect.bottom
+      ) {
+        return entry;
+      }
+    }
+
+    let closest: TreeNodeHostEntry | null = null;
+    let closestDistance = Infinity;
+
+    for (const entry of entries) {
+      if (isDraggedHost(entry)) {
+        continue;
+      }
+
+      const { host } = entry;
+      const rect = host.getBoundingClientRect();
+
+      if (clientX < rect.left - 16 || clientX > rect.right + 16) {
+        continue;
+      }
+
+      const distance = Math.abs(clientY - (rect.top + rect.height / 2));
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closest = entry;
+      }
+    }
+
+    return closest;
+  }
+
+  updatePlacementFromPoint = (clientX: number, clientY: number): void => {
+    const { root } = this;
+
+    if (!root.isDragging) {
+      return;
+    }
+
+    const target = root.findTreeNodeHostFromPoint(clientX, clientY);
+
+    if (!target) {
+      return;
+    }
+
+    const { host, inside, tree } = target;
+    const child = tree.findChildByNodeId(host.dataset.treeNodeId!);
+
+    if (!child) {
+      return;
+    }
+
+    tree.setPlacementForChild(
+      child,
+      tree.placementPositionFromClientY(clientY, host, inside),
+    );
+  };
+
+  finishDragSession = (node: TreeNode<unknown>): void => {
+    const { root } = this;
+
+    root._dragSessionCleanup?.();
+    root._dragSessionCleanup = null;
+
+    if (!root.isDragging) {
+      return;
+    }
+
+    root.isDragging = false;
+    root.draggedNode = null;
+    root.toggleAttribute('data-tree-dragging', false);
+
+    const placement = root._lastPlacementState;
+    root._lastPlacementState = null;
+
+    if (placement) {
+      this.dispatchEvent(new CustomEvent<NodePlacementEvent<unknown>>('node-placement', {
+        bubbles: true,
+        composed: true,
+        detail: { node, placement },
+      }));
+    }
+
+    root.requestUpdate();
+  };
+
+  beginDragSession = (node: TreeNode<unknown>): void => {
+    const { root } = this;
+
+    if (!root.isDragging) {
+      root.isDragging = true;
+      root.draggedNode = node;
+      root.toggleAttribute('data-tree-dragging', true);
+      root.requestUpdate();
+    }
+
+    if (root._dragSessionCleanup) {
+      return;
+    }
+
+    let finished = false;
+
+    const finish = (): void => {
+      if (finished) {
+        return;
+      }
+
+      finished = true;
+      this.finishDragSession(node);
+    };
+
+    const cleanup = (): void => {
+      window.removeEventListener('mouseup', finish);
+      root._dragSessionCleanup = null;
+    };
+
+    root._dragSessionCleanup = cleanup;
+
+    window.addEventListener('mouseup', finish, { once: true });
+  };
+
+  handleMouseMove = (child: TreeNode<unknown>, evt: MouseEvent, inside = false): void => {
+    const { root } = this;
+    const { isDragging } = root;
+
     if (!isDragging) {
       return;
     }
@@ -197,56 +551,101 @@ export class Tree extends LitElement {
     const { y: targetY } = target.getBoundingClientRect();
     const { y: currentTargetY } = currentTarget.getBoundingClientRect();
 
-    const nodePlacement = {
-      node: child,
-      position: inside
+    this.setPlacementForChild(
+      child,
+      inside
         ? NodePlacementPosition.INSIDE
         : (
           offsetY - (currentTargetY - targetY) > (currentTarget.offsetHeight / 2)
             ? NodePlacementPosition.BELOW
             : NodePlacementPosition.ABOVE
         ),
-    };
-
-    root._lastPlacementState = root.placementValidator(root, { node: draggedNode, placement: nodePlacement })
-      ? nodePlacement
-      : null;
+    );
   };
 
-  handleDragStart = (node: TreeNode<unknown>, evt: MouseEvent): void => {
+  handleDragStart = (node: TreeNode<unknown>, evt: DragEvent): void => {
     const { root } = this;
-    const { canDrag, allowMove } = root;
-    if (!canDrag || !allowMove(root, node)) {
+    const { allowMove, canDrag } = root;
+
+    if (!canDrag || !root.useNativeDrag || !allowMove(root, node)) {
+      evt.preventDefault();
       return;
     }
 
-    root.isDragging = true;
-    root.draggedNode = node;
-    window.addEventListener('mouseup', (evt) => {
-      evt.preventDefault();
-      evt.stopPropagation();
-      root.isDragging = false;
-      root.draggedNode = null;
-
-      const placement = root._lastPlacementState;
-      root._lastPlacementState = null;
-
-      if (placement) {
-        this.dispatchEvent(new CustomEvent<NodePlacementEvent<unknown>>('node-placement', {
-          bubbles: true,
-          composed: true,
-          detail: { node, placement },
-        }));
-      }
-    }, { once: true });
+    this.beginDragSession(node);
     evt.preventDefault();
     evt.stopPropagation();
+  };
+
+  handleTouchStart = (node: TreeNode<unknown>, evt: TouchEvent): void => {
+    const { root } = this;
+    const { allowMove, canDrag } = root;
+
+    if (!canDrag || !allowMove(root, node) || evt.touches.length !== 1) {
+      return;
+    }
+
+    if (root._touchDragPointerId != null) {
+      return;
+    }
+
+    const pointerId = evt.touches[0].identifier;
+    root._touchDragPointerId = pointerId;
+
+    const startX = evt.touches[0].clientX;
+    const startY = evt.touches[0].clientY;
+    let finished = false;
+
+    const onTouchMove = (moveEvt: TouchEvent): void => {
+      if (finished) {
+        return;
+      }
+
+      const touch = Array.from(moveEvt.touches).find(({ identifier }) => identifier === pointerId)
+        ?? Array.from(moveEvt.changedTouches).find(({ identifier }) => identifier === pointerId);
+
+      if (!touch) {
+        return;
+      }
+
+      if (!root.isDragging) {
+        if (Math.hypot(touch.clientX - startX, touch.clientY - startY) < Tree.DRAG_THRESHOLD_PX) {
+          return;
+        }
+
+        this.beginDragSession(node);
+      }
+
+      moveEvt.preventDefault();
+      root.updatePlacementFromPoint(touch.clientX, touch.clientY);
+    };
+
+    const finish = (): void => {
+      if (finished) {
+        return;
+      }
+
+      finished = true;
+      root._touchDragPointerId = null;
+      window.removeEventListener('touchmove', onTouchMove, true);
+
+      if (root.isDragging) {
+        root._dragSessionCleanup?.();
+        root._dragSessionCleanup = null;
+        this.finishDragSession(node);
+      }
+    };
+
+    window.addEventListener('touchmove', onTouchMove, { capture: true, passive: false });
+    window.addEventListener('touchend', finish, { once: true, capture: true });
+    window.addEventListener('touchcancel', finish, { once: true, capture: true });
   };
 
   render(): TemplateResult[] {
     const {
       canDrag,
       draggedNode,
+      dragIndicator,
       emptyNodeIndicator,
       filteredNodeChildren,
       folderHeaderRight,
@@ -255,6 +654,7 @@ export class Tree extends LitElement {
       handleItemContextmenu,
       handleMouseMove,
       handleSlotChange,
+      handleTouchStart,
       isRoot,
       item,
       itemBottom,
@@ -263,9 +663,17 @@ export class Tree extends LitElement {
       lastPlacement,
       root,
       showEmptyNodes,
+      subtree,
       top,
       treeNodeToId,
+      useNativeDrag,
     } = this;
+
+    const staticDragIndicator = dragIndicator ?? 'fzn-tree-drag-indicator';
+    const staticSubtree = subtree ?? this.localName;
+    const staticEmptyNodePlaceholder = emptyNodeIndicator ?? 'fzn-tree-empty-node-placeholder';
+    const staticFolderHeaderRight = folderHeaderRight ?? folderHeaderRight;
+    const staticItem = item ?? 'fzn-tree-item';
 
     return [
       html`<slot name="top" @slotchange=${handleSlotChange}></slot>`,
@@ -277,6 +685,7 @@ export class Tree extends LitElement {
               (child) => treeNodeToId(child),
               (child, idx) => {
                 const { children, label, open } = child;
+                const nodeId = String(treeNodeToId(child));
 
                 if (children) {
                   if (!showEmptyNodes && !children.length) {
@@ -284,9 +693,9 @@ export class Tree extends LitElement {
                   }
 
                   return [
-                    lastPlacement && lastPlacement.node === child &&
+                    lastPlacement && this.nodeEquals(lastPlacement.node, child) &&
                         lastPlacement.position === NodePlacementPosition.ABOVE
-                      ? html`<fzn-tree-drag-indicator></fzn-tree-drag-indicator>`
+                      ? html`<${unsafeStatic(staticDragIndicator)}></${unsafeStatic(staticDragIndicator)}>`
                       : null,
                     html`
                       <div
@@ -300,11 +709,13 @@ export class Tree extends LitElement {
                         })}
                       >
                         <div
-                          draggable=${canDrag}
+                          draggable=${canDrag && useNativeDrag}
                           class="folder-header"
+                          data-tree-node-id=${nodeId}
                           @click=${(): void => this.handleNodeMutation({ ...child, open: !open })}
                           @mousemove=${(evt: MouseEvent): void => handleMouseMove(child, evt)}
-                          @dragstart=${(evt: MouseEvent): void => handleDragStart(child, evt)}
+                          @dragstart=${(evt: DragEvent): void => handleDragStart(child, evt)}
+                          @touchstart=${(evt: TouchEvent): void => handleTouchStart(child, evt)}
                         >
                           <span class="left">
                             <fa-icon class="state" type=${`fa fa-caret-${open ? 'up' : 'down'}`}></fa-icon>
@@ -313,13 +724,13 @@ export class Tree extends LitElement {
                           </span>
 
                           ${
-                            folderHeaderRight
+                            unsafeStatic(folderHeaderRight)
                               ? html`
                                 <span class="right">
-                                  <${unsafeStatic(folderHeaderRight)} 
+                                  <${unsafeStatic(staticFolderHeaderRight)} 
                                     .rootTree=${this.root}
                                     .node=${child}
-                                  ></${unsafeStatic(folderHeaderRight)}>
+                                  ></${unsafeStatic(staticFolderHeaderRight)}>
                                 </span>
                               `
                               : null
@@ -330,11 +741,11 @@ export class Tree extends LitElement {
                           <div class="top-bar"></div>
 
                           ${
-                            lastPlacement && lastPlacement.node === child &&
+                            lastPlacement && this.nodeEquals(lastPlacement.node, child) &&
                                 lastPlacement.position === NodePlacementPosition.INSIDE
                               ? html`
                                 <div class="children-level">
-                                  <fzn-tree-drag-indicator></fzn-tree-drag-indicator>
+                                  <${unsafeStatic(staticDragIndicator)}></${unsafeStatic(staticDragIndicator)}>
                                 </div>
                               `
                               : null
@@ -343,7 +754,7 @@ export class Tree extends LitElement {
                           ${
                             children.length
                               ? html`
-                                <fzn-tree
+                                <${unsafeStatic(staticSubtree)}
                                   .folderHeaderRight=${folderHeaderRight}
                                   .itemBottom=${itemBottom}
                                   .itemIcon=${itemIcon}
@@ -352,13 +763,16 @@ export class Tree extends LitElement {
                                   .nodeChildren=${children}
                                   .rootProp=${root}
                                   .treeNodeToId=${treeNodeToId}
-                                ></fzn-tree>
+                                ></${unsafeStatic(staticSubtree)}>
                               `
                               : html`
                                 <div class="children-level">
-                                  <${unsafeStatic(emptyNodeIndicator)}
+                                  <${unsafeStatic(staticEmptyNodePlaceholder)}
+                                    data-tree-node-id=${nodeId}
+                                    data-tree-node-inside=""
                                     @mousemove=${(evt: MouseEvent): void => handleMouseMove(child, evt, true)}
-                                  ></${unsafeStatic(emptyNodeIndicator)}>
+                                    @touchstart=${(evt: TouchEvent): void => handleTouchStart(child, evt)}
+                                  ></${unsafeStatic(staticEmptyNodePlaceholder)}>
                                 </div>
                               `
                           }
@@ -367,9 +781,9 @@ export class Tree extends LitElement {
                         </div>
                       </div>
                     `,
-                    lastPlacement && lastPlacement.node === child &&
+                    lastPlacement && this.nodeEquals(lastPlacement.node, child) &&
                         lastPlacement.position === NodePlacementPosition.BELOW
-                      ? html`<fzn-tree-drag-indicator></fzn-tree-drag-indicator>`
+                      ? html`<${unsafeStatic(staticDragIndicator)}></${unsafeStatic(staticDragIndicator)}>`
                       : null,
                   ];
                 } else {
@@ -377,17 +791,18 @@ export class Tree extends LitElement {
                     html`
                       <div class="item">
                         ${
-                          lastPlacement && lastPlacement.node === child &&
+                          lastPlacement && this.nodeEquals(lastPlacement.node, child) &&
                               lastPlacement.position === NodePlacementPosition.ABOVE
-                            ? html`<fzn-tree-drag-indicator></fzn-tree-drag-indicator>`
+                            ? html`<${unsafeStatic(staticDragIndicator)}></${unsafeStatic(staticDragIndicator)}>`
                             : null
                         }
 
-                        <${unsafeStatic(item ?? 'fzn-tree-item')}
+                        <${unsafeStatic(staticItem)}
                           class=${classMap({
-                            dragging: draggedNode === child,
+                            dragging: this.nodeEquals(draggedNode, child),
                           })}
-                          draggable=${canDrag}
+                          data-tree-node-id=${nodeId}
+                          draggable=${canDrag && useNativeDrag}
                           .isInRoot=${isRoot}
                           .itemBottom=${itemBottom}
                           .itemIcon=${itemIcon}
@@ -396,13 +811,14 @@ export class Tree extends LitElement {
                           @click=${(): void => handleItemClick(child)}
                           @contextmenu=${(evt): void => handleItemContextmenu(evt, child)}
                           @mousemove=${(evt: MouseEvent): void => handleMouseMove(child, evt)}
-                          @dragstart=${(evt: MouseEvent): void => handleDragStart(child, evt)}
-                        ></${unsafeStatic(item ?? 'fzn-tree-item')}>
+                          @dragstart=${(evt: DragEvent): void => handleDragStart(child, evt)}
+                          @touchstart=${(evt: TouchEvent): void => handleTouchStart(child, evt)}
+                        ></${unsafeStatic(staticItem)}>
 
                         ${
-                          lastPlacement && lastPlacement.node === child &&
+                          lastPlacement && this.nodeEquals(lastPlacement.node, child) &&
                               lastPlacement.position === NodePlacementPosition.BELOW
-                            ? html`<fzn-tree-drag-indicator></fzn-tree-drag-indicator>`
+                            ? html`<${unsafeStatic(staticDragIndicator)}></${unsafeStatic(staticDragIndicator)}>`
                             : null
                         }
                       </div>
@@ -474,6 +890,10 @@ export class TreeItem extends LitElement {
     } = this;
     const { href, selected, label } = node;
 
+    const staticItemIcon = itemIcon ?? itemIcon;
+    const staticItemRight = itemRight ?? itemRight;
+    const staticItemBottom = itemBottom ?? itemBottom;
+
     return [
       html`
         <a
@@ -488,11 +908,11 @@ export class TreeItem extends LitElement {
               itemIcon
                 ? html`
                   <span class="icon">
-                    <${unsafeStatic(itemIcon)}
+                    <${unsafeStatic(staticItemIcon)}
                       class=${classMap({ 'item-hovered': itemHovered })}
                       .node=${node}
                       .selected=${selected}
-                    ></${unsafeStatic(itemIcon)}>
+                    ></${unsafeStatic(staticItemIcon)}>
                   </span>
                 `
                 : null
@@ -505,11 +925,11 @@ export class TreeItem extends LitElement {
             itemRight
               ? html`
                 <span class="right">
-                  <${unsafeStatic(itemRight)}
+                  <${unsafeStatic(staticItemRight)}
                     class=${classMap({ 'item-hovered': itemHovered })}
                     .node=${node}
                     .selected=${selected}
-                  ></${unsafeStatic(itemRight)}>
+                  ></${unsafeStatic(staticItemRight)}>
                 </span>
               `
               : null
@@ -518,11 +938,11 @@ export class TreeItem extends LitElement {
       `,
       itemBottom
         ? html`
-          <${unsafeStatic(itemBottom)}
+          <${unsafeStatic(staticItemBottom)}
             class=${classMap({ 'item-hovered': itemHovered })}
             .node=${node}
             .selected=${selected}
-          ></${unsafeStatic(itemBottom)}>
+          ></${unsafeStatic(staticItemBottom)}>
         `
         : null,
     ];
@@ -546,6 +966,7 @@ export class TreeDragIndicator extends LitElement {
         left: -2px;
         height: 4px;
         background: #0099FF;
+        border-radius: 2px;
       }
     `,
   ];

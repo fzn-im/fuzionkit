@@ -2,6 +2,26 @@
 {
   display: block;
 
+  &[allow-dragging]
+  {
+    .folder-header,
+    .item > *
+    {
+      touch-action: pan-y;
+    }
+
+    &[data-tree-dragging]
+    {
+      touch-action: none;
+    }
+
+    .folder-header.dragging,
+    .item > .dragging
+    {
+      pointer-events: none;
+    }
+  }
+
   > .children,
   .children-level
   {

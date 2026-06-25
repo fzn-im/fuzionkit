@@ -706,6 +706,7 @@ export class Tree extends LitElement {
                             ? !!filteredNodeChildren[idx + 1].children
                             : false,
                           open,
+                          dragging: this.nodeEquals(draggedNode, child),
                         })}
                       >
                         <div

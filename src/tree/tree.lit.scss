@@ -217,6 +217,23 @@
   }
 }
 
+
+:host(fzn-tree-item.dragging)
+{
+  border-radius: 2px 0 0 2px;
+  outline: 2px solid #0099FF;
+
+
+  > a
+  {
+    &:active,
+    &.active
+    {
+      border-left: 0;
+    }
+  }
+}
+
 :host(fzn-tree-item)
 {
   display: block;

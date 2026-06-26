@@ -167,18 +167,24 @@ export class Tree extends LitElement {
 
   _touchDragPointerId: number | null = null;
 
+  _suppressItemContextMenu = false;
+
   static DRAG_THRESHOLD_PX = 8;
+
+  static TOUCH_DRAG_HOLD_MS = 500;
+
+  static TOUCH_DRAG_CANCEL_MOVE_PX = 10;
+
+  static CONTEXT_MENU_SUPPRESS_MS = 400;
 
   private static _prefersNativeDrag: boolean | undefined;
 
   static prefersNativeDrag(): boolean {
     if (Tree._prefersNativeDrag === undefined) {
+      // Touchscreen presence must not disable native drag: touchpad/mouse still use
+      // mouse events, while finger input uses the pointer-drag path below.
       Tree._prefersNativeDrag = typeof window === 'undefined'
-        || (
-          !('ontouchstart' in window)
-          && navigator.maxTouchPoints === 0
-          && window.matchMedia('(hover: hover) and (pointer: fine)').matches
-        );
+        || window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     }
 
     return Tree._prefersNativeDrag;
@@ -288,6 +294,21 @@ export class Tree extends LitElement {
   };
 
   handleItemContextmenu = (evt: MouseEvent, node: TreeNode<unknown>): void => {
+    const { root, canDrag } = this;
+
+    if (
+      canDrag
+      && (
+        root.isDragging
+        || root._touchDragPointerId != null
+        || root._suppressItemContextMenu
+      )
+    ) {
+      evt.preventDefault();
+      evt.stopPropagation();
+      return;
+    }
+
     this.dispatchEvent(new CustomEvent('item-contextmenu', {
       composed: true,
       detail: {
@@ -577,6 +598,68 @@ export class Tree extends LitElement {
     evt.stopPropagation();
   };
 
+  handlePointerDown = (node: TreeNode<unknown>, evt: PointerEvent): void => {
+    const { root } = this;
+    const { allowMove, canDrag, useNativeDrag } = root;
+
+    if (!canDrag || !allowMove(root, node)) {
+      return;
+    }
+
+    // Touch uses touchstart; mouse on fine-pointer devices uses native HTML5 drag.
+    if (evt.pointerType === 'touch' || (evt.pointerType === 'mouse' && useNativeDrag)) {
+      return;
+    }
+
+    if (root._touchDragPointerId != null) {
+      return;
+    }
+
+    const pointerId = evt.pointerId;
+    root._touchDragPointerId = pointerId;
+
+    const startX = evt.clientX;
+    const startY = evt.clientY;
+    let finished = false;
+
+    const onPointerMove = (moveEvt: PointerEvent): void => {
+      if (finished || moveEvt.pointerId !== pointerId) {
+        return;
+      }
+
+      if (!root.isDragging) {
+        if (Math.hypot(moveEvt.clientX - startX, moveEvt.clientY - startY) < Tree.DRAG_THRESHOLD_PX) {
+          return;
+        }
+
+        this.beginDragSession(node);
+      }
+
+      moveEvt.preventDefault();
+      root.updatePlacementFromPoint(moveEvt.clientX, moveEvt.clientY);
+    };
+
+    const finish = (): void => {
+      if (finished) {
+        return;
+      }
+
+      finished = true;
+      root._touchDragPointerId = null;
+      window.removeEventListener('pointermove', onPointerMove, true);
+
+      if (root.isDragging) {
+        root._dragSessionCleanup?.();
+        root._dragSessionCleanup = null;
+        this.finishDragSession(node);
+      }
+    };
+
+    window.addEventListener('pointermove', onPointerMove, { capture: true, passive: false });
+    window.addEventListener('pointerup', finish, { once: true, capture: true });
+    window.addEventListener('pointercancel', finish, { once: true, capture: true });
+  };
+
   handleTouchStart = (node: TreeNode<unknown>, evt: TouchEvent): void => {
     const { root } = this;
     const { allowMove, canDrag } = root;
@@ -589,35 +672,78 @@ export class Tree extends LitElement {
       return;
     }
 
-    const pointerId = evt.touches[0].identifier;
+    const touch = evt.touches[0];
+    const pointerId = touch.identifier;
     root._touchDragPointerId = pointerId;
 
-    const startX = evt.touches[0].clientX;
-    const startY = evt.touches[0].clientY;
+    const startX = touch.clientX;
+    const startY = touch.clientY;
     let finished = false;
+    let dragReady = false;
+    let holdTimer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
+      holdTimer = null;
+
+      if (finished) {
+        return;
+      }
+
+      dragReady = true;
+      this.beginDragSession(node);
+    }, Tree.TOUCH_DRAG_HOLD_MS);
+
+    const onContextMenu = (ctxEvt: Event): void => {
+      ctxEvt.preventDefault();
+      ctxEvt.stopPropagation();
+    };
+
+    const removeContextMenuBlock = (): void => {
+      window.removeEventListener('contextmenu', onContextMenu, true);
+    };
+
+    window.addEventListener('contextmenu', onContextMenu, { capture: true });
+
+    const cancel = (): void => {
+      if (finished) {
+        return;
+      }
+
+      finished = true;
+
+      if (holdTimer != null) {
+        clearTimeout(holdTimer);
+        holdTimer = null;
+      }
+
+      root._touchDragPointerId = null;
+      window.removeEventListener('touchmove', onTouchMove, true);
+      removeContextMenuBlock();
+    };
 
     const onTouchMove = (moveEvt: TouchEvent): void => {
       if (finished) {
         return;
       }
 
-      const touch = Array.from(moveEvt.touches).find(({ identifier }) => identifier === pointerId)
+      const activeTouch = Array.from(moveEvt.touches).find(({ identifier }) => identifier === pointerId)
         ?? Array.from(moveEvt.changedTouches).find(({ identifier }) => identifier === pointerId);
 
-      if (!touch) {
+      if (!activeTouch) {
         return;
       }
 
-      if (!root.isDragging) {
-        if (Math.hypot(touch.clientX - startX, touch.clientY - startY) < Tree.DRAG_THRESHOLD_PX) {
-          return;
+      if (!dragReady) {
+        if (
+          Math.hypot(activeTouch.clientX - startX, activeTouch.clientY - startY)
+            >= Tree.TOUCH_DRAG_CANCEL_MOVE_PX
+        ) {
+          cancel();
         }
 
-        this.beginDragSession(node);
+        return;
       }
 
       moveEvt.preventDefault();
-      root.updatePlacementFromPoint(touch.clientX, touch.clientY);
+      root.updatePlacementFromPoint(activeTouch.clientX, activeTouch.clientY);
     };
 
     const finish = (): void => {
@@ -626,10 +752,24 @@ export class Tree extends LitElement {
       }
 
       finished = true;
+
+      if (holdTimer != null) {
+        clearTimeout(holdTimer);
+        holdTimer = null;
+      }
+
+      const wasDragging = root.isDragging;
+
       root._touchDragPointerId = null;
       window.removeEventListener('touchmove', onTouchMove, true);
+      removeContextMenuBlock();
 
-      if (root.isDragging) {
+      if (wasDragging) {
+        root._suppressItemContextMenu = true;
+        window.setTimeout(() => {
+          root._suppressItemContextMenu = false;
+        }, Tree.CONTEXT_MENU_SUPPRESS_MS);
+
         root._dragSessionCleanup?.();
         root._dragSessionCleanup = null;
         this.finishDragSession(node);
@@ -654,6 +794,7 @@ export class Tree extends LitElement {
       handleItemContextmenu,
       handleMouseMove,
       handleSlotChange,
+      handlePointerDown,
       handleTouchStart,
       isRoot,
       item,
@@ -716,6 +857,7 @@ export class Tree extends LitElement {
                           @click=${(): void => this.handleNodeMutation({ ...child, open: !open })}
                           @mousemove=${(evt: MouseEvent): void => handleMouseMove(child, evt)}
                           @dragstart=${(evt: DragEvent): void => handleDragStart(child, evt)}
+                          @pointerdown=${(evt: PointerEvent): void => handlePointerDown(child, evt)}
                           @touchstart=${(evt: TouchEvent): void => handleTouchStart(child, evt)}
                         >
                           <span class="left">
@@ -772,6 +914,7 @@ export class Tree extends LitElement {
                                     data-tree-node-id=${nodeId}
                                     data-tree-node-inside=""
                                     @mousemove=${(evt: MouseEvent): void => handleMouseMove(child, evt, true)}
+                                    @pointerdown=${(evt: PointerEvent): void => handlePointerDown(child, evt)}
                                     @touchstart=${(evt: TouchEvent): void => handleTouchStart(child, evt)}
                                   ></${unsafeStatic(staticEmptyNodePlaceholder)}>
                                 </div>
@@ -813,6 +956,7 @@ export class Tree extends LitElement {
                           @contextmenu=${(evt): void => handleItemContextmenu(evt, child)}
                           @mousemove=${(evt: MouseEvent): void => handleMouseMove(child, evt)}
                           @dragstart=${(evt: DragEvent): void => handleDragStart(child, evt)}
+                          @pointerdown=${(evt: PointerEvent): void => handlePointerDown(child, evt)}
                           @touchstart=${(evt: TouchEvent): void => handleTouchStart(child, evt)}
                         ></${unsafeStatic(staticItem)}>
 

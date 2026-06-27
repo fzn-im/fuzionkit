@@ -813,7 +813,7 @@ export class Tree extends LitElement {
     const staticDragIndicator = dragIndicator ?? 'fzn-tree-drag-indicator';
     const staticSubtree = subtree ?? this.localName;
     const staticEmptyNodePlaceholder = emptyNodeIndicator ?? 'fzn-tree-empty-node-placeholder';
-    const staticFolderHeaderRight = folderHeaderRight ?? folderHeaderRight;
+    const staticFolderHeaderRight = folderHeaderRight;
     const staticItem = item ?? 'fzn-tree-item';
 
     return [
@@ -867,7 +867,7 @@ export class Tree extends LitElement {
                           </span>
 
                           ${
-                            unsafeStatic(folderHeaderRight)
+                            folderHeaderRight
                               ? html`
                                 <span class="right">
                                   <${unsafeStatic(staticFolderHeaderRight)} 

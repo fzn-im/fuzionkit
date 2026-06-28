@@ -16,9 +16,9 @@
 
 :host(fzn-alert[variant="danger"])
 {
-  color: #721c24;
-  background-color: #f8d7da;
-  border-color: #f5c6cb;
+  color: rgba(231, 120, 110, .95);
+  background-color: rgba(231, 76, 60, .12);
+  border-color: rgba(231, 76, 60, .3);
 }
 
 :host(fzn-alert[variant="warning"])

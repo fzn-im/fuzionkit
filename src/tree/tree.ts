@@ -11,6 +11,7 @@ export type TreeNode<T> = {
   children?: TreeNode<T>[];
   data: T;
   href?: string;
+  interactive?: boolean;
   label: string;
   open?: boolean;
   selected?: boolean;
@@ -952,8 +953,13 @@ export class Tree extends LitElement {
                           .itemIcon=${itemIcon}
                           .itemRight=${itemRight}
                           .node=${child}
-                          @click=${(): void => handleItemClick(child)}
-                          @contextmenu=${(evt): void => handleItemContextmenu(evt, child)}
+                          .nonInteractive=${child.interactive === false}
+                          @click=${child.interactive === false
+                            ? undefined
+                            : (): void => handleItemClick(child)}
+                          @contextmenu=${child.interactive === false
+                            ? undefined
+                            : (evt): void => handleItemContextmenu(evt, child)}
                           @mousemove=${(evt: MouseEvent): void => handleMouseMove(child, evt)}
                           @dragstart=${(evt: DragEvent): void => handleDragStart(child, evt)}
                           @pointerdown=${(evt: PointerEvent): void => handlePointerDown(child, evt)}
@@ -1002,14 +1008,25 @@ export class TreeItem extends LitElement {
   @property({ attribute: false })
   node: TreeNode<unknown>;
 
+  @property({ attribute: true, type: Boolean, reflect: true })
+  nonInteractive = false;
+
   @state()
   itemHovered = false;
 
   handleMouseover = (): void => {
+    if (this.nonInteractive) {
+      return;
+    }
+
     this.itemHovered = true;
   };
 
   handleMouseout = (): void => {
+    if (this.nonInteractive) {
+      return;
+    }
+
     this.itemHovered = false;
   };
 

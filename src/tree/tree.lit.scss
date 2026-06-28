@@ -111,8 +111,8 @@
         border: none;
         color: #FFFFFF;
         cursor: pointer;
-        line-height: 2rem;
-        padding: 0 .5rem 0 1rem;
+        line-height: 0;
+        padding: 0 .5rem 0 .6125rem;
         border-top: 1px solid rgba(0, 0, 0, .25);
         border-bottom: 1px solid rgba(0, 0, 0, .25);
         border-left: 1px solid rgba(0, 0, 0, .25);
@@ -127,6 +127,24 @@
           background-color: rgba(255, 255, 255, .05);
         }
 
+        & > .left
+        {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 8px;
+          overflow: hidden;
+
+          & > .label
+          {
+            margin: .25rem 0;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            line-height: 1.125rem;
+          }
+        }
+
         & > .left i.fa.state
         {
           margin-right: .325rem;
@@ -138,6 +156,7 @@
           flex-grow: 1;
           display: flex;
           justify-content: flex-end;
+          align-items: center;
         }
       }
 
@@ -335,6 +354,34 @@
     &.active
     {
       cursor: default;
+    }
+  }
+}
+
+:host(fzn-tree-item[noninteractive])
+{
+  > a
+  {
+    cursor: default;
+
+    &:hover
+    {
+      background: transparent;
+      opacity: 1;
+    }
+
+    &:active,
+    &.active
+    {
+      background: transparent;
+      background-image: none;
+      border-left: 0;
+      color: rgba(255, 255, 255, .6);
+
+      > .left .icon
+      {
+        color: inherit;
+      }
     }
   }
 }

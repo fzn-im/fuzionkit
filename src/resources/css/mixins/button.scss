@@ -41,18 +41,21 @@
 
 @mixin fzn-button--danger
 {
-  border: var(--fzn-button--border, 1px solid #E74C3C);
-  background: var(--fzn-button--background, transparent);
+  border: var(--fzn-button--border, 1px solid transparent);
+  background: var(--fzn-button--background, rgba(231, 76, 60, .25));
+  color: var(--fzn-button--color, #E74C3C);
 }
 
 @mixin fzn-button--danger--hover
 {
   border: var(--fzn-button--hover--border, 1px solid #E74C3C);
   background: var(--fzn-button--hover--background, #E74C3C);
+  color: var(--fzn-button--hover--color, #FFFFFF);
 }
 
 @mixin fzn-button--danger--active
 {
+  border: var(--fzn-button--active--border, 1px solid #c13f31);
   background: var(--fzn-button--active--background, #c13f31);
   color: var(--fzn-button--active--color, #FFFFFF);
 }

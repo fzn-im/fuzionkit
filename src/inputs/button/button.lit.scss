@@ -10,8 +10,8 @@
   > button,
   > a
   {
-    flex-grow: 1;
     @include fzn-button;
+    flex-grow: 1;
 
     &:hover
     {
@@ -98,6 +98,115 @@
     {
       @include fzn-button--danger--active;
     }
+  }
+}
+
+:host([variant^='subtle-'])
+{
+  --fzn-button--border-radius: 32px;
+}
+
+:host([variant='subtle-primary'])
+{
+  > button,
+  > a
+  {
+    @include fzn-button--subtle-primary;
+
+    &:hover
+    {
+      @include fzn-button--subtle-primary--hover;
+    }
+
+    &:active
+    {
+      @include fzn-button--subtle-primary--active;
+    }
+  }
+}
+
+:host([variant='subtle-solid'])
+{
+  > button,
+  > a
+  {
+    @include fzn-button--subtle-solid;
+
+    &:hover
+    {
+      @include fzn-button--subtle-solid--hover;
+    }
+
+    &:active
+    {
+      @include fzn-button--subtle-solid--active;
+    }
+  }
+}
+
+:host([variant='subtle-solid-success'])
+{
+  > button,
+  > a
+  {
+    @include fzn-button--subtle-solid-success;
+
+    &:hover
+    {
+      @include fzn-button--subtle-solid-success--hover;
+    }
+
+    &:active
+    {
+      @include fzn-button--subtle-solid-success--active;
+    }
+  }
+}
+
+:host([variant='subtle-success'])
+{
+  > button,
+  > a
+  {
+    @include fzn-button--subtle-success;
+
+    &:hover
+    {
+      @include fzn-button--subtle-success--hover;
+    }
+
+    &:active
+    {
+      @include fzn-button--subtle-success--active;
+    }
+  }
+}
+
+:host([variant='subtle-danger'])
+{
+  > button,
+  > a
+  {
+    @include fzn-button--subtle-danger;
+
+    &:hover
+    {
+      @include fzn-button--subtle-danger--hover;
+    }
+
+    &:active
+    {
+      @include fzn-button--subtle-danger--active;
+    }
+  }
+}
+
+:host([square])
+{
+  > button,
+  > a
+  {
+    aspect-ratio: 1 / 1;
   }
 }
 

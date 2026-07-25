@@ -15,6 +15,11 @@
   border-radius: var(--fzn-button--border-radius, .25rem);
   font-size: var(--fzn-button--font-size, 1rem);
   height: var(--fzn-button--height, auto);
+
+  a
+  {
+    text-decoration: none;
+  }
 }
 
 @mixin fzn-button--hover
@@ -109,6 +114,146 @@
 @mixin fzn-button--solid-success--active
 {
   background: var(--fzn-button--active--background, #CEE61B);
+}
+
+@mixin fzn-button--subtle
+{
+  border-radius: var(--fzn-button--border-radius, 32px);
+}
+
+@mixin fzn-button--subtle-primary
+{
+  @include fzn-button--subtle;
+  border: var(--fzn-button--border, 0);
+  background: var(
+    --fzn-button--background,
+    linear-gradient(rgba(255, 255, 255, 0.08) 0, rgba(255, 255, 255, 0) 100%)
+  );
+  color: var(--fzn-button--color, #FFFFFF);
+}
+
+@mixin fzn-button--subtle-primary--hover
+{
+  border: var(--fzn-button--hover--border, 0);
+  background: var(
+    --fzn-button--hover--background,
+    linear-gradient(rgba(255, 255, 255, 0.12) 0, rgba(255, 255, 255, 0.04) 100%)
+  );
+  color: var(--fzn-button--hover--color, #FFFFFF);
+}
+
+@mixin fzn-button--subtle-primary--active
+{
+  border: var(--fzn-button--active--border, 0);
+  background: var(--fzn-button--active--background, #4C5A67);
+  color: var(--fzn-button--active--color, #DDDDDD);
+}
+
+@mixin fzn-button--subtle-solid
+{
+  @include fzn-button--subtle;
+  border: var(--fzn-button--border, 0);
+  background: var(
+    --fzn-button--background,
+    linear-gradient(rgba(255, 255, 255, 0.08) 0, rgba(255, 255, 255, 0) 100%),
+    rgb(38, 38, 38)
+  );
+}
+
+@mixin fzn-button--subtle-solid--hover
+{
+  border: var(--fzn-button--hover--border, 0);
+  background: var(
+    --fzn-button--hover--background,
+    linear-gradient(rgba(255, 255, 255, 0.12) 0, rgba(255, 255, 255, 0.04) 100%),
+    rgb(59, 59, 59)
+  );
+}
+
+@mixin fzn-button--subtle-solid--active
+{
+  border: var(--fzn-button--active--border, 0);
+  background: var(--fzn-button--active--background, rgb(32, 32, 32));
+}
+
+@mixin fzn-button--subtle-success
+{
+  @include fzn-button--subtle;
+  border: var(--fzn-button--border, 1px solid #CEE61B);
+  background: var(
+    --fzn-button--background,
+    linear-gradient(rgba(255, 255, 255, 0.08) 0, rgba(255, 255, 255, 0) 100%)
+  );
+}
+
+@mixin fzn-button--subtle-success--hover
+{
+  border: var(--fzn-button--hover--border, 1px solid #CEE61B);
+  background: var(
+    --fzn-button--hover--background,
+    linear-gradient(rgba(255, 255, 255, 0.12) 0, rgba(255, 255, 255, 0.04) 100%)
+  );
+}
+
+@mixin fzn-button--subtle-success--active
+{
+  border: var(--fzn-button--active--border, 1px solid #CEE61B);
+  background: var(--fzn-button--active--background, #CEE61B);
+  color: var(--fzn-button--active--color, #121212);
+}
+
+@mixin fzn-button--subtle-solid-success
+{
+  @include fzn-button--subtle;
+  border: var(--fzn-button--border, 1px solid #CEE61B);
+  background: var(
+    --fzn-button--background,
+    linear-gradient(rgba(255, 255, 255, 0.08) 0, rgba(255, 255, 255, 0) 100%),
+    #CEE61B
+  );
+  color: var(--fzn-button--color, #121212);
+}
+
+@mixin fzn-button--subtle-solid-success--hover
+{
+  border: var(--fzn-button--hover--border, 1px solid #CEE61B);
+  background: var(
+    --fzn-button--hover--background,
+    linear-gradient(rgba(255, 255, 255, 0.12) 0, rgba(255, 255, 255, 0.04) 100%),
+    #DAEA62
+  );
+}
+
+@mixin fzn-button--subtle-solid-success--active
+{
+  border: var(--fzn-button--active--border, 1px solid #CEE61B);
+  background: var(--fzn-button--active--background, #CEE61B);
+}
+
+@mixin fzn-button--subtle-danger
+{
+  @include fzn-button--subtle;
+  border: var(--fzn-button--border, 1px solid transparent);
+  background: var(
+    --fzn-button--background,
+    linear-gradient(rgba(255, 255, 255, 0.08) 0, rgba(255, 255, 255, 0) 100%),
+    rgba(231, 76, 60, .25)
+  );
+  color: var(--fzn-button--color, #E74C3C);
+}
+
+@mixin fzn-button--subtle-danger--hover
+{
+  border: var(--fzn-button--hover--border, 1px solid #E74C3C);
+  background: var(--fzn-button--hover--background, #E74C3C);
+  color: var(--fzn-button--hover--color, #FFFFFF);
+}
+
+@mixin fzn-button--subtle-danger--active
+{
+  border: var(--fzn-button--active--border, 1px solid #c13f31);
+  background: var(--fzn-button--active--background, #c13f31);
+  color: var(--fzn-button--active--color, #FFFFFF);
 }
 
 @mixin fzn-button--xs

@@ -25,6 +25,9 @@ export default class Button extends ButtonBase {
   @property({ attribute: true, type: Boolean, reflect: true })
   disabled?: boolean;
 
+  @property({ attribute: true, type: Boolean, reflect: true })
+  square?: boolean;
+
   @property({ attribute: true, type: String, reflect: true })
   href: string;
 

@@ -75,11 +75,12 @@
 
   > div
   {
-    background: #1b1d28;
     height: 100%;
 
     > .app-badge, > .action-bar
     {
+      filter: brightness(var(--fzn-dim-darkness, 100%));
+
       > .content-title
       {
         > .item
@@ -431,6 +432,7 @@
       left: 0;
       z-index: 1001;
       height: 100%;
+      filter: brightness(var(--fzn-dim-darkness, 100%));
 
       &::part(slide)
       {

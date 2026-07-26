@@ -89,7 +89,7 @@
     {
       &.open
       {
-        border-right: 1px solid rgba(0, 0, 0, .4);
+        border-right: 1px solid color-mix(in srgb, rgba(0, 0, 0, .4) var(--fzn-dim-darkness, 100%), black);
         right: 0;
 
         & > .slide > .drag

@@ -233,7 +233,7 @@
 @mixin fzn-button--subtle-danger
 {
   @include fzn-button--subtle;
-  border: var(--fzn-button--border, 1px solid transparent);
+  border: var(--fzn-button--border, 1px solid #E74C3C);
   background: var(
     --fzn-button--background,
     linear-gradient(rgba(255, 255, 255, 0.08) 0, rgba(255, 255, 255, 0) 100%),

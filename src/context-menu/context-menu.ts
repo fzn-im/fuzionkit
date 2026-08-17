@@ -5,7 +5,7 @@ import { consume } from '@lit/context';
 import { debounce } from 'ts-debounce';
 
 import { takeOrEvaluate, TakeOrEvaluate } from '../utils/take-or-evaluate.js';
-import { getElementOffsetPosition, getElementOuterSize, getViewportSize } from '../utils/elements.js';
+import { getElementOffsetPosition, getViewportSize } from '../utils/elements.js';
 
 import { contextMenuFactoryContext } from './context.js';
 import { ContextMenuItemOptions, renderContextMenuItems } from './context-menu-item.js';
@@ -398,10 +398,13 @@ export class ContextMenu extends LitElement {
       let boundH = null;
 
       const anchorToElement = takeOrEvaluate<HTMLElement>(anchorTo);
-      // console.log('anchorTo', anchorToElement);
-      const anchorToPosition = getElementOffsetPosition(anchorToElement);
-      // console.log('anchorToPosition', anchorToPosition);
-      const { width: bindToW, height: bindToH } = getElementOuterSize(anchorToElement);
+      const anchorRect = anchorToElement.getBoundingClientRect();
+      const anchorToPosition = {
+        top: anchorRect.top + window.scrollY,
+        left: anchorRect.left + window.scrollX,
+      };
+      const bindToW = anchorRect.width;
+      const bindToH = anchorRect.height;
 
       const styleOut = new ContextMenuPosition();
 
@@ -520,6 +523,12 @@ export class ContextMenu extends LitElement {
 
       const chosenAlignX = this.anchorOptions?.alignX ?? 'left';
       const chosenAlignY = this.anchorOptions?.alignY ?? 'top';
+      const overflowsX = (x: number): boolean => (
+        Math.floor(x + menuW) > boundRight || Math.ceil(x) < boundLeft
+      );
+      const overflowsY = (y: number): boolean => (
+        Math.floor(y + menuH) > boundBottom || Math.ceil(y) < boundTop
+      );
 
       do {
         figuredAlign = null;
@@ -530,9 +539,11 @@ export class ContextMenu extends LitElement {
         case 'up':
           position.y = anchorToPosition.top - (getMargin(anchorOptions.margin, 'top') ?? 0) - menuH;
 
-          position.y = Math.max(boundTop + borderWall, Math.min(boundBottom - menuH - borderWall, position.y));
+          if (fug) {
+            position.y = Math.max(boundTop + borderWall, Math.min(boundBottom - menuH - borderWall, position.y));
+          }
 
-          if (position.y + menuH > boundBottom || position.y < boundTop) {
+          if (overflowsY(position.y)) {
             figuredDir = false;
           } else {
             figuredDir = true;
@@ -551,10 +562,11 @@ export class ContextMenu extends LitElement {
                 break;
               }
 
-              // if (fug) {
-              position.x = Math.max(boundLeft + borderWall, Math.min(boundRight - menuW - borderWall, position.x));
+              if (fug) {
+                position.x = Math.max(boundLeft + borderWall, Math.min(boundRight - menuW - borderWall, position.x));
+              }
 
-              if (position.x + menuW > boundRight || position.x < boundLeft) {
+              if (overflowsX(position.x)) {
                 if (chosenAlign !== chosenAlignX) {
                   figuredAlign = false;
                 } else {
@@ -575,9 +587,11 @@ export class ContextMenu extends LitElement {
         case 'right':
           position.x = anchorToPosition.left + (getMargin(anchorOptions.margin, 'right') ?? 0) + bindToW;
 
-          position.x = Math.max(boundLeft + borderWall, Math.min(boundRight - menuW - borderWall, position.x));
+          if (fug) {
+            position.x = Math.max(boundLeft + borderWall, Math.min(boundRight - menuW - borderWall, position.x));
+          }
 
-          if (position.x + menuW > boundRight || position.x < boundLeft) {
+          if (overflowsX(position.x)) {
             figuredDir = false;
           } else {
             figuredDir = true;
@@ -595,10 +609,11 @@ export class ContextMenu extends LitElement {
                 break;
               }
 
-              // if (fug) {
-              position.y = Math.max(boundTop + borderWall, Math.min(boundBottom - menuH - borderWall, position.y));
+              if (fug) {
+                position.y = Math.max(boundTop + borderWall, Math.min(boundBottom - menuH - borderWall, position.y));
+              }
 
-              if (position.y + menuH > boundBottom || position.y < boundTop) {
+              if (overflowsY(position.y)) {
                 if (chosenAlign !== chosenAlignY) {
                   figuredAlign = false;
                 } else {
@@ -623,9 +638,11 @@ export class ContextMenu extends LitElement {
         case 'left':
           position.x = anchorToPosition.left - (getMargin(anchorOptions.margin, 'left') ?? 0) - menuW;
 
-          position.x = Math.max(boundLeft + borderWall, Math.min(boundRight - menuW - borderWall, position.x));
+          if (fug) {
+            position.x = Math.max(boundLeft + borderWall, Math.min(boundRight - menuW - borderWall, position.x));
+          }
 
-          if (position.x + menuW > boundRight || position.x < boundLeft) {
+          if (overflowsX(position.x)) {
             figuredDir = false;
           } else {
             figuredDir = true;
@@ -643,10 +660,11 @@ export class ContextMenu extends LitElement {
                 break;
               }
 
-              // if (fug) {
-              position.y = Math.max(boundTop + borderWall, Math.min(boundBottom - menuH - borderWall, position.y));
+              if (fug) {
+                position.y = Math.max(boundTop + borderWall, Math.min(boundBottom - menuH - borderWall, position.y));
+              }
 
-              if (position.y + menuH > boundBottom || position.y < boundTop) {
+              if (overflowsY(position.y)) {
                 if (chosenAlign !== chosenAlignY) {
                   figuredAlign = false;
                 } else {
@@ -672,9 +690,11 @@ export class ContextMenu extends LitElement {
           chosenDir = 'down';
           position.y = anchorToPosition.top + bindToH + (getMargin(anchorOptions.margin, 'bottom') ?? 0);
 
-          position.y = Math.max(boundTop + borderWall, Math.min(boundBottom - menuH - borderWall, position.y));
+          if (fug) {
+            position.y = Math.max(boundTop + borderWall, Math.min(boundBottom - menuH - borderWall, position.y));
+          }
 
-          if (position.y + menuH > boundBottom || position.y < boundTop) {
+          if (overflowsY(position.y)) {
             figuredDir = false;
           } else {
             figuredDir = true;
@@ -692,10 +712,11 @@ export class ContextMenu extends LitElement {
                 break;
               }
 
-              // if (fug) {
-              position.x = Math.max(boundLeft + borderWall, Math.min(boundRight - menuW - borderWall, position.x));
+              if (fug) {
+                position.x = Math.max(boundLeft + borderWall, Math.min(boundRight - menuW - borderWall, position.x));
+              }
 
-              if (position.x + menuW > boundRight || position.x < boundLeft) {
+              if (overflowsX(position.x)) {
                 if (chosenAlign !== chosenAlignX) {
                   figuredAlign = false;
                 } else {

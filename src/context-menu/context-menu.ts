@@ -117,6 +117,9 @@ export class ContextMenuFactory {
       },
     );
     Object.assign(contextMenu.style, style);
+    if (style.width) {
+      contextMenu._explicitWidth = style.width;
+    }
     window.CONTEXT_MENUS[uuid] = contextMenu;
 
     container.appendChild(contextMenu);
@@ -193,6 +196,7 @@ export class ContextMenu extends LitElement {
   };
 
   _anchorTo: TakeOrEvaluate<HTMLElement> | null;
+  _anchorGhost: { top: number; left: number; width: number; height: number } | null = null;
 
   get anchorTo(): TakeOrEvaluate<HTMLElement> | null {
     return this._anchorTo;
@@ -206,6 +210,7 @@ export class ContextMenu extends LitElement {
       }
 
       this._anchorTo = anchorTo;
+      this._anchorGhost = null;
       const newAnchorTo = takeOrEvaluate(this._anchorTo);
       if (newAnchorTo) {
         this.resizeObserver.observe(newAnchorTo);
@@ -218,6 +223,7 @@ export class ContextMenu extends LitElement {
   _repositioning = false;
   _pendingSizeFrame = 0;
   _sizeRetries = 0;
+  _explicitWidth: string | null = null;
 
   handleResize = (): void => {
     if (this._repositioning) {
@@ -279,6 +285,7 @@ export class ContextMenu extends LitElement {
       this._pendingSizeFrame = 0;
     }
     this._sizeRetries = 0;
+    this._anchorGhost = null;
 
     if (manageClose) {
       if (window.ontouchstart !== undefined) {
@@ -398,18 +405,32 @@ export class ContextMenu extends LitElement {
       let boundH = null;
 
       const anchorToElement = takeOrEvaluate<HTMLElement>(anchorTo);
-      const anchorRect = anchorToElement.getBoundingClientRect();
-      const anchorToPosition = {
-        top: anchorRect.top + window.scrollY,
-        left: anchorRect.left + window.scrollX,
-      };
-      const bindToW = anchorRect.width;
-      const bindToH = anchorRect.height;
+      const liveRect = anchorToElement?.isConnected
+        ? anchorToElement.getBoundingClientRect()
+        : null;
+      const liveGone = !liveRect || (liveRect.width === 0 && liveRect.height === 0);
+
+      if (!liveGone) {
+        this._anchorGhost = {
+          top: liveRect.top + window.scrollY,
+          left: liveRect.left + window.scrollX,
+          width: liveRect.width,
+          height: liveRect.height,
+        };
+      } else if (!this._anchorGhost) {
+        return;
+      }
+
+      const { top, left, width: bindToW, height: bindToH } = this._anchorGhost;
+      const anchorToPosition = { top, left };
 
       const styleOut = new ContextMenuPosition();
 
       if (matchWidth) {
         this.style.width = `${bindToW}px`;
+        styleOut.width = this.style.width;
+      } else if (this._explicitWidth) {
+        this.style.width = this._explicitWidth;
         styleOut.width = this.style.width;
       }
 
@@ -443,12 +464,18 @@ export class ContextMenu extends LitElement {
       const menuRect = this.getBoundingClientRect();
       const panel = this.shadowRoot?.querySelector('fzn-panel') as HTMLElement | null;
       const contentRoot = (panel?.firstElementChild ?? panel) as HTMLElement | null;
-      let menuW = Math.max(
-        menuRect.width,
-        this.scrollWidth,
-        panel?.scrollWidth ?? 0,
-        contentRoot?.scrollWidth ?? 0,
-      );
+      const specifiedWidth = parseFloat(this.style.width);
+      const hasSpecifiedWidth = Number.isFinite(specifiedWidth)
+        && specifiedWidth > 0
+        && (matchWidth || !!this._explicitWidth);
+      let menuW = hasSpecifiedWidth
+        ? specifiedWidth
+        : Math.max(
+          menuRect.width,
+          this.scrollWidth,
+          panel?.scrollWidth ?? 0,
+          contentRoot?.scrollWidth ?? 0,
+        );
       let menuH = Math.max(
         menuRect.height,
         this.scrollHeight,

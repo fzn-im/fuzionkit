@@ -4,11 +4,15 @@
 
 :host(fzn-context-menu)
 {
-  display: block;
+  display: flex;
+  box-sizing: border-box;
   position: absolute;
   top: 0;
   left: 0;
   z-index: 999999;
+  max-width: 100%;
+  max-height: none;
+  overflow: auto;
 
   > fzn-panel
   {
@@ -16,7 +20,7 @@
     max-height: 100%;
     min-width: 160px;
     font-size: .825rem;
-    min-height: 12px;
+    min-height: 0;
     color: #DDD;
     border-radius: 3px;
     padding: 3px 0;

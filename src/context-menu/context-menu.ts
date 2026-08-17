@@ -215,7 +215,15 @@ export class ContextMenu extends LitElement {
 
   anchorOptions: AnchorOptions = {};
 
+  _repositioning = false;
+  _pendingSizeFrame = 0;
+  _sizeRetries = 0;
+
   handleResize = (): void => {
+    if (this._repositioning) {
+      return;
+    }
+
     this.repositionDebounce();
   };
 
@@ -244,14 +252,11 @@ export class ContextMenu extends LitElement {
 
   containerSlot: string | undefined;
 
-  constructor() {
-    super();
-    this.resizeObserver.observe(this);
-  }
-
   connectedCallback(): void {
     super.connectedCallback();
     const { documentEvent, documentEventClick, manageClose } = this;
+
+    this.resizeObserver.observe(this);
 
     if (manageClose) {
       if (window.ontouchstart !== undefined) {
@@ -267,6 +272,13 @@ export class ContextMenu extends LitElement {
   disconnectedCallback(): void {
     super.disconnectedCallback();
     const { documentEvent, documentEventClick, manageClose } = this;
+
+    this.resizeObserver.unobserve(this);
+    if (this._pendingSizeFrame) {
+      cancelAnimationFrame(this._pendingSizeFrame);
+      this._pendingSizeFrame = 0;
+    }
+    this._sizeRetries = 0;
 
     if (manageClose) {
       if (window.ontouchstart !== undefined) {
@@ -314,6 +326,7 @@ export class ContextMenu extends LitElement {
       bounds,
       container,
       containerSlot,
+      appendTo: this.parentElement,
       anchorOptions: {
         direction:
           [ 'left', 'right' ].includes(this.anchorOptions.direction)
@@ -351,6 +364,24 @@ export class ContextMenu extends LitElement {
   repositionDebounceLeading = debounce(() => this.reposition(), 1000 / 60, { isImmediate: true });
 
   reposition(): void {
+    if (this._repositioning) {
+      return;
+    }
+
+    this._repositioning = true;
+    this.resizeObserver.unobserve(this);
+
+    try {
+      this.repositionNow();
+    } finally {
+      this._repositioning = false;
+      if (this.isConnected) {
+        this.resizeObserver.observe(this);
+      }
+    }
+  }
+
+  repositionNow(): void {
     const { anchorOptions, anchorTo, bounds, logd, originParent, position } = this;
     const { matchWidth = false } = anchorOptions;
 
@@ -389,11 +420,13 @@ export class ContextMenu extends LitElement {
         boundLeft = 0 + window.scrollX;
       } else {
         const boundsElement = bounds as HTMLElement;
-        const { top: boundTop, left: boundLeft } = getElementOffsetPosition(boundsElement);
-        boundW = boundsElement.offsetWidth;
-        boundH = boundsElement.offsetHeight;
-        boundRight = boundLeft + boundW;
-        boundBottom = boundTop + boundH;
+        const rect = boundsElement.getBoundingClientRect();
+        boundTop = rect.top + window.scrollY;
+        boundLeft = rect.left + window.scrollX;
+        boundW = rect.width;
+        boundH = rect.height;
+        boundRight = rect.right + window.scrollX;
+        boundBottom = rect.bottom + window.scrollY;
       }
 
       let offsetX = 0;
@@ -404,9 +437,41 @@ export class ContextMenu extends LitElement {
         offsetY = 0 - offset.top;
       }
 
-      const menuSize = getElementOuterSize(this);
-      const { width: menuW } = menuSize;
-      let { height: menuH } = menuSize;
+      const menuRect = this.getBoundingClientRect();
+      const panel = this.shadowRoot?.querySelector('fzn-panel') as HTMLElement | null;
+      const contentRoot = (panel?.firstElementChild ?? panel) as HTMLElement | null;
+      let menuW = Math.max(
+        menuRect.width,
+        this.scrollWidth,
+        panel?.scrollWidth ?? 0,
+        contentRoot?.scrollWidth ?? 0,
+      );
+      let menuH = Math.max(
+        menuRect.height,
+        this.scrollHeight,
+        panel?.scrollHeight ?? 0,
+        contentRoot?.scrollHeight ?? 0,
+        contentRoot?.offsetHeight ?? 0,
+      );
+      const hasSize = menuH > 16;
+      const hostScrollTop = this.scrollTop;
+      const hostScrollLeft = this.scrollLeft;
+      const panelScrollTop = panel?.scrollTop ?? 0;
+      const panelScrollLeft = panel?.scrollLeft ?? 0;
+
+      if (!hasSize) {
+        if (this.isConnected && !this._pendingSizeFrame && this._sizeRetries < 8) {
+          this._sizeRetries += 1;
+          this._pendingSizeFrame = requestAnimationFrame(() => {
+            this._pendingSizeFrame = 0;
+            this.reposition();
+          });
+        }
+
+        return;
+      }
+
+      this._sizeRetries = 0;
 
       const { anchorOptions } = this;
       const position = { x: 0, y: 0 };
@@ -439,9 +504,16 @@ export class ContextMenu extends LitElement {
       let figuredAlign = null;
 
       // console.log('menuH', menuH, 'boundH', boundH);
-      if (menuH > boundH) {
-        this.style.height = `${boundH}px`;
-        menuH = boundH;
+      const maxMenuH = Math.max(0, boundH);
+      const maxMenuW = Math.max(0, boundW);
+      if (menuH > maxMenuH) {
+        this.style.height = `${maxMenuH}px`;
+        menuH = maxMenuH;
+      }
+      if (menuW > maxMenuW) {
+        this.style.width = `${maxMenuW}px`;
+        styleOut.width = this.style.width;
+        menuW = maxMenuW;
       }
 
       let fug = false;
@@ -458,11 +530,9 @@ export class ContextMenu extends LitElement {
         case 'up':
           position.y = anchorToPosition.top - (getMargin(anchorOptions.margin, 'top') ?? 0) - menuH;
 
-          if (fug) {
-            position.y = Math.max(boundTop + borderWall, Math.min(boundBottom - menuH - borderWall, position.y));
-          }
+          position.y = Math.max(boundTop + borderWall, Math.min(boundBottom - menuH - borderWall, position.y));
 
-          if (position.y + menuH > boundBottom + 2 || position.y + 2 < boundTop) {
+          if (position.y + menuH > boundBottom || position.y < boundTop) {
             figuredDir = false;
           } else {
             figuredDir = true;
@@ -484,7 +554,7 @@ export class ContextMenu extends LitElement {
               // if (fug) {
               position.x = Math.max(boundLeft + borderWall, Math.min(boundRight - menuW - borderWall, position.x));
 
-              if (position.x + menuW > boundRight + 2 || position.x + 2 < boundLeft) {
+              if (position.x + menuW > boundRight || position.x < boundLeft) {
                 if (chosenAlign !== chosenAlignX) {
                   figuredAlign = false;
                 } else {
@@ -505,11 +575,9 @@ export class ContextMenu extends LitElement {
         case 'right':
           position.x = anchorToPosition.left + (getMargin(anchorOptions.margin, 'right') ?? 0) + bindToW;
 
-          if (fug) {
-            position.x = Math.max(boundLeft + borderWall, Math.min(boundRight - menuW - borderWall, position.x));
-          }
+          position.x = Math.max(boundLeft + borderWall, Math.min(boundRight - menuW - borderWall, position.x));
 
-          if (position.x + menuW > boundRight + 2 || position.x + 2 < boundLeft) {
+          if (position.x + menuW > boundRight || position.x < boundLeft) {
             figuredDir = false;
           } else {
             figuredDir = true;
@@ -530,7 +598,7 @@ export class ContextMenu extends LitElement {
               // if (fug) {
               position.y = Math.max(boundTop + borderWall, Math.min(boundBottom - menuH - borderWall, position.y));
 
-              if (position.y + menuH > boundBottom + 2 || position.y + 2 < boundTop) {
+              if (position.y + menuH > boundBottom || position.y < boundTop) {
                 if (chosenAlign !== chosenAlignY) {
                   figuredAlign = false;
                 } else {
@@ -555,11 +623,9 @@ export class ContextMenu extends LitElement {
         case 'left':
           position.x = anchorToPosition.left - (getMargin(anchorOptions.margin, 'left') ?? 0) - menuW;
 
-          if (fug) {
-            position.x = Math.max(boundLeft + borderWall, Math.min(boundRight - menuW - borderWall, position.x));
-          }
+          position.x = Math.max(boundLeft + borderWall, Math.min(boundRight - menuW - borderWall, position.x));
 
-          if (position.x + menuW > boundRight + 2 || position.x + 2 < boundLeft) {
+          if (position.x + menuW > boundRight || position.x < boundLeft) {
             figuredDir = false;
           } else {
             figuredDir = true;
@@ -580,7 +646,7 @@ export class ContextMenu extends LitElement {
               // if (fug) {
               position.y = Math.max(boundTop + borderWall, Math.min(boundBottom - menuH - borderWall, position.y));
 
-              if (position.y + menuH > boundBottom + 2 || position.y + 2 < boundTop) {
+              if (position.y + menuH > boundBottom || position.y < boundTop) {
                 if (chosenAlign !== chosenAlignY) {
                   figuredAlign = false;
                 } else {
@@ -606,11 +672,9 @@ export class ContextMenu extends LitElement {
           chosenDir = 'down';
           position.y = anchorToPosition.top + bindToH + (getMargin(anchorOptions.margin, 'bottom') ?? 0);
 
-          if (fug) {
-            position.y = Math.max(boundTop + borderWall, Math.min(boundBottom - menuH - borderWall, position.y));
-          }
+          position.y = Math.max(boundTop + borderWall, Math.min(boundBottom - menuH - borderWall, position.y));
 
-          if (position.y + menuH > boundBottom + 2 || position.y + 2 < boundTop) {
+          if (position.y + menuH > boundBottom || position.y < boundTop) {
             figuredDir = false;
           } else {
             figuredDir = true;
@@ -631,7 +695,7 @@ export class ContextMenu extends LitElement {
               // if (fug) {
               position.x = Math.max(boundLeft + borderWall, Math.min(boundRight - menuW - borderWall, position.x));
 
-              if (position.x + menuW > boundRight + 2 || position.x + 2 < boundLeft) {
+              if (position.x + menuW > boundRight || position.x < boundLeft) {
                 if (chosenAlign !== chosenAlignX) {
                   figuredAlign = false;
                 } else {
@@ -676,6 +740,59 @@ export class ContextMenu extends LitElement {
         }
       } while (!figuredDir);
 
+      if (menuW > boundW) {
+        menuW = boundW;
+      }
+      if (menuH > boundH) {
+        menuH = boundH;
+      }
+
+      const wallX = menuW + 2 * borderWall <= boundW
+        ? borderWall
+        : Math.max(0, (boundW - menuW) / 2);
+      const wallY = menuH + 2 * borderWall <= boundH
+        ? borderWall
+        : Math.max(0, (boundH - menuH) / 2);
+
+      const clampedTop = typeof styleOut.top === 'number' ? styleOut.top : boundTop;
+      const clampedLeft = typeof styleOut.left === 'number' ? styleOut.left : boundLeft;
+
+      styleOut.top = Math.max(
+        boundTop + wallY,
+        Math.min(boundBottom - wallY - menuH, clampedTop),
+      );
+      styleOut.left = Math.max(
+        boundLeft + wallX,
+        Math.min(boundRight - wallX - menuW, clampedLeft),
+      );
+
+      const availableH = Math.max(0, boundBottom - wallY - styleOut.top);
+      const availableW = Math.max(0, boundRight - wallX - styleOut.left);
+
+      if (hasSize) {
+        this.style.overflow = 'auto';
+
+        if (availableH > 0) {
+          this.style.maxHeight = `${availableH}px`;
+        }
+
+        if (availableW > 0) {
+          this.style.maxWidth = `${availableW}px`;
+        }
+
+        if (availableH > 0 && menuH > availableH) {
+          this.style.height = `${availableH}px`;
+        } else {
+          this.style.height = '';
+        }
+
+        if (availableW > 0 && menuW > availableW) {
+          this.style.width = `${availableW}px`;
+          styleOut.width = this.style.width;
+          menuW = availableW;
+        }
+      }
+
       if (typeof styleOut.top === 'number') {
         styleOut.top += offsetY;
       }
@@ -691,6 +808,13 @@ export class ContextMenu extends LitElement {
         this.style,
         styleOut.toStyle(),
       );
+
+      this.scrollTop = hostScrollTop;
+      this.scrollLeft = hostScrollLeft;
+      if (panel) {
+        panel.scrollTop = panelScrollTop;
+        panel.scrollLeft = panelScrollLeft;
+      }
     } else if (position) {
       const newPosition = { ...position };
 
@@ -731,7 +855,7 @@ export class ContextMenu extends LitElement {
   isComponentEvent = (element: HTMLElement, evt?: Event): boolean => {
     return (
       this.contains(element) ||
-      this.shadowRoot.contains(element) ||
+      this.shadowRoot?.contains(element) ||
       (
         evt && evt.composedPath().includes(this)
       ) ||
@@ -745,7 +869,9 @@ export class ContextMenu extends LitElement {
   };
 
   documentEventClick = (evt: MouseEvent): void => {
-    [ 0, 2 ].includes(evt.button) && this.documentEvent(evt);
+    if ([ 0, 2 ].includes(evt.button)) {
+      this.documentEvent(evt);
+    }
   };
 
   getEventTarget(evt: Event): HTMLElement {
@@ -806,7 +932,11 @@ export class ContextMenu extends LitElement {
                 ${renderContextMenuItems(this, evalItems)}
               </div>
             `
-            : html`<div class="empty"><fa-icon type="fa-solid fa-cog fa-spin"></fa-icon></div>`
+            : html`
+              <div class="empty">
+                <fa-icon type="fa-solid fa-cog fa-spin"></fa-icon>
+              </div>
+            `
         }
       </fzn-panel>
     `;
@@ -814,7 +944,6 @@ export class ContextMenu extends LitElement {
 }
 
 declare global {
-  // eslint-disable-next-line no-unused-vars
   interface Window {
     CONTEXT_MENUS: { [uuid: string ]: ContextMenu };
   }

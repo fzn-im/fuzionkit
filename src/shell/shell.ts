@@ -44,28 +44,8 @@ export class Shell extends EnhancedEventTargetMixin<
   @consume({ context: routerContext, subscribe: true })
   router: Router;
 
-  _contentTitle: HTMLElement | null = null;
-
-  @property({ attribute: false })
-  get contentTitle(): HTMLElement {
-    return this._contentTitle;
-  }
-
-  set contentTitle(contentTitle: HTMLElement) {
-    const oldValue = this._contentTitle;
-
-    if (oldValue !== null) {
-      oldValue.remove();
-    }
-
-    if (contentTitle !== null) {
-      contentTitle.setAttribute('slot', 'content-title');
-      this.appendChild(contentTitle);
-    }
-
-    this._contentTitle = contentTitle;
-    this.requestUpdate('contentTitle', oldValue);
-  }
+  @state()
+  actionBarContent: unknown = null;
 
   @property({ attribute: true, type: Boolean, reflect: true })
   collapsed = false;
@@ -238,12 +218,8 @@ export class Shell extends EnhancedEventTargetMixin<
     }
   }
 
-  clearContentTitle(): void {
-    this.contentTitle = null;
-  }
-
-  setContentTitle(contentTitle: HTMLElement): void {
-    this.contentTitle = contentTitle;
+  renderActionBar(content: unknown = null): void {
+    this.actionBarContent = content;
   }
 
   getContentFrameHeight(): number {
@@ -307,6 +283,7 @@ export class Shell extends EnhancedEventTargetMixin<
 
   render(): TemplateResult {
     const {
+      actionBarContent,
       contentFramePadding,
       collapsed,
       drawerMinWidth,
@@ -370,7 +347,7 @@ export class Shell extends EnhancedEventTargetMixin<
           </div>${
             !drawerOpen
               ? html`<div class="content-title">
-                <slot name="content-title"></slot>
+                ${actionBarContent}
               </div>`
               : null
           }
@@ -386,7 +363,7 @@ export class Shell extends EnhancedEventTargetMixin<
                     left: `${drawerWidth}px`,
                   })}
                 >
-                  <slot name="content-title"></slot>
+                  ${actionBarContent}
                 </div>
               `
               : null

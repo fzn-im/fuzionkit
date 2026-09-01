@@ -15,7 +15,9 @@ export class ActionBarController implements ReactiveController {
     this.host.addController(this);
   }
 
-  hostDisconnected(): void {}
+  hostDisconnected(): void {
+    this.host.shell?.renderActionBar(null);
+  }
 
   render(content: unknown = null): void {
     const { host } = this;

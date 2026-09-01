@@ -99,6 +99,9 @@ export class Tree extends LitElement {
   itemIcon?: string = null;
 
   @property({ attribute: true })
+  itemLabel?: string = null;
+
+  @property({ attribute: true })
   itemRight?: string = null;
 
   @queryAssignedNodes({ slot: 'top', flatten: true })
@@ -801,6 +804,7 @@ export class Tree extends LitElement {
       item,
       itemBottom,
       itemIcon,
+      itemLabel,
       itemRight,
       lastPlacement,
       root,
@@ -816,6 +820,7 @@ export class Tree extends LitElement {
     const staticEmptyNodePlaceholder = emptyNodeIndicator ?? 'fzn-tree-empty-node-placeholder';
     const staticFolderHeaderRight = folderHeaderRight;
     const staticItem = item ?? 'fzn-tree-item';
+    const staticItemLabel = itemLabel;
 
     return [
       html`<slot name="top" @slotchange=${handleSlotChange}></slot>`,
@@ -902,6 +907,7 @@ export class Tree extends LitElement {
                                   .folderHeaderRight=${folderHeaderRight}
                                   .itemBottom=${itemBottom}
                                   .itemIcon=${itemIcon}
+                                  .itemLabel=${itemLabel}
                                   .itemRight=${itemRight}
                                   .lastPlacementProperty=${lastPlacement}
                                   .nodeChildren=${children}
@@ -964,7 +970,15 @@ export class Tree extends LitElement {
                           @dragstart=${(evt: DragEvent): void => handleDragStart(child, evt)}
                           @pointerdown=${(evt: PointerEvent): void => handlePointerDown(child, evt)}
                           @touchstart=${(evt: TouchEvent): void => handleTouchStart(child, evt)}
-                        ></${unsafeStatic(staticItem)}>
+                        >${
+                          staticItemLabel
+                            ? html`<${unsafeStatic(staticItemLabel)}
+                              slot="label"
+                              .node=${child}
+                              .selected=${child.selected}
+                            ></${unsafeStatic(staticItemLabel)}>`
+                            : null
+                        }</${unsafeStatic(staticItem)}>
 
                         ${
                           lastPlacement && this.nodeEquals(lastPlacement.node, child) &&
@@ -1080,7 +1094,7 @@ export class TreeItem extends LitElement {
                 : null
             }
 
-            <span class="label">${label}</span>
+            <span class="label"><slot name="label">${label}</slot></span>
           </span>
 
           ${

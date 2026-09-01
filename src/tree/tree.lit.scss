@@ -73,6 +73,7 @@
 
           > .label
           {
+            min-width: 0;
             text-overflow: ellipsis;
             overflow: hidden;
           }
@@ -310,6 +311,7 @@
 
       > .label
       {
+        min-width: 0;
         text-overflow: ellipsis;
         overflow: hidden;
       }

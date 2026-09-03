@@ -84,7 +84,10 @@ export class Shell extends EnhancedEventTargetMixin<
     return this.querySelector('slot:not([name])')
   }
 
+  @state()
   hasTouchScreen = false;
+
+  private touchMediaQueries: MediaQueryList[] = [];
 
   mouseGuard = false;
   mouseGuardLocks = 0;
@@ -134,6 +137,12 @@ export class Shell extends EnhancedEventTargetMixin<
 
     this.resizeObserver = new ResizeObserver(this.handleResize);
     this.resizeObserver.observe(this);
+  }
+
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+
+    this.unbindTouchScreenListeners();
   }
 
   async firstUpdated(): Promise<void> {
@@ -238,26 +247,105 @@ export class Shell extends EnhancedEventTargetMixin<
   };
 
   initMobileScreen(): void {
-    this.hasTouchScreen = false;
-    if ('maxTouchPoints' in navigator) {
-      this.hasTouchScreen = navigator.maxTouchPoints > 0;
-    } else if ('msMaxTouchPoints' in navigator) {
-      this.hasTouchScreen = (navigator as any).msMaxTouchPoints > 0;
-    } else {
-      const mQ = window.matchMedia?.('(pointer:coarse)');
-      if (mQ?.media === '(pointer:coarse)') {
-        this.hasTouchScreen = !!mQ.matches;
-      } else if ('orientation' in window) {
-        this.hasTouchScreen = true; // deprecated, but good fallback
-      } else {
-        // Only as a last resort, fall back to user agent sniffing
-        const UA = (navigator as any).userAgent;
-        this.hasTouchScreen = (
-          /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
-            /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA)
-        );
+    this.unbindTouchScreenListeners();
+    this.updateTouchScreen();
+
+    if (typeof window.matchMedia !== 'function') {
+      return;
+    }
+
+    this.touchMediaQueries = [
+      window.matchMedia('(pointer: fine)'),
+      window.matchMedia('(hover: hover)'),
+      window.matchMedia('(pointer: coarse)'),
+      window.matchMedia('(hover: none)'),
+    ];
+
+    for (const mq of this.touchMediaQueries) {
+      if (typeof mq.addEventListener === 'function') {
+        mq.addEventListener('change', this.handleTouchScreenMediaChange);
+      } else if (typeof mq.addListener === 'function') {
+        mq.addListener(this.handleTouchScreenMediaChange);
       }
     }
+  }
+
+  private unbindTouchScreenListeners(): void {
+    for (const mq of this.touchMediaQueries) {
+      if (typeof mq.removeEventListener === 'function') {
+        mq.removeEventListener('change', this.handleTouchScreenMediaChange);
+      } else if (typeof mq.removeListener === 'function') {
+        mq.removeListener(this.handleTouchScreenMediaChange);
+      }
+    }
+
+    this.touchMediaQueries = [];
+  }
+
+  private handleTouchScreenMediaChange = (): void => {
+    this.updateTouchScreen();
+  };
+
+  private updateTouchScreen(): void {
+    const detected = this.detectTouchScreen();
+
+    if (this.hasTouchScreen === detected) {
+      return;
+    }
+
+    this.hasTouchScreen = detected;
+    this.dispatchChange({ hasTouchScreen: detected });
+  }
+
+  private detectTouchScreen(): boolean {
+    const nav = navigator as Navigator & {
+      msMaxTouchPoints?: number;
+      userAgentData?: { mobile?: boolean };
+    };
+
+    if (typeof window.matchMedia === 'function') {
+      const fine = window.matchMedia('(pointer: fine)');
+      const hover = window.matchMedia('(hover: hover)');
+      const coarse = window.matchMedia('(pointer: coarse)');
+      const noHover = window.matchMedia('(hover: none)');
+      const pointerQueriesWork = fine.media.includes('pointer')
+        && coarse.media.includes('pointer');
+
+      if (pointerQueriesWork) {
+        if (fine.matches && hover.matches) {
+          return false;
+        }
+
+        if (coarse.matches || noHover.matches || nav.userAgentData?.mobile) {
+          return true;
+        }
+
+        return false;
+      }
+    }
+
+    if (nav.userAgentData?.mobile) {
+      return true;
+    }
+
+    if ('maxTouchPoints' in navigator) {
+      return navigator.maxTouchPoints > 0;
+    }
+
+    if (typeof nav.msMaxTouchPoints === 'number') {
+      return nav.msMaxTouchPoints > 0;
+    }
+
+    if ('orientation' in window) {
+      return true;
+    }
+
+    const ua = nav.userAgent;
+
+    return (
+      /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(ua) ||
+      /\b(Android|Windows Phone|iPad|iPod)\b/i.test(ua)
+    );
   }
 
   @state()

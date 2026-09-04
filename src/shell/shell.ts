@@ -80,9 +80,24 @@ export class Shell extends EnhancedEventTargetMixin<
   @query('fzn-drawer')
   drawer: Drawer;
 
+  @query(':host > div > .bottom-bar')
+  bottomBar: HTMLElement;
+
+  @query(':host > div > .top-bar')
+  topBar: HTMLElement;
+
   get contentSlot(): HTMLSlotElement {
     return this.querySelector('slot:not([name])')
   }
+
+  @state()
+  bottomBarHeight = 0;
+
+  @state()
+  topBarHeight = 0;
+
+  private bottomBarResizeObserver: ResizeObserver | null = null;
+  private topBarResizeObserver: ResizeObserver | null = null;
 
   @state()
   hasTouchScreen = false;
@@ -143,6 +158,10 @@ export class Shell extends EnhancedEventTargetMixin<
     super.disconnectedCallback();
 
     this.unbindTouchScreenListeners();
+    this.bottomBarResizeObserver?.disconnect();
+    this.bottomBarResizeObserver = null;
+    this.topBarResizeObserver?.disconnect();
+    this.topBarResizeObserver = null;
   }
 
   async firstUpdated(): Promise<void> {
@@ -152,6 +171,10 @@ export class Shell extends EnhancedEventTargetMixin<
 
     this.handleResize();
     this.drawerOpen = !this.collapsed;
+    this.observeBottomBar();
+    this.updateBottomBarHeight();
+    this.observeTopBar();
+    this.updateTopBarHeight();
 
     this.dispatchEvent(
       new CustomEvent(
@@ -242,9 +265,81 @@ export class Shell extends EnhancedEventTargetMixin<
   getContentFrameVisibleHeight = (): number => {
     return (
       parseInt(getComputedStyle(this).height.split('px')[0], 10) -
-        parseInt(getComputedStyle(this.actionBar).height.split('px')[0], 10)
+        parseInt(getComputedStyle(this.actionBar).height.split('px')[0], 10) -
+        this.topBarHeight -
+        this.bottomBarHeight
     );
   };
+
+  private handleBottomSlotChange = (): void => {
+    this.observeBottomBar();
+    this.updateBottomBarHeight();
+  };
+
+  private handleTopSlotChange = (): void => {
+    this.observeTopBar();
+    this.updateTopBarHeight();
+  };
+
+  private observeBottomBar(): void {
+    this.bottomBarResizeObserver?.disconnect();
+
+    if (!this.bottomBar) {
+      this.bottomBarResizeObserver = null;
+      return;
+    }
+
+    this.bottomBarResizeObserver = new ResizeObserver(this.updateBottomBarHeight);
+    this.bottomBarResizeObserver.observe(this.bottomBar);
+  }
+
+  private observeTopBar(): void {
+    this.topBarResizeObserver?.disconnect();
+
+    if (!this.topBar) {
+      this.topBarResizeObserver = null;
+      return;
+    }
+
+    this.topBarResizeObserver = new ResizeObserver(this.updateTopBarHeight);
+    this.topBarResizeObserver.observe(this.topBar);
+  }
+
+  private updateBottomBarHeight = (): void => {
+    const height = this.bottomBar?.offsetHeight ?? 0;
+
+    if (this.bottomBarHeight === height) {
+      return;
+    }
+
+    this.bottomBarHeight = height;
+    this.style.setProperty('--fzn-shell-bottom-bar-height', `${height}px`);
+    this.dispatchChange({ bottomBarHeight: height });
+  };
+
+  private updateTopBarHeight = (): void => {
+    const height = this.topBar?.offsetHeight ?? 0;
+
+    if (this.topBarHeight === height) {
+      return;
+    }
+
+    this.topBarHeight = height;
+    this.style.setProperty('--fzn-shell-top-bar-height', `${height}px`);
+    this.dispatchChange({ topBarHeight: height });
+  };
+
+  private updateContentFramePaddingVar(): void {
+    const noticesPadding = !this.pageHandlesPadding && this.contentFramePadding
+      ? this.contentFramePadding
+      : 0;
+
+    this.style.setProperty('--fzn-shell-content-frame-padding', `${noticesPadding}px`);
+  };
+
+  protected updated(): void {
+    this.updateContentFramePaddingVar();
+  }
 
   initMobileScreen(): void {
     this.unbindTouchScreenListeners();
@@ -372,7 +467,6 @@ export class Shell extends EnhancedEventTargetMixin<
   render(): TemplateResult {
     const {
       actionBarContent,
-      contentFramePadding,
       collapsed,
       drawerMinWidth,
       drawerOpen,
@@ -383,7 +477,6 @@ export class Shell extends EnhancedEventTargetMixin<
       logo,
       logoRouterHref,
       logoText,
-      pageHandlesPadding,
       router,
     } = this;
 
@@ -462,11 +555,14 @@ export class Shell extends EnhancedEventTargetMixin<
           </div>
         </div>
 
+        <div class="top-bar">
+          <slot name="top" @slotchange=${this.handleTopSlotChange}></slot>
+        </div>
+
         <div
           class="content-frame"
           style=${styleMap({
             paddingLeft: !collapsed && drawerOpen ? `${adjustedDrawerWidth}px` : '0',
-            paddingBottom: !pageHandlesPadding && contentFramePadding ? `${contentFramePadding}px` : '0',
           })}
         >
           <slot
@@ -486,6 +582,10 @@ export class Shell extends EnhancedEventTargetMixin<
         >
           <slot name="drawer"></slot>
         </fzn-drawer>
+
+        <div class="bottom-bar">
+          <slot name="bottom" @slotchange=${this.handleBottomSlotChange}></slot>
+        </div>
 
         <slot name="floating"></slot>
       </div>

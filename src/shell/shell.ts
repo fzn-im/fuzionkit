@@ -315,6 +315,7 @@ export class Shell extends EnhancedEventTargetMixin<
     this.bottomBarHeight = height;
     this.style.setProperty('--fzn-shell-bottom-bar-height', `${height}px`);
     this.dispatchChange({ bottomBarHeight: height });
+    this.dispatchEvent(new CustomEvent('resize'));
   };
 
   private updateTopBarHeight = (): void => {
@@ -327,6 +328,7 @@ export class Shell extends EnhancedEventTargetMixin<
     this.topBarHeight = height;
     this.style.setProperty('--fzn-shell-top-bar-height', `${height}px`);
     this.dispatchChange({ topBarHeight: height });
+    this.dispatchEvent(new CustomEvent('resize'));
   };
 
   private updateContentFramePaddingVar(): void {
@@ -565,13 +567,7 @@ export class Shell extends EnhancedEventTargetMixin<
             paddingLeft: !collapsed && drawerOpen ? `${adjustedDrawerWidth}px` : '0',
           })}
         >
-          <slot
-            style=${styleMap({
-              marginBottom: (flipVertical && this.actionBar?.clientHeight)
-                ? `${this.actionBar.clientHeight}px`
-                : 0,
-            })}
-          ></slot>
+          <slot></slot>
         </div>
 
         <fzn-drawer

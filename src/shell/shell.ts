@@ -473,7 +473,6 @@ export class Shell extends EnhancedEventTargetMixin<
       drawerMinWidth,
       drawerOpen,
       drawerWidth,
-      flipVertical,
       handleDrawerResize,
       handleUpActionClick,
       logo,

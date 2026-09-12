@@ -81,7 +81,8 @@ export type ContextMenuItemOptions = {
   onItemCreate?: OnItemCreate;
   renderElement?: RenderElement;
   routeTo?: string;
-  selected?: boolean
+  selected?: boolean;
+  highlighted?: boolean;
   target?: string;
 };
 
@@ -258,12 +259,14 @@ export const renderContextMenuItem = (
       renderElement,
       routeTo,
       selected,
+      highlighted,
       target,
     } = options;
 
     return html`
       <fzn-context-menu-item-button
         selected=${ifDefined(selected || undefined)}
+        highlighted=${ifDefined(highlighted || undefined)}
         @click=${(): void => onClick && onClick(contextMenu)}
         .childOptions=${childOptions}
         .contextMenu=${contextMenu}
@@ -425,6 +428,9 @@ export class ContextMenuItemButton extends LitElement {
 
   @property({ attribute: true, type: Boolean, reflect: true })
   hasMore: boolean;
+
+  @property({ type: Boolean, reflect: true })
+  highlighted: boolean;
 
   @property({ attribute: false })
   childOptions: ContextMenuOptions;

@@ -54,6 +54,7 @@
 }
 
 :host(fzn-context-menu-item-button:hover),
+:host(fzn-context-menu-item-button[highlighted]),
 :host(fzn-context-menu-item-toggle:hover)
 {
   background: #406DCE;

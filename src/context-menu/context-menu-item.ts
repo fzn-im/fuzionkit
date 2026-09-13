@@ -19,8 +19,8 @@ type OnItemCreate = (item: HTMLElement, props: ContextMenuItemOptions, ctx: Cont
 type OnClick = (ctx: ContextMenu, evt?: Event, src?: any) => void;
 type OnChangeStop = (ctx: ContextMenu, evt?: Event, src?: any) => void;
 type ItemElement = TakeOrEvaluate<HTMLElement>;
-type RenderElement = unknown;
-type ItemLabel = string;
+type RenderElement = ReturnType<typeof html>;
+type ItemLabel = RenderElement | string;
 type SliderValue = number;
 type ToggleValue = boolean;
 type Items = TakeOrEvaluate<ContextMenuItemOptions[]>;
@@ -76,7 +76,7 @@ export type ContextMenuItemOptions = {
   childOptions?: ContextMenuOptions;
   href?: string;
   items?: Items;
-  label?: string;
+  label?: ItemLabel;
   onClick?: OnClick;
   onItemCreate?: OnItemCreate;
   renderElement?: RenderElement;

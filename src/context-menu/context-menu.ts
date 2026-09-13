@@ -818,7 +818,7 @@ export class ContextMenu extends LitElement {
       const availableW = Math.max(0, boundRight - wallX - styleOut.left);
 
       if (hasSize) {
-        this.style.overflow = 'auto';
+        this.style.overflow = 'visible';
 
         if (availableH > 0) {
           this.style.maxHeight = `${availableH}px`;

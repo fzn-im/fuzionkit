@@ -67,17 +67,17 @@
 
 @mixin fzn-button--solid
 {
-  background: var(--fzn-button--background, rgb(38, 38, 38));
+  background: var(--fzn-button--background, #373B47);
 }
 
 @mixin fzn-button--solid--hover
 {
-  background: var(--fzn-button--hover--background, rgb(59, 59, 59));
+  background: var(--fzn-button--hover--background, #40444f);
 }
 
 @mixin fzn-button--solid--active
 {
-  background: var(--fzn-button--active--background, rgb(32, 32, 32));
+  background: var(--fzn-button--active--background, #4C5A67);
 }
 
 @mixin fzn-button--success
@@ -114,6 +114,26 @@
 @mixin fzn-button--solid-success--active
 {
   background: var(--fzn-button--active--background, #CEE61B);
+}
+
+@mixin fzn-button--solid-danger
+{
+  border: var(--fzn-button--border, 1px solid #E74C3C);
+  background: var(--fzn-button--background, #E74C3C);
+  color: var(--fzn-button--color, #FFFFFF);
+}
+
+@mixin fzn-button--solid-danger--hover
+{
+  border: var(--fzn-button--hover--border, 1px solid #E74C3C);
+  background: var(--fzn-button--hover--background, #ED7A6E);
+}
+
+@mixin fzn-button--solid-danger--active
+{
+  border: var(--fzn-button--active--border, 1px solid #c13f31);
+  background: var(--fzn-button--active--background, #c13f31);
+  color: var(--fzn-button--active--color, #FFFFFF);
 }
 
 @mixin fzn-button--subtle

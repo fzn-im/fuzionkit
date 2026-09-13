@@ -63,6 +63,25 @@
   }
 }
 
+:host([variant='solid-danger'])
+{
+  > button,
+  > a
+  {
+    @include fzn-button--solid-danger;
+
+    &:hover
+    {
+      @include fzn-button--solid-danger--hover;
+    }
+
+    &:active
+    {
+      @include fzn-button--solid-danger--active;
+    }
+  }
+}
+
 :host([variant='success'])
 {
   > button,

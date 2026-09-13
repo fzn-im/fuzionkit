@@ -260,28 +260,40 @@ export class ContextMenu extends LitElement {
 
   pointerOnIgnored = false;
 
+  pointerOnIgnoredClearTimeout = 0;
+
   connectedCallback(): void {
     super.connectedCallback();
-    const { clearPointerOnIgnored, documentEvent, documentEventClick, manageClose } = this;
+    const {
+      clearPointerOnIgnored,
+      clearPointerOnIgnoredLater,
+      documentEvent,
+      documentEventClick,
+      manageClose,
+    } = this;
 
     this.resizeObserver.observe(this);
 
     if (manageClose) {
-      if (window.ontouchstart !== undefined) {
-        window.document.addEventListener('touchstart', documentEvent);
-      } else {
-        window.document.addEventListener('mousedown', documentEventClick);
-      }
+      window.document.addEventListener('mousedown', documentEventClick, { capture: true });
+      window.document.addEventListener('touchstart', documentEvent, { capture: true });
       window.document.addEventListener('focus', documentEvent, { capture: true });
       this.addEventListener('focusout', documentEvent, { capture: true });
-      window.document.addEventListener('pointerup', clearPointerOnIgnored, { capture: true });
+      window.document.addEventListener('pointerup', clearPointerOnIgnoredLater, { capture: true });
+      window.document.addEventListener('pointercancel', clearPointerOnIgnoredLater, { capture: true });
       window.document.addEventListener('click', clearPointerOnIgnored, { capture: true });
     }
   }
 
   disconnectedCallback(): void {
     super.disconnectedCallback();
-    const { clearPointerOnIgnored, documentEvent, documentEventClick, manageClose } = this;
+    const {
+      clearPointerOnIgnored,
+      clearPointerOnIgnoredLater,
+      documentEvent,
+      documentEventClick,
+      manageClose,
+    } = this;
 
     this.resizeObserver.unobserve(this);
     if (this._pendingSizeFrame) {
@@ -291,16 +303,18 @@ export class ContextMenu extends LitElement {
     this._sizeRetries = 0;
     this._anchorGhost = null;
     this.pointerOnIgnored = false;
+    if (this.pointerOnIgnoredClearTimeout) {
+      window.clearTimeout(this.pointerOnIgnoredClearTimeout);
+      this.pointerOnIgnoredClearTimeout = 0;
+    }
 
     if (manageClose) {
-      if (window.ontouchstart !== undefined) {
-        window.document.removeEventListener('touchstart', documentEvent);
-      } else {
-        window.document.removeEventListener('mousedown', documentEventClick);
-      }
+      window.document.removeEventListener('mousedown', documentEventClick, { capture: true } as EventListenerOptions);
+      window.document.removeEventListener('touchstart', documentEvent, { capture: true } as EventListenerOptions);
       window.document.removeEventListener('focus', documentEvent, { capture: true });
       this.removeEventListener('focusout', documentEvent, { capture: true });
-      window.document.removeEventListener('pointerup', clearPointerOnIgnored, { capture: true } as EventListenerOptions);
+      window.document.removeEventListener('pointerup', clearPointerOnIgnoredLater, { capture: true } as EventListenerOptions);
+      window.document.removeEventListener('pointercancel', clearPointerOnIgnoredLater, { capture: true } as EventListenerOptions);
       window.document.removeEventListener('click', clearPointerOnIgnored, { capture: true } as EventListenerOptions);
     }
   }
@@ -945,7 +959,23 @@ export class ContextMenu extends LitElement {
   };
 
   clearPointerOnIgnored = (): void => {
+    if (this.pointerOnIgnoredClearTimeout) {
+      window.clearTimeout(this.pointerOnIgnoredClearTimeout);
+      this.pointerOnIgnoredClearTimeout = 0;
+    }
+
     this.pointerOnIgnored = false;
+  };
+
+  clearPointerOnIgnoredLater = (): void => {
+    if (this.pointerOnIgnoredClearTimeout) {
+      window.clearTimeout(this.pointerOnIgnoredClearTimeout);
+    }
+
+    this.pointerOnIgnoredClearTimeout = window.setTimeout(() => {
+      this.pointerOnIgnoredClearTimeout = 0;
+      this.pointerOnIgnored = false;
+    }, 0);
   };
 
   isComponentEvent = (element: HTMLElement, evt?: Event): boolean => {
@@ -984,6 +1014,10 @@ export class ContextMenu extends LitElement {
     const componentElement = isComponentEvent(eventTarget, evt);
 
     if ([ 'mousedown', 'touchstart' ].includes(evt.type) && isIgnoredNode(eventTarget, evt)) {
+      if (this.pointerOnIgnoredClearTimeout) {
+        window.clearTimeout(this.pointerOnIgnoredClearTimeout);
+        this.pointerOnIgnoredClearTimeout = 0;
+      }
       this.pointerOnIgnored = true;
       return;
     }

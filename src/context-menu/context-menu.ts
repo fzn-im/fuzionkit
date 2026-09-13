@@ -258,9 +258,11 @@ export class ContextMenu extends LitElement {
 
   containerSlot: string | undefined;
 
+  pointerOnIgnored = false;
+
   connectedCallback(): void {
     super.connectedCallback();
-    const { documentEvent, documentEventClick, manageClose } = this;
+    const { clearPointerOnIgnored, documentEvent, documentEventClick, manageClose } = this;
 
     this.resizeObserver.observe(this);
 
@@ -272,12 +274,14 @@ export class ContextMenu extends LitElement {
       }
       window.document.addEventListener('focus', documentEvent, { capture: true });
       this.addEventListener('focusout', documentEvent, { capture: true });
+      window.document.addEventListener('pointerup', clearPointerOnIgnored, { capture: true });
+      window.document.addEventListener('click', clearPointerOnIgnored, { capture: true });
     }
   }
 
   disconnectedCallback(): void {
     super.disconnectedCallback();
-    const { documentEvent, documentEventClick, manageClose } = this;
+    const { clearPointerOnIgnored, documentEvent, documentEventClick, manageClose } = this;
 
     this.resizeObserver.unobserve(this);
     if (this._pendingSizeFrame) {
@@ -286,6 +290,7 @@ export class ContextMenu extends LitElement {
     }
     this._sizeRetries = 0;
     this._anchorGhost = null;
+    this.pointerOnIgnored = false;
 
     if (manageClose) {
       if (window.ontouchstart !== undefined) {
@@ -295,6 +300,8 @@ export class ContextMenu extends LitElement {
       }
       window.document.removeEventListener('focus', documentEvent, { capture: true });
       this.removeEventListener('focusout', documentEvent, { capture: true });
+      window.document.removeEventListener('pointerup', clearPointerOnIgnored, { capture: true } as EventListenerOptions);
+      window.document.removeEventListener('click', clearPointerOnIgnored, { capture: true } as EventListenerOptions);
     }
   }
 
@@ -900,15 +907,54 @@ export class ContextMenu extends LitElement {
     this.close();
   };
 
+  composedContains = (root: Node, node: Node): boolean => {
+    let current: Node | null = node;
+
+    while (current) {
+      if (current === root) {
+        return true;
+      }
+
+      const slotted = (current as Element).assignedSlot;
+      if (slotted) {
+        current = slotted;
+        continue;
+      }
+
+      if (current.parentNode) {
+        current = current.parentNode;
+        continue;
+      }
+
+      current = current instanceof ShadowRoot ? current.host : null;
+    }
+
+    return false;
+  };
+
+  isIgnoredNode = (node?: EventTarget | null, evt?: Event): boolean => {
+    const path = evt && typeof evt.composedPath === 'function' ? evt.composedPath() : [];
+
+    return this.ignoredElements.some((elem) => (
+      !!elem && (
+        path.includes(elem) ||
+        node === elem ||
+        (node instanceof Node && this.composedContains(elem, node))
+      )
+    ));
+  };
+
+  clearPointerOnIgnored = (): void => {
+    this.pointerOnIgnored = false;
+  };
+
   isComponentEvent = (element: HTMLElement, evt?: Event): boolean => {
     return (
       this.contains(element) ||
       this.shadowRoot?.contains(element) ||
+      this.isIgnoredNode(element, evt) ||
       (
         evt && evt.composedPath().includes(this)
-      ) ||
-      (
-        evt && !!this.ignoredElements.find((elem) => evt.composedPath().includes(elem))
       ) ||
       (
         evt && !!this.getChildren().find((elem) => evt.composedPath().includes(elem))
@@ -932,10 +978,19 @@ export class ContextMenu extends LitElement {
   }
 
   documentEvent = (evt: Event): void => {
-    const { handleBlur, getEventTarget, isComponentEvent } = this;
+    const { handleBlur, getEventTarget, isComponentEvent, isIgnoredNode } = this;
 
     const eventTarget = getEventTarget(evt);
     const componentElement = isComponentEvent(eventTarget, evt);
+
+    if ([ 'mousedown', 'touchstart' ].includes(evt.type) && isIgnoredNode(eventTarget, evt)) {
+      this.pointerOnIgnored = true;
+      return;
+    }
+
+    if (this.pointerOnIgnored && [ 'blur', 'focus', 'focusout' ].includes(evt.type)) {
+      return;
+    }
 
     const evtAny = evt as unknown as any;
 
@@ -945,9 +1000,6 @@ export class ContextMenu extends LitElement {
       ('path' in evtAny &&
         evtAny.path.indexOf &&
           (~evtAny.path.indexOf(this)));
-
-    // console.log(eventTarget, 'type', evt.type, 'componentElement', componentElement,
-    //   evtAny.path, evt.composedPath());
 
     const lostFocus = [ 'blur', 'focusout' ].includes(evt.type)
       ? isInput &&
